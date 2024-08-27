@@ -1,0 +1,18 @@
+[package]
+name = "rush-sdk"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[[example]]
+name = "bevy-apple-game"
+path = "examples/bevy-apple-game/src/main.rs"
+
+[[example]]
+name = "bevy-farm-game"
+path = "examples/bevy-farm-game/src/main.rs"
+
+[[example]]
+name = "bevy-platformer-game"
+path = "examples/bevy-platformer-game/src/main.rs"

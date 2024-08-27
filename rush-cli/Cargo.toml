@@ -1,0 +1,25 @@
+[package]
+name = "rush-cli"
+version = "0.1.0"
+author = "SonicSVM Engineering"
+edition = "2021"
+
+[features]
+# Default features:
+# - Toml (Parser)
+# - Bevy (Game Engine)
+# - Solana (Blockchain)
+
+# Parser Support
+# yaml = []
+
+# Game Engine Support
+# unity = []
+# godot = []
+# pygame = []
+
+# Blockchain Support
+# evm = []
+# near = []
+
+[dependencies]

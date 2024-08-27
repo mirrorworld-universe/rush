@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+
+members = [
+	"rush-core",
+	"rush-cli",
+	"rush-sdk",
+	"rush-parser",
+	"rush-visor", "rush-programs/rush-store",
+]
+
+exclude = [
+	"rush-programs",
+	"rush-sdk/examples/*"
+]
