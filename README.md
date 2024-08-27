@@ -1,12 +1,21 @@
 # Rush
 
-![Rush package-level system design](.github/images/rush-package-level)
-
 Rush is a **Rapid** and **Declarative** development framework for Fully Onchain Games (FOCG) and Autonomous Worlds (AW) by SonicSVM. 
+
+![Rush Peepo Banner](.github/images/rush-peepo.png)
+
+# The Rush Way
+
+![Rush Way Banner](.github/images/rush-way.png)
+
+[WIP Narrative]
+
+
+# Package-Level System Design
 
 ![Rush Banner](.github/images/rush-package-level.png)
 
-# Packages
+# Monorepo Packages
 
 <center>
 <table>
@@ -74,3 +83,33 @@ Rush is a **Rapid** and **Declarative** development framework for Fully Onchain 
 </table>
 </center>
 
+# Examples
+
+<center>
+<table>
+    <thead>
+        <td>Name</td>
+        <td>Description</td>
+        <td>Tests</td>
+        <td>Docs</td>
+    </head>
+    <tr>
+        <td>bevy-apple-game</td>
+        <td>Exploring collision detection with player and apple entities with Bevy</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>bevy-farm-game</td>
+        <td>Exploring world-building and world-sharing with atomic Gaming Primitives with Bevy</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>bevy-platformer-game</td>
+        <td>Exploring world state side-effect (e.g. gravity) with Bevy</td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>
+</center>
