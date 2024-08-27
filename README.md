@@ -4,7 +4,7 @@
 
 Rush is a **Rapid** and **Declarative** development framework for Fully Onchain Games (FOCG) and Autonomous Worlds (AW) by SonicSVM. 
 
-![Rush Banner](.github/images/rushpeepo-small.png)
+![Rush Banner](.github/images/rush-package-level.png)
 
 # Packages
 
