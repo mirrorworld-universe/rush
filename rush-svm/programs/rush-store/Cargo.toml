@@ -16,3 +16,5 @@ solana-sdk = "=2.0.5"
 name="rush_store"
 crate-type = ["cdylib", "rlib"]
 doctest = false
+
+[workspace] # to exclude in virtual manifest

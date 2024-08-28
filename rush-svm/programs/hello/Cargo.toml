@@ -9,3 +9,5 @@ solana-program = "=2.0.5"
 [lib]
 name="hello"
 crate-type = ["cdylib", "rlib"]
+
+[workspace] # to exclude in virtual manifest

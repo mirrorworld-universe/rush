@@ -6,10 +6,12 @@ members = [
 	"rush-cli",
 	"rush-sdk",
 	"rush-parser",
-	"rush-visor", "rush-programs/rush-store",
+	"rush-visor",
+	"rush-svm",
 ]
 
 exclude = [
-	"rush-programs",
+	"rush-svm/programs/hello",
+	"rush-svm/programs/rush-store",
 	"rush-sdk/examples/*"
 ]

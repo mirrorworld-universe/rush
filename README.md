@@ -27,7 +27,7 @@ Rush is a **Rapid** and **Declarative** development framework for Fully Onchain 
     </head>
     <tr>
         <td>rush-core</td>
-        <td>Rush library for abstracting chain-specific implementation details</td>
+        <td>Rush library for abstracting Rush specific implementation details</td>
         <td></td>
         <td></td>
     </tr>
