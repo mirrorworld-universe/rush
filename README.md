@@ -44,8 +44,8 @@ Rush is a **Rapid** and **Declarative** development framework for Fully Onchain 
         <td></td>
     </tr>
     <tr>
-        <td>rush-programs</td>
-        <td>Collection of Rush programs</td>
+        <td>rush-svm</td>
+        <td>Collection of SVM Rush programs and Solana modules</td>
         <td></td>
         <td></td>
     </tr>
