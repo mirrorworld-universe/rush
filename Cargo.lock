@@ -5,9 +5,6 @@ version = 3
 [[package]]
 name = "rush-cli"
 version = "0.1.0"
-dependencies = [
- "rush-svm",
-]
 
 [[package]]
 name = "rush-core"
