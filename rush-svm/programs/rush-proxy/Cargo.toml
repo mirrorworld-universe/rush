@@ -1,5 +1,5 @@
 [package]
-name = "hello"
+name = "rush-proxy"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,7 +7,7 @@ edition = "2021"
 solana-program = "=2.0.5"
 
 [lib]
-name="hello"
+name="rush_proxy"
 crate-type = ["cdylib", "rlib"]
 
 [workspace] # to exclude in virtual manifest
