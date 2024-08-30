@@ -13,6 +13,9 @@ version = "0.1.0"
 [[package]]
 name = "rush-parser"
 version = "0.1.0"
+dependencies = [
+ "rush-core",
+]
 
 [[package]]
 name = "rush-sdk"
