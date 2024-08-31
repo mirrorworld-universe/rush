@@ -14,12 +14,12 @@ use rush_core::blueprint::{Blueprint, BlueprintString};
 ///
 // @dev
 // Parser is Send + Sync to enable concurrent parsing
-// Parser is `static for dynamic dispatch with Box
+// Parser is 'static for dynamic dispatch with Box
 pub trait Parser: Send + Sync + 'static {
+    /// Parse [`String`] to [`Blueprint`]
+    fn parse_string(&self, blueprint_string: BlueprintString) -> Result<Blueprint>;
+
     // TODO: Implement
     // Parse [`str`] to [`Blueprint`]
     // fn parse_str(path: &Path) -> Result<Blueprint>;
-
-    /// Parse [`String`] to [`Blueprint`]
-    fn parse_string(&self, blueprint_string: BlueprintString) -> Result<Blueprint>;
 }

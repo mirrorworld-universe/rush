@@ -1,9 +1,11 @@
+use solana_sdk::hash::{hash, Hash};
 use std::collections::BTreeMap;
 
 pub type Region = String;
 pub type Entity = String;
 pub type Component = String;
 pub type BlueprintString = String;
+pub type Instance = BTreeMap<Component, ComponentValue>;
 
 /// Blueprint of a World
 ///
@@ -17,7 +19,10 @@ pub struct Blueprint {
     /// Names of available Regions
     pub regions: Vec<String>,
     /// Container of all instances existing in the World
-    pub instances: BTreeMap<Region, BTreeMap<Entity, BTreeMap<Component, ComponentValue>>>,
+    ///
+    /// Key: Hash(Region, Entity)
+    ///
+    pub instances: BTreeMap<Hash, Vec<Instance>>,
 }
 
 impl Blueprint {
@@ -37,6 +42,44 @@ impl Blueprint {
     pub fn add_region(&mut self, name: Region) {
         self.regions.push(name);
     }
+
+    pub fn add_instance(
+        &mut self,
+        region: Region,
+        entity: Entity,
+        components: Vec<(Component, ComponentValue)>,
+    ) {
+        let hash = hash(format!("{region}{entity}").as_bytes());
+
+        let instances = match self.instances.get_mut(&hash) {
+            // instance exists
+            Some(e) => e,
+            // insert and get, if not exists
+            None => {
+                self.instances.insert(hash, Vec::new());
+                // unwrap ok
+                self.instances.get_mut(&hash).unwrap()
+            }
+        };
+
+        let mut instance: Instance = BTreeMap::new();
+        for component_kv in components.into_iter() {
+            let (name, value) = component_kv;
+            let component = match instance.get_mut(&name) {
+                Some(c) => c,
+                None => {
+                    instance.insert(name.clone(), value.clone());
+                    // unwrap ok
+                    instance.get_mut(&name).unwrap()
+                }
+            };
+
+            *component = value;
+        }
+
+        // insert Instance
+        instances.push(instance);
+    }
 }
 
 /// Enum defining the supported dataset in the World
@@ -46,5 +89,5 @@ pub enum ComponentValue {
     String(String),
     Integer(i64),
     Float(f64),
-    Bool(bool),
+    Boolean(bool),
 }

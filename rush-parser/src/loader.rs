@@ -4,11 +4,16 @@ use anyhow::Result;
 use rush_core::blueprint::Blueprint;
 use std::{fs::metadata, path::Path};
 
+/// [`Blueprint`] Loader
+///
+/// Load [`Blueprint`] from file or directory
+///
 pub struct Loader {
     parser: Box<dyn Parser>,
 }
 
 impl Loader {
+    /// Create a new [`Blueprint`] [`Loader`]
     pub fn new(parser: impl Parser) -> Self {
         Self {
             parser: Box::new(parser),

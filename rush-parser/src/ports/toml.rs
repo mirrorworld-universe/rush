@@ -2,8 +2,9 @@
 
 use crate::adapter::Parser;
 use anyhow::Result;
-use rush_core::blueprint::{Blueprint, BlueprintString, Component, Entity, Region};
-use toml::Table;
+use rush_core::blueprint::{Blueprint, BlueprintString, Component, ComponentValue, Entity, Region};
+use solana_sdk::hash::hash;
+use toml::{Table, Value};
 
 /// TOML Blueprint Parser
 ///
@@ -93,14 +94,64 @@ impl Parser for TomlParser {
             })
             .collect();
 
-        // Insert Regions into Blueprint
+        // insert Regions into Blueprint
         for region in regions.into_iter() {
             blueprint.add_region(region);
         }
 
-        // parse Instances
+        // check which Region-Entity pair has instances
+        // Vec<(Region, Entity)>
+        let mut has_instances: Vec<(Region, Entity)> = Vec::new();
+        for region in blueprint.regions.iter() {
+            for entity in blueprint.entities.keys() {
+                // unwrap ok
+                let list_of_instances = table["instances"][&region].get(entity);
+                if list_of_instances.is_some() {
+                    has_instances.push((region.to_string(), entity.to_string()));
+                }
+            }
+        }
 
-        println!("{:?}", blueprint);
+        // insert instances into Blueprint
+        for re_pair in has_instances.iter() {
+            let (region, entity) = re_pair;
+
+            // unwrap ok, previously checked if there are instances for each pair
+            let list_of_instances = table["instances"][&region]
+                .get(entity)
+                .unwrap()
+                .as_array()
+                .unwrap();
+
+            for instance in list_of_instances {
+                // unwrap ok
+                let mut components: Vec<(Component, ComponentValue)> = Vec::new();
+                for component in blueprint.entities.get(entity).unwrap().iter() {
+                    let option_value = instance.get(component);
+                    let value = match option_value {
+                        Some(v) => v,
+                        // if None, get from defaults
+                        None => table[entity].get(component).unwrap_or_else(|| {
+                            panic!("component {component} from  {entity} must have a default value")
+                        }),
+                    };
+
+                    // parse supported data types
+                    let component_value = match value {
+                        Value::String(v) => ComponentValue::String(v.clone()),
+                        Value::Integer(v) => ComponentValue::Integer(*v),
+                        Value::Boolean(v) => ComponentValue::Boolean(*v),
+                        Value::Float(v) => ComponentValue::Float(*v),
+                        _ => panic!("using an unsupported data type for instance"),
+                    };
+
+                    components.push((component.to_string(), component_value));
+                }
+
+                // insert Instance into Blueprint
+                blueprint.add_instance(region.to_string(), entity.to_string(), components);
+            }
+        }
 
         Ok(blueprint)
     }
@@ -118,6 +169,7 @@ mod tests {
 
         let toml_parser = TomlParser::default();
         let blueprint = toml_parser.parse_string(blueprint_string);
+        // TODO: Assert value
         assert!(true)
     }
 }
