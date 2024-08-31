@@ -3,18 +3,23 @@
 //! Used for parsing Blueprint from the following
 //! supported formats: `TOML`
 
-use rush_core::blueprint::Blueprint;
+use anyhow::Result;
+use rush_core::blueprint::{Blueprint, BlueprintString};
 
 /// Parser Trait
 ///
-/// For flexibility to choose different blueprint
-/// formats
-pub trait Parser {
-    fn parse_str() -> Blueprint {
-        Blueprint::default()
-    }
+/// Used as an adapter for different Blueprint file
+/// formats. Enables the flexibility to choose a
+/// different DSL
+///
+// @dev
+// Parser is Send + Sync to enable concurrent parsing
+// Parser is `static for dynamic dispatch with Box
+pub trait Parser: Send + Sync + 'static {
+    // TODO: Implement
+    // Parse [`str`] to [`Blueprint`]
+    // fn parse_str(path: &Path) -> Result<Blueprint>;
 
-    fn parse_string() -> Blueprint {
-        Blueprint::default()
-    }
+    /// Parse [`String`] to [`Blueprint`]
+    fn parse_string(&self, blueprint_string: BlueprintString) -> Result<Blueprint>;
 }
