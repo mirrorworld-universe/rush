@@ -1,0 +1,30 @@
+[world]
+name = "Sonic's World"
+entities = ["player", "apple"]
+regions = ["farm", "house"]
+
+[player] # (e.g. [<entity_name>])
+name = "string"
+x = 0
+y = 0
+w = 0
+h = 0
+speed = 10.0
+
+[apple] # (e.g. [<entity_name>])
+x = 0
+y = 0
+
+[instances.farm]
+player = [
+	  # speed = 10.0, taken default value from [player] table
+	{ name = "npc", x = 0, y = 0, w = 0, h = 0 }
+]
+apple = [
+	{ x = 0, y = 0}
+]
+
+[instances.house]
+player = [
+	{ name = "npc", x = 0, y = 0, w = 0, h = 0, speed = 50.0 }
+]

@@ -1,0 +1,4 @@
+[instances.house]
+player = [
+	{ name = "npc", x = 0, y = 0, w = 0, h = 0, speed = 50 }
+]

@@ -1,0 +1,4 @@
+[world]
+name = "Sonic's World"
+entities = ["player"]
+regions = ["farm", "house"]
