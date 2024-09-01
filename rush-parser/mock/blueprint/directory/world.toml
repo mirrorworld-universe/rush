@@ -1,4 +1,7 @@
 [world]
 name = "Sonic's World"
-entities = ["player"]
 regions = ["farm", "house"]
+
+[entity]
+player = { name = "String", x = "f64", y = "f64", w = "f64", h = "f64", speed = "f64" }
+apple = { x = "f64", y = "f64"}

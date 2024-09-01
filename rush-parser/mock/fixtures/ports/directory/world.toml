@@ -1,0 +1,3 @@
+[world]
+name = "Test World"
+regions = ["test_region1", "test_region2"]

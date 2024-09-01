@@ -1,4 +1,5 @@
 mod adapter;
+pub mod error;
 pub mod loader;
 mod ports;
 pub mod utils;

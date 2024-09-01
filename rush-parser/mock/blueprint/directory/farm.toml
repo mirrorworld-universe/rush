@@ -1,5 +1,7 @@
-[instances.farm]
+[farm]
 player = [
-  # speed = 0, taken default value from [player] table
-	{ name = "npc", x = 0, y = 0, w = 0, h = 0 }
+	{ name = "npc", x = 0.0, y = 0.0, w = 0.0, h = 0.0, speed = 0.0 }
+]
+apple = [
+	{ x = 0, y = 0}
 ]
