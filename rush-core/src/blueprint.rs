@@ -1,3 +1,4 @@
+use comfy_table::{modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Table, *};
 use solana_sdk::hash::{hash, Hash};
 use std::{collections::BTreeMap, fmt::Display};
 
@@ -82,11 +83,31 @@ impl Blueprint {
     }
 }
 
-// impl Display for Blueprint {
-//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         write!()
-//     }
-// }
+// Blueprint { name: "Test World", entities: {"test_entity1": ["test_property"], "test_entity2": ["test_property"]}, regions: ["test_region1", "test_region2"], instances: {49C
+// v49GYtkd8NRwcBYwmxBj8LR36qAYt3BSx5vgo38ZD: [{"test_property": Integer(0)}], AQsHsjb3ckqc7RtjZzTSs9H2ZXfvfghHjsNXsZWpjdNB: [{"test_property": Integer(0)}], DDXxZ8h3fCKRELQV7
+// spk1aFso1eZZ1yAunkhKYkuksZi: [{"test_property": Integer(0)}]} }
+
+// TODO: Finish Display
+impl Display for Blueprint {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // World table
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .apply_modifier(UTF8_ROUND_CORNERS)
+            .set_header(vec![Cell::new("World"), Cell::new(&self.name)])
+            .add_row(vec![
+                Cell::new("Regions"),
+                Cell::new(self.regions.join(", ")),
+            ])
+            .add_row(vec![
+                Cell::new("Entities"),
+                Cell::new(self.entities.keys().cloned().collect::<Vec<_>>().join(", ")),
+            ]);
+
+        write!(f, "{}", table)
+    }
+}
 
 /// Enum defining the supported dataset in the World
 /// and how it maps with Rust data types
@@ -96,4 +117,19 @@ pub enum ComponentValue {
     Integer(i64),
     Float(f64),
     Boolean(bool),
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_blueprint_display() {
+        let mut blueprint = Blueprint::new("Test World".to_string());
+        blueprint.regions.push("region1".to_string());
+        blueprint.regions.push("region2".to_string());
+        blueprint.entities.insert("entity1".to_string(), Vec::new());
+        blueprint.entities.insert("entity2".to_string(), Vec::new());
+        println!("{blueprint}");
+    }
 }
