@@ -16,6 +16,7 @@ pub struct Blueprint {
     /// World's Name
     pub name: String,
     /// Entity name and Names of its Comoponents
+    // TODO: Consider adding Default value in entities
     pub entities: BTreeMap<String, Vec<Component>>,
     /// Names of available Regions
     pub regions: Vec<String>,
@@ -83,29 +84,55 @@ impl Blueprint {
     }
 }
 
-// Blueprint { name: "Test World", entities: {"test_entity1": ["test_property"], "test_entity2": ["test_property"]}, regions: ["test_region1", "test_region2"], instances: {49C
-// v49GYtkd8NRwcBYwmxBj8LR36qAYt3BSx5vgo38ZD: [{"test_property": Integer(0)}], AQsHsjb3ckqc7RtjZzTSs9H2ZXfvfghHjsNXsZWpjdNB: [{"test_property": Integer(0)}], DDXxZ8h3fCKRELQV7
-// spk1aFso1eZZ1yAunkhKYkuksZi: [{"test_property": Integer(0)}]} }
-
-// TODO: Finish Display
+// TODO: Finish Display, display Instances
 impl Display for Blueprint {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        // World table
-        let mut table = Table::new();
-        table
+        // build World table
+        let mut world_table = Table::new();
+        world_table
             .load_preset(UTF8_FULL)
             .apply_modifier(UTF8_ROUND_CORNERS)
-            .set_header(vec![Cell::new("World"), Cell::new(&self.name)])
+            .set_header(vec![
+                Cell::new("World")
+                    .fg(Color::Green)
+                    .add_attribute(Attribute::Bold),
+                Cell::new(&self.name),
+            ])
             .add_row(vec![
-                Cell::new("Regions"),
+                Cell::new("Regions")
+                    .fg(Color::Green)
+                    .add_attribute(Attribute::Bold),
                 Cell::new(self.regions.join(", ")),
             ])
             .add_row(vec![
-                Cell::new("Entities"),
+                Cell::new("Entities")
+                    .fg(Color::Green)
+                    .add_attribute(Attribute::Bold),
                 Cell::new(self.entities.keys().cloned().collect::<Vec<_>>().join(", ")),
             ]);
 
-        write!(f, "{}", table)
+        // list down Entities and their properties
+        let mut entity_table = Table::new();
+        entity_table
+            .load_preset(UTF8_FULL)
+            .apply_modifier(UTF8_ROUND_CORNERS)
+            .set_header(vec![Cell::new("Entity"), Cell::new("Components")]);
+
+        for entity in self.entities.keys() {
+            // get component list
+            let components_string = match self.entities.get(entity) {
+                Some(components) => components.join(", "),
+                None => String::from("(No registered components)"),
+            };
+            entity_table.add_row(vec![
+                Cell::new(entity)
+                    .fg(Color::Green)
+                    .add_attribute(Attribute::Bold),
+                Cell::new(components_string),
+            ]);
+        }
+
+        write!(f, "{world_table}\n\n{entity_table}")
     }
 }
 
@@ -126,10 +153,28 @@ mod tests {
     #[test]
     fn test_blueprint_display() {
         let mut blueprint = Blueprint::new("Test World".to_string());
-        blueprint.regions.push("region1".to_string());
-        blueprint.regions.push("region2".to_string());
-        blueprint.entities.insert("entity1".to_string(), Vec::new());
-        blueprint.entities.insert("entity2".to_string(), Vec::new());
+
+        // load mock regions
+        blueprint.add_region("region1".to_string());
+        blueprint.add_region("region2".to_string());
+
+        // load mock entities
+        blueprint.add_entity(
+            "entity1".to_string(),
+            vec!["x".to_string(), "y".to_string()],
+        );
+        blueprint.add_entity(
+            "entity2".to_string(),
+            vec!["width".to_string(), "height".to_string()],
+        );
+
+        // load mock instances
+        let components = vec![
+            ("x".to_string(), ComponentValue::Integer(0)),
+            ("y".to_string(), ComponentValue::Integer(0)),
+        ];
+        blueprint.add_instance("region1".to_string(), "entity1".to_string(), components);
+
         println!("{blueprint}");
     }
 }
