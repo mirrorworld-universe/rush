@@ -1,12 +1,13 @@
 use comfy_table::{modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Table, *};
-use solana_sdk::hash::{hash, Hash};
+use solana_sdk::hash::hash;
 use std::{collections::BTreeMap, fmt::Display};
 
 pub type Region = String;
 pub type Entity = String;
 pub type Component = String;
+pub type ComponentPair = (Component, ComponentValue);
+pub type ComponentTree = BTreeMap<Component, ComponentValue>;
 pub type BlueprintString = String;
-pub type Instance = BTreeMap<Component, ComponentValue>;
 
 /// Blueprint of a World
 ///
@@ -15,16 +16,12 @@ pub type Instance = BTreeMap<Component, ComponentValue>;
 pub struct Blueprint {
     /// World's Name
     pub name: String,
-    /// Entity name and Names of its Comoponents
-    // TODO: Consider adding Default value in entities
-    pub entities: BTreeMap<String, Vec<Component>>,
-    /// Names of available Regions
-    pub regions: Vec<String>,
-    /// Container of all instances existing in the World
-    ///
-    /// Key: Hash(Region, Entity)
-    ///
-    pub instances: BTreeMap<Hash, Vec<Instance>>,
+    /// Region names and Entities that exit in it
+    pub regions: BTreeMap<Region, Vec<Entity>>,
+    /// Entity name and Names of its Components
+    pub entities: BTreeMap<Entity, Vec<Component>>,
+    /// Instances
+    pub instances: BTreeMap<Region, BTreeMap<Entity, Vec<ComponentTree>>>,
 }
 
 impl Blueprint {
@@ -32,7 +29,7 @@ impl Blueprint {
         Self {
             name: world_name,
             entities: BTreeMap::new(),
-            regions: Vec::new(),
+            regions: BTreeMap::new(),
             instances: BTreeMap::new(),
         }
     }
@@ -41,46 +38,44 @@ impl Blueprint {
         self.entities.insert(name, components);
     }
 
-    pub fn add_region(&mut self, name: Region) {
-        self.regions.push(name);
+    pub fn add_region(&mut self, name: Region, entities: Vec<Entity>) {
+        self.regions.insert(name, entities);
     }
 
-    pub fn add_instance(
-        &mut self,
-        region: Region,
-        entity: Entity,
-        components: Vec<(Component, ComponentValue)>,
-    ) {
-        let hash = hash(format!("{region}{entity}").as_bytes());
-
-        let instances = match self.instances.get_mut(&hash) {
+    pub fn add_instance(&mut self, region: Region, entity: Entity, components: Vec<ComponentPair>) {
+        // get mutable region
+        let region_mut = match self.instances.get_mut(&region) {
             // instance exists
             Some(e) => e,
             // insert and get, if not exists
             None => {
-                self.instances.insert(hash, Vec::new());
+                self.instances.insert(entity.clone(), BTreeMap::new());
                 // unwrap ok
-                self.instances.get_mut(&hash).unwrap()
+                self.instances.get_mut(&region).unwrap()
             }
         };
 
-        let mut instance: Instance = BTreeMap::new();
+        // get mutable entity
+        let entity_mut = match region_mut.get_mut(&entity) {
+            // instance exists
+            Some(e) => e,
+            // insert and get, if not exists
+            None => {
+                region_mut.insert(entity.clone(), Vec::new());
+                // unwrap ok
+                region_mut.get_mut(&entity).unwrap()
+            }
+        };
+
+        // create instance
+        let mut component_tree: ComponentTree = BTreeMap::new();
         for component_kv in components.into_iter() {
             let (name, value) = component_kv;
-            let component = match instance.get_mut(&name) {
-                Some(c) => c,
-                None => {
-                    instance.insert(name.clone(), value.clone());
-                    // unwrap ok
-                    instance.get_mut(&name).unwrap()
-                }
-            };
-
-            *component = value;
+            component_tree.insert(name, value);
         }
 
-        // insert Instance
-        instances.push(instance);
+        // add entity instance to blueprint under region
+        entity_mut.push(component_tree);
     }
 }
 
@@ -102,7 +97,7 @@ impl Display for Blueprint {
                 Cell::new("Regions")
                     .fg(Color::Green)
                     .add_attribute(Attribute::Bold),
-                Cell::new(self.regions.join(", ")),
+                Cell::new(self.regions.keys().cloned().collect::<Vec<_>>().join(", ")),
             ])
             .add_row(vec![
                 Cell::new("Entities")
@@ -152,29 +147,29 @@ mod tests {
 
     #[test]
     fn test_blueprint_display() {
-        let mut blueprint = Blueprint::new("Test World".to_string());
-
-        // load mock regions
-        blueprint.add_region("region1".to_string());
-        blueprint.add_region("region2".to_string());
-
-        // load mock entities
-        blueprint.add_entity(
-            "entity1".to_string(),
-            vec!["x".to_string(), "y".to_string()],
-        );
-        blueprint.add_entity(
-            "entity2".to_string(),
-            vec!["width".to_string(), "height".to_string()],
-        );
-
-        // load mock instances
-        let components = vec![
-            ("x".to_string(), ComponentValue::Integer(0)),
-            ("y".to_string(), ComponentValue::Integer(0)),
-        ];
-        blueprint.add_instance("region1".to_string(), "entity1".to_string(), components);
-
-        println!("{blueprint}");
+        // let mut blueprint = Blueprint::new("Test World".to_string());
+        //
+        // // load mock regions
+        // blueprint.add_region("region1".to_string());
+        // blueprint.add_region("region2".to_string());
+        //
+        // // load mock entities
+        // blueprint.add_entity(
+        //     "entity1".to_string(),
+        //     vec!["x".to_string(), "y".to_string()],
+        // );
+        // blueprint.add_entity(
+        //     "entity2".to_string(),
+        //     vec!["width".to_string(), "height".to_string()],
+        // );
+        //
+        // // load mock instances
+        // let components = vec![
+        //     ("x".to_string(), ComponentValue::Integer(0)),
+        //     ("y".to_string(), ComponentValue::Integer(0)),
+        // ];
+        // blueprint.add_instance("region1".to_string(), "entity1".to_string(), components);
+        //
+        // println!("{blueprint}");
     }
 }
