@@ -1,0 +1,23 @@
+[world]
+name = "Test World"
+entities = ["test_entity1", "test_entity2"]
+regions = ["test_region1", "test_region2"]
+
+[test_entity1]
+test_property = 0
+
+[test_entity2]
+test_property = 0
+
+[instances.test_region1]
+test_entity1 = [
+	{ test_property = 0 }
+]
+test_entity2 = [
+	{ test_property = 0 }
+]
+
+[instances.test_region2]
+test_entity1 = [
+	{ test_property = 0 }
+]

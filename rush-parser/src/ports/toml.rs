@@ -46,6 +46,8 @@ pub struct TomlParser {}
 
 impl Parser for TomlParser {
     fn parse_string(&self, blueprint_string: BlueprintString) -> Result<Blueprint> {
+        // TODO: add all validations up top, here for readability
+
         // expecting a valid TOML
         let table: Table = blueprint_string.parse::<Table>().expect("invalid TOML");
 
@@ -163,12 +165,13 @@ mod tests {
     use std::path::Path;
 
     #[test]
-    fn test_toml_parser() {
-        let path = Path::new("mock/blueprint.toml");
+    fn test_toml_parser_file() {
+        let path = Path::new("mock/fixtures/ports/blueprint.toml");
         let blueprint_string = file_to_string(path);
 
         let toml_parser = TomlParser::default();
-        let blueprint = toml_parser.parse_string(blueprint_string);
+        let blueprint = toml_parser.parse_string(blueprint_string).unwrap();
+        println!("{:?}", blueprint);
         // TODO: Assert value
         assert!(true)
     }

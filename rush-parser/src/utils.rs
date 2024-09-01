@@ -43,7 +43,7 @@ pub fn dir_to_string(path: &Path) -> BlueprintString {
         let content = read_to_string(filepath).expect("invalid path");
 
         // combine
-        loaded_string += format!("\n{content}").as_str();
+        loaded_string += format!("{content}\n").as_str();
     }
 
     loaded_string
@@ -54,15 +54,15 @@ mod tests {
 
     #[test]
     fn test_file_to_string() {
-        let path = Path::new("mock/blueprint.toml");
-        file_to_string(path);
-        // TODO: Assert output
+        let path = Path::new("mock/fixtures/utils/file_to_string");
+        let string = file_to_string(path);
+        assert_eq!(string, "abcd\n");
     }
 
     #[test]
     fn test_dir_to_string() {
-        let path = Path::new("mock/blueprint_directory");
-        dir_to_string(path);
-        // TODO: Assert output
+        let path = Path::new("mock/fixtures/utils/dir_to_string");
+        let string = dir_to_string(path);
+        assert_eq!(string, "a\n\nb\n\n");
     }
 }

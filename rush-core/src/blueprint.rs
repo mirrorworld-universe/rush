@@ -1,5 +1,5 @@
 use solana_sdk::hash::{hash, Hash};
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, fmt::Display};
 
 pub type Region = String;
 pub type Entity = String;
@@ -81,6 +81,12 @@ impl Blueprint {
         instances.push(instance);
     }
 }
+
+// impl Display for Blueprint {
+//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+//         write!()
+//     }
+// }
 
 /// Enum defining the supported dataset in the World
 /// and how it maps with Rust data types
