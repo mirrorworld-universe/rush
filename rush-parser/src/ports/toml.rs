@@ -159,6 +159,7 @@ impl Parser for TomlParser {
     }
 }
 
+#[cfg(test)]
 mod tests {
     use super::*;
     use crate::utils::file_to_string;

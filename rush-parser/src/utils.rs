@@ -49,6 +49,7 @@ pub fn dir_to_string(path: &Path) -> BlueprintString {
     loaded_string
 }
 
+#[cfg(test)]
 mod tests {
     use super::*;
 
