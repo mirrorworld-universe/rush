@@ -1214,9 +1214,11 @@ dependencies = [
 name = "rush-cli"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "clap",
  "rush-core",
  "rush-parser",
+ "thiserror",
 ]
 
 [[package]]
