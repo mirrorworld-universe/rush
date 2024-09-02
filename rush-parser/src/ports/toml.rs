@@ -2,8 +2,10 @@
 
 use crate::{adapter::Parser, error::utils::ensure_syntax};
 use anyhow::Result;
-use rush_core::blueprint::{Blueprint, BlueprintString, Component, ComponentValue, Entity, Region};
-use solana_sdk::hash::hash;
+use rush_core::blueprint::{
+    Blueprint, BlueprintString, Component, ComponentType, ComponentValue, Entity,
+};
+use std::collections::BTreeMap;
 use toml::{Table, Value};
 
 /// TOML Blueprint Parser
@@ -71,8 +73,6 @@ impl Parser for TomlParser {
             world_table["name"].is_str(),
         );
 
-        // REGIONS
-
         ensure_syntax(
             "World must have a regions property".to_string(),
             world_table.contains_key("regions"),
@@ -98,11 +98,14 @@ impl Parser for TomlParser {
             .map(|r| r.as_str().unwrap().to_string()) // unwrap ok
             .collect::<Vec<_>>();
 
+        // REGIONS
+
         // every region stated in the world table must have
         // a table of instances in the blueprint
         for region in regions.iter() {
             ensure_syntax(
                 format!("Region {region} table must exist"),
+                // certain region exists
                 table.contains_key(region),
             );
         }
@@ -119,123 +122,99 @@ impl Parser for TomlParser {
         );
 
         let entity_table = table["entity"].as_table().unwrap();
-        let entities = entity_table.keys().collect::<Vec<_>>();
+        let entities = entity_table.keys().cloned().collect::<Vec<_>>();
 
         ensure_syntax(
             "Entity table must have at least 1 entity properties".to_string(),
             // not empty
             !entities.is_empty() &&
             // must be a table of properties e.g. { x = 0, y = 0 }
-            entity_table[entities[0]].is_table(),
+            entity_table[&entities[0]].is_table(),
         );
 
-        // // parse World's name
-        // let world_name = table["world"]["name"]
-        //     .as_str()
-        //     .unwrap()
-        //     .to_string();
+        // parse World's name
+        let world_name = world_table["name"].as_str().unwrap().to_string();
+
+        // create Blueprint
+        let mut blueprint = Blueprint::new(world_name);
+
+        // load Regions
+        for region_name in regions.iter().cloned() {
+            println!("region_name: {region_name}");
+            if let Some(region_table) = table[&region_name].as_table() {
+                // get entities from keys in the table
+                let entities = region_table.keys().cloned().collect::<Vec<Entity>>();
+                blueprint.add_region(region_name, entities);
+            }
+        }
+
+        // load Entities
+        for entity_name in entities.into_iter() {
+            if let Some(component_table) = entity_table[&entity_name].as_table() {
+                // load entities
+                let mut component_type_tree: BTreeMap<Component, ComponentType> = BTreeMap::new();
+                for component_name in component_table.keys() {
+                    // unwrap ok, a value is expected
+                    let value = component_table
+                        .get(component_name)
+                        .unwrap()
+                        .as_str()
+                        .unwrap()
+                        .to_string();
+                    component_type_tree.insert(component_name.to_string(), value);
+                }
+                blueprint.add_entity(entity_name, component_type_tree);
+            }
+        }
+
+        // TODO: Refactor nested For loops for readability
         //
-        // // create Blueprint let mut blueprint = Blueprint::new(world_name);
+        // load Instances
         //
-        // // parse Entities
-        // for entity in table["entity"].as_table()..keys() {}
-        // let entities: Vec<Entity> = table["world"]["entities"]
-        //     .as_array()
-        //     .expect("World entities must be an array of String")
-        //     .iter()
-        //     .map(|e| {
-        //         e.as_str()
-        //             .expect("Entity name must be a valid String")
-        //             .to_string()
-        //     })
-        //     .collect();
-        //
-        // // insert Entities and its Components into Blueprint
-        // for entity in entities.into_iter() {
-        //     let components: Vec<Component> = table[&entity]
-        //         .as_table()
-        //         .unwrap_or_else(|| panic!("Expected {entity} to be present in the Blueprint"))
-        //         .keys()
-        //         .cloned()
-        //         .collect();
-        //
-        //     blueprint.add_entity(entity, components);
-        // }
-        //
-        // // parse Regions
-        // let regions: Vec<Region> = table["world"]["regions"]
-        //     .as_array()
-        //     .expect("World regions must be an array of String")
-        //     .iter()
-        //     .map(|e| {
-        //         e.as_str()
-        //             .expect("Region name must be a valid String")
-        //             .to_string()
-        //     })
-        //     .collect();
-        //
-        // // insert Regions into Blueprint
-        // for region in regions.into_iter() {
-        //     let entities = table[&region]
-        //     blueprint.add_region(region);
-        // }
-        //
-        // // check which Region-Entity pair has instances
-        // // Vec<(Region, Entity)>
-        // let mut has_instances: Vec<(Region, Entity)> = Vec::new();
-        // for region in blueprint.regions.iter() {
-        //     for entity in blueprint.entities.keys() {
-        //         // unwrap ok
-        //         let list_of_instances = table["instances"][&region].get(entity);
-        //         if list_of_instances.is_some() {
-        //             has_instances.push((region.to_string(), entity.to_string()));
-        //         }
-        //     }
-        // }
-        //
-        // // insert instances into Blueprint
-        // for re_pair in has_instances.iter() {
-        //     let (region, entity) = re_pair;
-        //
-        //     // unwrap ok, previously checked if there are instances for each pair
-        //     let list_of_instances = table["instances"][&region]
-        //         .get(entity)
-        //         .unwrap()
-        //         .as_array()
-        //         .unwrap();
-        //
-        //     for instance in list_of_instances {
-        //         // unwrap ok
-        //         let mut components: Vec<(Component, ComponentValue)> = Vec::new();
-        //         for component in blueprint.entities.get(entity).unwrap().iter() {
-        //             let option_value = instance.get(component);
-        //             let value = match option_value {
-        //                 Some(v) => v,
-        //                 // if None, get from defaults
-        //                 None => table[entity].get(component).unwrap_or_else(|| {
-        //                     panic!("component {component} from  {entity} must have a default value")
-        //                 }),
-        //             };
-        //
-        //             // parse supported data types
-        //             let component_value = match value {
-        //                 Value::String(v) => ComponentValue::String(v.clone()),
-        //                 Value::Integer(v) => ComponentValue::Integer(*v),
-        //                 Value::Boolean(v) => ComponentValue::Boolean(*v),
-        //                 Value::Float(v) => ComponentValue::Float(*v),
-        //                 _ => panic!("using an unsupported data type for instance"),
-        //             };
-        //
-        //             components.push((component.to_string(), component_value));
-        //         }
-        //
-        //         // insert Instance into Blueprint
-        //         blueprint.add_instance(region.to_string(), entity.to_string(), components);
-        //     }
-        // }
-        //
-        // Ok(blueprint)
-        Ok(Blueprint::new("tmp".to_string()))
+        // In blueprint.rs:
+        //  pub instances: BTreeMap<Region, BTreeMap<Entity, Vec<ComponentTree>>>,
+        let blueprint_regions = blueprint.regions.clone();
+
+        for region_name in regions.into_iter() {
+            // if there are entities in region
+            if let Some(entities_in_region) = blueprint_regions.get(&region_name) {
+                // get each entity in region
+                for entity_name in entities_in_region.iter() {
+                    if let Some(instances) = table[&region_name][entity_name].as_array() {
+                        for instance in instances.into_iter() {
+                            // build each entity's component tree
+                            if let Some(entity_components) = instance.as_table() {
+                                let mut component_tree: BTreeMap<Component, ComponentValue> =
+                                    BTreeMap::new();
+
+                                // get (component, value) pairs
+                                for (toml_component, toml_value) in entity_components.into_iter() {
+                                    let component = toml_component.to_string();
+                                    let value = match toml_value {
+                                        Value::String(v) => ComponentValue::String(v.to_string()),
+                                        Value::Float(v) => ComponentValue::Float(*v),
+                                        Value::Integer(v) => ComponentValue::Integer(*v),
+                                        Value::Boolean(v) => ComponentValue::Boolean(*v),
+                                        _ => panic!("Unsupported data type"),
+                                    };
+
+                                    component_tree.insert(component, value);
+                                }
+
+                                // add to blueprint
+                                blueprint.add_instance(
+                                    region_name.clone(),
+                                    entity_name.to_string(),
+                                    component_tree,
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Ok(blueprint)
     }
 }
 

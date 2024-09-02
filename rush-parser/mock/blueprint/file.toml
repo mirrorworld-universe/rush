@@ -3,8 +3,8 @@ name = "Sonic's World"
 regions = ["farm", "house"]
 
 [entity]
-player = { name = "String", x = "f64", y = "f64", w = "f64", h = "f64", speed = "f64" }
-apple = { x = "f64", y = "f64"}
+player = { name = "string", x = "float", y = "float", w = "float", h = "float", speed = "float" }
+apple = { x = "float", y = "float"}
 
 [farm]
 player = [

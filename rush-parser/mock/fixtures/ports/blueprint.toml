@@ -3,8 +3,8 @@ name = "Test World"
 regions = ["test_region1", "test_region2"]
 
 [entity]
-test_entity1 = { test_property = "i64" }
-test_entity2 = { test_property = "i64" }
+test_entity1 = { test_property = "int" }
+test_entity2 = { test_property = "int" }
 
 [test_region1]
 test_entity1 = [
