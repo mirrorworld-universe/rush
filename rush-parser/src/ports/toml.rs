@@ -46,7 +46,7 @@ impl Parser for TomlParser {
         // expecting a valid TOML
         let table: Table = blueprint_string.parse::<Table>().expect("invalid TOML");
 
-        // check for expected Top Level Tables and Properties
+        // ensure syntax for top-level Tables and Properties are met
 
         // WORLD
 
@@ -125,7 +125,7 @@ impl Parser for TomlParser {
             "Entity table must have at least 1 entity properties".to_string(),
             // not empty
             !entities.is_empty() &&
-            // must have a table of properties
+            // must be a table of properties e.g. { x = 0, y = 0 }
             entity_table[entities[0]].is_table(),
         );
 
