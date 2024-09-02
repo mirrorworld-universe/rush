@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.86"
-rush-core = { path = "../rush-core" }
+rush-core = { version = "0.1.0", path = "../rush-core" }
 solana-sdk = "2.0.8"
 thiserror = "1.0.63"
 toml = "0.8.19"
