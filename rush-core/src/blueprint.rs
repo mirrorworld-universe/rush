@@ -1,5 +1,4 @@
 use comfy_table::{modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Table, *};
-use solana_sdk::hash::hash;
 use std::{collections::BTreeMap, fmt::Display};
 
 pub type Region = String;
@@ -7,6 +6,8 @@ pub type Entity = String;
 pub type Component = String;
 pub type ComponentPair = (Component, ComponentValue);
 pub type ComponentTree = BTreeMap<Component, ComponentValue>;
+pub type ComponentType = String;
+pub type ComponentTypeTree = BTreeMap<Component, ComponentType>;
 pub type BlueprintString = String;
 
 /// Blueprint of a World
@@ -16,11 +17,11 @@ pub type BlueprintString = String;
 pub struct Blueprint {
     /// World's Name
     pub name: String,
-    /// Region names and Entities that exit in it
+    /// Region names and Entities that exist in it
     pub regions: BTreeMap<Region, Vec<Entity>>,
     /// Entity name and Names of its Components
-    pub entities: BTreeMap<Entity, Vec<Component>>,
-    /// Instances
+    pub entities: BTreeMap<Entity, ComponentTypeTree>,
+    /// Instances of different Entities in different Regions
     pub instances: BTreeMap<Region, BTreeMap<Entity, Vec<ComponentTree>>>,
 }
 
@@ -34,22 +35,22 @@ impl Blueprint {
         }
     }
 
-    pub fn add_entity(&mut self, name: Entity, components: Vec<Component>) {
-        self.entities.insert(name, components);
+    pub fn add_entity(&mut self, name: Entity, component_types: ComponentTypeTree) {
+        self.entities.insert(name, component_types);
     }
 
     pub fn add_region(&mut self, name: Region, entities: Vec<Entity>) {
         self.regions.insert(name, entities);
     }
 
-    pub fn add_instance(&mut self, region: Region, entity: Entity, components: Vec<ComponentPair>) {
+    pub fn add_instance(&mut self, region: Region, entity: Entity, component_tree: ComponentTree) {
         // get mutable region
         let region_mut = match self.instances.get_mut(&region) {
             // instance exists
             Some(e) => e,
             // insert and get, if not exists
             None => {
-                self.instances.insert(entity.clone(), BTreeMap::new());
+                self.instances.insert(region.clone(), BTreeMap::new());
                 // unwrap ok
                 self.instances.get_mut(&region).unwrap()
             }
@@ -66,13 +67,6 @@ impl Blueprint {
                 region_mut.get_mut(&entity).unwrap()
             }
         };
-
-        // create instance
-        let mut component_tree: ComponentTree = BTreeMap::new();
-        for component_kv in components.into_iter() {
-            let (name, value) = component_kv;
-            component_tree.insert(name, value);
-        }
 
         // add entity instance to blueprint under region
         entity_mut.push(component_tree);
@@ -113,19 +107,19 @@ impl Display for Blueprint {
             .apply_modifier(UTF8_ROUND_CORNERS)
             .set_header(vec![Cell::new("Entity"), Cell::new("Components")]);
 
-        for entity in self.entities.keys() {
-            // get component list
-            let components_string = match self.entities.get(entity) {
-                Some(components) => components.join(", "),
-                None => String::from("(No registered components)"),
-            };
-            entity_table.add_row(vec![
-                Cell::new(entity)
-                    .fg(Color::Green)
-                    .add_attribute(Attribute::Bold),
-                Cell::new(components_string),
-            ]);
-        }
+        // for entity in self.entities.keys() {
+        //     // get component list
+        //     let components_string = match self.entities.get(entity) {
+        //         Some(components) => components.join(", "),
+        //         None => String::from("(No registered components)"),
+        //     };
+        //     entity_table.add_row(vec![
+        //         Cell::new(entity)
+        //             .fg(Color::Green)
+        //             .add_attribute(Attribute::Bold),
+        //         Cell::new(components_string),
+        //     ]);
+        // }
 
         write!(f, "{world_table}\n\n{entity_table}")
     }
