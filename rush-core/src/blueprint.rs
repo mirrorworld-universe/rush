@@ -139,6 +139,7 @@ pub enum ComponentValue {
 mod tests {
     use super::*;
 
+    // TODO: Blueprint Display test
     #[test]
     fn test_blueprint_display() {
         // let mut blueprint = Blueprint::new("Test World".to_string());
