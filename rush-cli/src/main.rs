@@ -89,17 +89,3 @@ fn main() -> Result<()> {
 
     Ok(())
 }
-// .subcommand(
-//     Command::new("new")
-//         .about("Create a new Rush project.")
-//         .subcommand(
-//             Command::new("add")
-//                 .about("Add a new <TASK> for this week")
-//                 .arg(Arg::new("TASK").long("task").short('t')),
-//         )
-//         .subcommand(
-//             Command::new("delete")
-//                 .about("Delete a task with <TASK_ID>")
-//                 .arg(Arg::new("TASK_ID").long("task-id").short('i')),
-//         ),
-// )
