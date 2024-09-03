@@ -1,0 +1,15 @@
+[package]
+name = "rush-integration-test"
+version = "0.1.0"
+edition = "2021"
+
+[dev-dependencies]
+solana-program-test = "=2.0.5"
+solana-sdk = "=2.0.5"
+
+[lib]
+name="rush_integration_test"
+crate-type = ["cdylib", "rlib"]
+doctest = false
+
+[workspace] # to exclude in virtual manifest
