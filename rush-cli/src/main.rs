@@ -2,6 +2,10 @@ use anyhow::Result;
 use clap::{Arg, Command};
 
 fn main() -> Result<()> {
+    /*
+     * @dev We'll leave the matchers here despite it being bulky to have a quick
+     * single point overview of all the commands and subcommands available
+     */
     let matches = Command::new("rush")
         // .version("0.1.0") // get version from manifest
         .about("Rapid and Declarative development framework for Fully Onchain Games (FOCG) and Autonomous Worlds (AW) by SonicSVM.")
