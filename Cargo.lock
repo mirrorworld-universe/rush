@@ -3221,6 +3221,7 @@ dependencies = [
  "num-derive",
  "num-traits",
  "rush-core",
+ "rush-svm",
  "shank",
  "solana-program",
  "solana-program-test",
@@ -3233,6 +3234,18 @@ dependencies = [
 [[package]]
 name = "rush-svm"
 version = "0.1.0"
+dependencies = [
+ "arrayref",
+ "borsh 1.5.1",
+ "num-derive",
+ "num-traits",
+ "rush-core",
+ "shank",
+ "solana-program",
+ "spl-discriminator",
+ "spl-program-error",
+ "thiserror",
+]
 
 [[package]]
 name = "rush-visor"

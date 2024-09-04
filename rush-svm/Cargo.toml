@@ -4,3 +4,17 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+arrayref = "0.3.8"
+borsh = "1.5.1"
+# we'll enable when we start optimizations
+# bytemuck = "1.17.1"
+num-derive = "0.4.2"
+num-traits = "0.2.19"
+rush-core = { version = "0.1.0", path = "../rush-core" }
+shank = "0.4.2"
+solana-program = "=2.0.5"
+spl-discriminator = "0.3.0"
+# we'll enable when we start optimizations
+# spl-pod = "0.4.0"
+spl-program-error = "0.5.0"
+thiserror = "1.0.63"

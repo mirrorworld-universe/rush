@@ -20,9 +20,9 @@ use shank::{ShankContext, ShankInstruction};
 pub enum RushStoreInstruction {
     #[account(
         0,
-        writable,
-        name = "payer",
-        desc = "Account description"
+        signer,
+        name = "world_authority",
+        desc = "World authority who has access to"
     )]
     CreateWorld,
 
