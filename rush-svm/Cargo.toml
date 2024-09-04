@@ -18,3 +18,8 @@ spl-discriminator = "0.3.0"
 # spl-pod = "0.4.0"
 spl-program-error = "0.5.0"
 thiserror = "1.0.63"
+
+# Ensure unsupported crates from solana_sdk don't get
+# imported into program specific code
+[target.'cfg(not(target_os = "solana"))'.dependencies]
+solana-sdk = "=2.0.5"

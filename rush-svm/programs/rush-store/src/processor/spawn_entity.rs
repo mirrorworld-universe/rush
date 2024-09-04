@@ -1,4 +1,4 @@
-use crate::instruction::accounts::{Context, SpawnEntityAccounts};
+use rush_svm::instruction::accounts::{Context, SpawnEntityAccounts};
 use solana_program::{entrypoint::ProgramResult, pubkey::Pubkey};
 
 /// Spawn Entity

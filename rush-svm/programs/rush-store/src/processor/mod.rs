@@ -12,8 +12,8 @@ use spawn_entity::*;
 use update_entity::*;
 use update_world::*;
 
-use crate::instruction::{accounts::*, RushStoreInstruction};
 use borsh::BorshDeserialize;
+use rush_svm::instruction::{accounts::*, RushStoreInstruction};
 use solana_program::{account_info::AccountInfo, entrypoint::ProgramResult, pubkey::Pubkey};
 
 pub struct Processor {}

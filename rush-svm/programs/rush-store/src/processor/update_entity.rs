@@ -1,4 +1,4 @@
-use crate::instruction::accounts::{Context, UpdateEntityAccounts};
+use rush_svm::instruction::accounts::{Context, UpdateEntityAccounts};
 use solana_program::{entrypoint::ProgramResult, pubkey::Pubkey};
 
 /// Update Entity

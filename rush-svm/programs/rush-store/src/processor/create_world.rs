@@ -1,6 +1,6 @@
-use crate::instruction::accounts::{Context, CreateWorldAccounts};
 use borsh::BorshSerialize;
 use rush_core::blueprint::{Entity, Region};
+use rush_svm::instruction::accounts::{Context, CreateWorldAccounts};
 use rush_svm::{pda::WorldPDA, state::World};
 use solana_program::{
     borsh1, entrypoint::ProgramResult, program::invoke_signed, pubkey::Pubkey, rent::Rent,
@@ -9,8 +9,8 @@ use solana_program::{
 
 /// Create World
 ///
-/// - Side effect #1
-/// - Side effect #2
+/// - Creates a new account for World state
+/// - Stores initial World state in newly created account
 ///
 /// Accounts
 /// 0. `[SIGNER]`       World Authority

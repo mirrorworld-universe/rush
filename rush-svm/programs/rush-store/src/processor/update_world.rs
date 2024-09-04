@@ -1,4 +1,4 @@
-use crate::instruction::accounts::{Context, UpdateWorldAccounts};
+use rush_svm::instruction::accounts::{Context, UpdateWorldAccounts};
 use solana_program::{entrypoint::ProgramResult, pubkey::Pubkey};
 
 /// Update World

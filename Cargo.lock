@@ -3242,6 +3242,7 @@ dependencies = [
  "rush-core",
  "shank",
  "solana-program",
+ "solana-sdk",
  "spl-discriminator",
  "spl-program-error",
  "thiserror",

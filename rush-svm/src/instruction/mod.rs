@@ -5,19 +5,17 @@ use shank::{ShankContext, ShankInstruction};
 /// RushStore Instruction List
 ///
 /// For World Authority:
-/// -
+/// - CreateWorld, UpdateWorld, DeleteWorld
 ///
 /// For Region Authority:
-/// -
+/// - UpdateEntity, DespawnEntity
 ///
 /// For Entity Authority:
-/// -
+/// - SpawnEntity, UpdateEntity, DespawnEntity
 ///
-#[repr(C)]
 #[derive(
     BorshDeserialize, BorshSerialize, Clone, Debug, Eq, PartialEq, ShankContext, ShankInstruction,
 )]
-#[rustfmt::skip]
 pub enum RushStoreInstruction {
     #[account(
         0,
@@ -25,12 +23,7 @@ pub enum RushStoreInstruction {
         name = "world_authority",
         desc = "World authority who has access to"
     )]
-    #[account(
-        1,
-        signer,
-        name = "world",
-        desc = "World State PDA"
-    )]
+    #[account(1, signer, name = "world", desc = "World State PDA")]
     CreateWorld {
         name: String,
         description: String,
@@ -39,43 +32,18 @@ pub enum RushStoreInstruction {
         bump: u8,
     },
 
-    #[account(
-        0,
-        writable,
-        name = "payer",
-        desc = "Account description"
-    )]
+    #[account(0, writable, name = "payer", desc = "Account description")]
     UpdateWorld,
 
-    #[account(
-        0,
-        writable,
-        name = "payer",
-        desc = "Account description"
-    )]
+    #[account(0, writable, name = "payer", desc = "Account description")]
     DeleteWorld,
 
-    #[account(
-        0,
-        writable,
-        name = "payer",
-        desc = "Account description"
-    )]
+    #[account(0, writable, name = "payer", desc = "Account description")]
     SpawnEntity,
 
-    #[account(
-        0,
-        writable,
-        name = "payer",
-        desc = "Account description"
-    )]
+    #[account(0, writable, name = "payer", desc = "Account description")]
     UpdateEntity,
 
-    #[account(
-        0,
-        writable,
-        name = "payer",
-        desc = "Account description"
-    )]
+    #[account(0, writable, name = "payer", desc = "Account description")]
     DespawnEntity,
 }
