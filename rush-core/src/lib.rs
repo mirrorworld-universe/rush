@@ -1,2 +1,4 @@
 pub mod blueprint;
-pub mod utils;
+
+#[cfg(not(target_os = "solana"))]
+mod display;

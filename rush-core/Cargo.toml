@@ -3,5 +3,12 @@ name = "rush-core"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+
 [dependencies]
+borsh = { version = "1.5.1", features = ["derive"] }
+
+[target.'cfg(not(target_os = "solana"))'.dependencies]
 comfy-table = "7.1.1"
+
+[target.'cfg(target_os = "solana")'.dependencies]
