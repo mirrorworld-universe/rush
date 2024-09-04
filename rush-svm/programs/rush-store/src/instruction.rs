@@ -1,4 +1,5 @@
 use borsh::{BorshDeserialize, BorshSerialize};
+use rush_core::blueprint::{Entity, Region};
 use shank::{ShankContext, ShankInstruction};
 
 /// RushStore Instruction List
@@ -24,7 +25,19 @@ pub enum RushStoreInstruction {
         name = "world_authority",
         desc = "World authority who has access to"
     )]
-    CreateWorld,
+    #[account(
+        1,
+        signer,
+        name = "world",
+        desc = "World State PDA"
+    )]
+    CreateWorld {
+        name: String,
+        description: String,
+        regions: Vec<Region>,
+        entities: Vec<Entity>,
+        bump: u8,
+    },
 
     #[account(
         0,

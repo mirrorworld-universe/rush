@@ -31,9 +31,21 @@ impl<'a> Processor {
         // get instruction
         let instruction = RushStoreInstruction::try_from_slice(instruction_data)?;
         match instruction {
-            RushStoreInstruction::CreateWorld => {
-                process_create_world(program_id, CreateWorldAccounts::context(accounts)?)?
-            }
+            RushStoreInstruction::CreateWorld {
+                name,
+                description,
+                regions,
+                entities,
+                bump,
+            } => process_create_world(
+                program_id,
+                CreateWorldAccounts::context(accounts)?,
+                name,
+                description,
+                regions,
+                entities,
+                bump,
+            )?,
 
             RushStoreInstruction::UpdateWorld => {
                 process_update_world(program_id, UpdateWorldAccounts::context(accounts)?)?
