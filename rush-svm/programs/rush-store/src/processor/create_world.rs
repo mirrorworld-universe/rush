@@ -14,7 +14,8 @@ use solana_program::{
 ///
 /// Accounts
 /// 0. `[SIGNER]`       World Authority
-/// 1. `[]`             System Program
+/// 1. `[WRITE]`        World PDA
+/// 2. `[]`             System Program
 ///
 /// Instruction Data
 /// - name: String

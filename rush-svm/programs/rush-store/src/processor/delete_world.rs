@@ -3,14 +3,16 @@ use solana_program::{entrypoint::ProgramResult, pubkey::Pubkey};
 
 /// Delete World
 ///
-/// - Side effect #1
-/// - Side effect #2
+/// - Transfers all lamports from World State PDA
+/// to World Authority (Signer) for closing
+/// - Fills data with 0s for closing
 ///
 /// Accounts
-/// 0. `[]`    Description
+/// 0. `[SIGNER]`       World Authority
+/// 1. `[WRITE]`        World PDA
 ///
 /// Instruction Data
-/// -
+/// - (None)
 ///
 /// Data Validations
 /// -

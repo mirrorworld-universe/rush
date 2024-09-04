@@ -47,9 +47,12 @@ impl<'a> Processor {
                 bump,
             )?,
 
-            RushStoreInstruction::UpdateWorld => {
-                process_update_world(program_id, UpdateWorldAccounts::context(accounts)?)?
-            }
+            RushStoreInstruction::UpdateWorld { regions, entities } => process_update_world(
+                program_id,
+                UpdateWorldAccounts::context(accounts)?,
+                regions,
+                entities,
+            )?,
 
             RushStoreInstruction::DeleteWorld => {
                 process_delete_world(program_id, DeleteWorldAccounts::context(accounts)?)?

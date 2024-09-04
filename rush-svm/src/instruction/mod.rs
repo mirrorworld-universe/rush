@@ -24,6 +24,7 @@ pub enum RushStoreInstruction {
         desc = "World authority who has access to"
     )]
     #[account(1, writable, name = "world", desc = "World State PDA")]
+    #[account(2, name = "system_program", desc = "System Program")]
     CreateWorld {
         name: String,
         description: String,
@@ -32,8 +33,17 @@ pub enum RushStoreInstruction {
         bump: u8,
     },
 
-    #[account(0, writable, name = "payer", desc = "Account description")]
-    UpdateWorld,
+    #[account(
+        0,
+        signer,
+        name = "world_authority",
+        desc = "World authority who has access to"
+    )]
+    #[account(1, writable, name = "world", desc = "World State PDA")]
+    UpdateWorld {
+        regions: Vec<Region>,
+        entities: Vec<Entity>,
+    },
 
     #[account(
         0,
