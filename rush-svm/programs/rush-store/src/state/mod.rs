@@ -1,5 +1,8 @@
-pub mod entity;
+pub mod instance;
 pub mod world;
 
-pub use entity::*;
+pub use instance::*;
 pub use world::*;
+
+pub type Region = String;
+pub type Entity = String;

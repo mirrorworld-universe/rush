@@ -3041,6 +3041,7 @@ dependencies = [
  "bytemuck",
  "num-derive",
  "num-traits",
+ "rush_core",
  "shank",
  "solana-program",
  "solana-program-test",
@@ -3049,6 +3050,20 @@ dependencies = [
  "spl-pod 0.4.0",
  "spl-program-error",
  "thiserror",
+]
+
+[[package]]
+name = "rush_core"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "503fe2cd2bbb25f8b5dbf651bc0a7024fb34c5fee34198916346ef1091bb03ca"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "serde",
+ "serde_json",
+ "tokio",
+ "wd_tools",
 ]
 
 [[package]]
@@ -5723,6 +5738,16 @@ name = "wasm-bindgen-shared"
 version = "0.2.93"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c62a0a307cb4a311d3a07867860911ca130c3494e8c2719593806c08bc5d0484"
+
+[[package]]
+name = "wd_tools"
+version = "0.8.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5cf02a9810cdba2d9e0249bfadbc94a99b17bbe85c7854135d5d1e1052ec2eb3"
+dependencies = [
+ "anyhow",
+ "tokio",
+]
 
 [[package]]
 name = "web-sys"
