@@ -35,9 +35,13 @@ pub struct World {
     pub regions: Vec<Region>,
     /// Source of truth for what Instances exist in the world
     pub instances: BTreeMap<Hash, u64>,
+    /// Determines if the World is already launched and
+    /// instances can now be Created, Updated, and Deleted
+    /// outside of the CreateWorld (Initialization) Instruction
+    pub is_launched: bool,
     /// Overaching authority who has access to state changing
     /// operations
-    pub world_auhtority: Pubkey,
+    pub world_authority: Pubkey,
 
     /// Canonical bump for World
     pub bump: u8,
