@@ -57,4 +57,26 @@ impl World {
     pub fn is_uninitialized(&self) -> bool {
         self.discriminator.as_slice() == ArrayDiscriminator::UNINITIALIZED.as_slice()
     }
+
+    /// Create new World state
+    pub fn new(
+        name: String,
+        description: String,
+        world_authority: Pubkey,
+        regions: Vec<Region>,
+        entities: Vec<Entity>,
+        bump: u8,
+    ) -> Self {
+        Self {
+            name,
+            description,
+            world_authority,
+            regions,
+            entities,
+            bump,
+            discriminator: World::SPL_DISCRIMINATOR.into(),
+            instances: BTreeMap::new(),
+            is_launched: false,
+        }
+    }
 }
