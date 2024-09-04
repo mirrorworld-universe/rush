@@ -4,6 +4,8 @@ use std::{
     collections::BTreeMap,
 };
 
+// TODO: Consider using structs for Region and Entity
+// with Display trait as oposed to Plain-Old-Data String
 pub type Region = String;
 pub type Entity = String;
 pub type Component = String;
