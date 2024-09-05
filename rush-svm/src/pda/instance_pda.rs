@@ -24,6 +24,7 @@ impl InstancePDA {
         world_pda: &Pubkey,
         region: &str,
         entity: &str,
+        nonce: u64,
     ) -> (Pubkey, u8) {
         Pubkey::find_program_address(
             &[
@@ -31,6 +32,7 @@ impl InstancePDA {
                 world_pda.as_ref(),
                 region.as_bytes(),
                 entity.as_bytes(),
+                &nonce.to_le_bytes(),
             ],
             program_id,
         )
@@ -49,6 +51,7 @@ impl InstancePDA {
         world_pda: &Pubkey,
         region: &str,
         entity: &str,
+        nonce: u64,
         bump_seed: u8,
     ) -> Pubkey {
         // expects a valid set of seeds
@@ -58,6 +61,7 @@ impl InstancePDA {
                 world_pda.as_ref(),
                 region.as_bytes(),
                 entity.as_bytes(),
+                &nonce.to_le_bytes(),
                 &[bump_seed],
             ],
             program_id,

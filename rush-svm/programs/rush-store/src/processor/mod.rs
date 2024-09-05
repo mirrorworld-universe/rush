@@ -58,13 +58,28 @@ impl<'a> Processor {
                 process_delete_world(program_id, DeleteWorldAccounts::context(accounts)?)?
             }
 
-            RushStoreInstruction::SpawnEntity => {
-                process_spawn_entity(program_id, SpawnEntityAccounts::context(accounts)?)?
-            }
+            RushStoreInstruction::SpawnEntity {
+                region,
+                entity,
+                components,
+                nonce,
+                bump,
+            } => process_spawn_entity(
+                program_id,
+                SpawnEntityAccounts::context(accounts)?,
+                region,
+                entity,
+                components,
+                nonce,
+                bump,
+            )?,
 
-            RushStoreInstruction::UpdateEntity => {
-                process_update_entity(program_id, UpdateEntityAccounts::context(accounts)?)?
-            }
+            RushStoreInstruction::UpdateEntity { component, value } => process_update_entity(
+                program_id,
+                UpdateEntityAccounts::context(accounts)?,
+                component,
+                value,
+            )?,
 
             RushStoreInstruction::DespawnEntity => {
                 process_despawn_entity(program_id, DespawnEntityAccounts::context(accounts)?)?

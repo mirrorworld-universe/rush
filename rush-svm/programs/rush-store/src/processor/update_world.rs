@@ -23,7 +23,6 @@ use solana_program::{borsh1, entrypoint::ProgramResult, pubkey::Pubkey};
 /// -
 ///
 pub fn process_update_world(
-    // TODO: Consider adding bump as Instruction Data
     _program_id: &Pubkey,
     ctx: Context<UpdateWorldAccounts>,
     regions: Vec<Region>,
