@@ -1,10 +1,11 @@
 use crate::instruction::RushStoreInstruction;
-use rush_core::blueprint::{Entity, Region};
+use rush_core::blueprint::{Component, ComponentValue, Entity, Region};
 use solana_sdk::{
     instruction::{AccountMeta, Instruction},
     pubkey::Pubkey,
     system_program::ID as SYSTEM_PROGRAM_ID,
 };
+use std::collections::BTreeMap;
 
 #[allow(clippy::too_many_arguments)]
 pub fn ix_create_world(
@@ -68,6 +69,74 @@ pub fn ix_delete_world(
         vec![
             AccountMeta::new(*world_authority, true),
             AccountMeta::new(*world, false),
+        ],
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub fn ix_spawn_entity(
+    program_id: &Pubkey,
+    region: Region,
+    entity: Entity,
+    components: BTreeMap<Component, ComponentValue>,
+    nonce: u64,
+    bump: u8,
+    instance: &Pubkey,
+    instance_authority: &Pubkey,
+    world: &Pubkey,
+) -> Instruction {
+    let instruction = RushStoreInstruction::SpawnEntity {
+        region,
+        entity,
+        components,
+        nonce,
+        bump,
+    };
+
+    Instruction::new_with_borsh(
+        *program_id,
+        &instruction,
+        vec![
+            AccountMeta::new(*instance_authority, true),
+            AccountMeta::new(*instance, false),
+            AccountMeta::new(*world, false),
+            AccountMeta::new_readonly(SYSTEM_PROGRAM_ID, false),
+        ],
+    )
+}
+
+pub fn ix_update_entity(
+    program_id: &Pubkey,
+    component: Component,
+    value: ComponentValue,
+    instance: &Pubkey,
+    instance_authority: &Pubkey,
+) -> Instruction {
+    let instruction = RushStoreInstruction::UpdateEntity { component, value };
+
+    Instruction::new_with_borsh(
+        *program_id,
+        &instruction,
+        vec![
+            AccountMeta::new(*instance_authority, true),
+            AccountMeta::new(*instance, false),
+        ],
+    )
+}
+
+pub fn ix_despawn_entity(
+    program_id: &Pubkey,
+    instance: &Pubkey,
+    instance_authority: &Pubkey,
+) -> Instruction {
+    let instruction = RushStoreInstruction::DeleteWorld;
+
+    Instruction::new_with_borsh(
+        *program_id,
+        &instruction,
+        vec![
+            AccountMeta::new(*instance_authority, true),
+            AccountMeta::new(*instance, false),
         ],
     )
 }
