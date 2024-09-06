@@ -1,10 +1,7 @@
+use crate::instruction::accounts::{Context, SpawnEntityAccounts};
 use borsh::BorshSerialize;
 use rush_core::blueprint::{Component, ComponentValue, Entity, Region};
-use rush_svm::{
-    instruction::accounts::{Context, SpawnEntityAccounts},
-    pda::InstancePDA,
-    state::Instance,
-};
+use rush_svm::{pda::InstancePDA, state::Instance};
 use solana_program::{
     borsh1, entrypoint::ProgramResult, program::invoke_signed, pubkey::Pubkey, rent::Rent,
     system_instruction, sysvar::Sysvar,
