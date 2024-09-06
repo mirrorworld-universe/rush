@@ -83,7 +83,7 @@ pub fn process_spawn_entity(
         ]],
     )?;
 
-    // store new World state into newly created account
+    // store new Instance state into newly created account
     let mut new_instance_raw_bytes = ctx.accounts.instance.try_borrow_mut_data()?;
     new_instance_state.serialize(&mut &mut new_instance_raw_bytes[..])?;
 
