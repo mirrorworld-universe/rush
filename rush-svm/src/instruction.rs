@@ -42,6 +42,7 @@ pub enum RushStoreInstruction {
         desc = "World authority who has access to World state changing operations"
     )]
     #[account(1, writable, name = "world", desc = "World State PDA")]
+    #[account(2, name = "system_program", desc = "System Program")]
     UpdateWorld {
         regions: Vec<Region>,
         entities: Vec<Entity>,
