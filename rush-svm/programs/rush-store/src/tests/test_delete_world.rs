@@ -7,6 +7,23 @@ use rush_svm::{
 use solana_program_test::*;
 use solana_sdk::{pubkey::Pubkey, signature::Signer, transaction::Transaction};
 
+/// Delete World
+///
+/// - Transfers all lamports from World State PDA
+/// to World Authority (Signer) for closing
+/// - Fills data with 0s for closing
+///
+/// Accounts
+/// 0. `[SIGNER]`       World Authority
+/// 1. `[WRITE]`        World PDA
+///
+/// Instruction Data
+/// - (None)
+///
+/// Data Validations
+/// -
+///
+
 /// Test Happy Path
 #[tokio::test]
 async fn test_delete_world() {

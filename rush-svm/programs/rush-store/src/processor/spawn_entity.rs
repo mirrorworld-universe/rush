@@ -1,10 +1,14 @@
 use crate::instruction::accounts::{Context, SpawnEntityAccounts};
 use borsh::BorshSerialize;
 use rush_core::blueprint::{Component, ComponentValue, Entity, Region};
-use rush_svm::{pda::InstancePDA, state::Instance};
+use rush_svm::{
+    pda::InstancePDA,
+    require,
+    state::{Instance, World},
+};
 use solana_program::{
-    borsh1, entrypoint::ProgramResult, program::invoke_signed, pubkey::Pubkey, rent::Rent,
-    system_instruction, sysvar::Sysvar,
+    borsh1, entrypoint::ProgramResult, program::invoke_signed, program_error::ProgramError,
+    pubkey::Pubkey, rent::Rent, system_instruction, sysvar::Sysvar,
 };
 use std::collections::BTreeMap;
 
@@ -38,6 +42,18 @@ pub fn process_spawn_entity(
     nonce: u64,
     bump: u8,
 ) -> ProgramResult {
+    // Make sure World exists
+    let world_data = ctx.accounts.world.try_borrow_data()?;
+    let world = borsh1::try_from_slice_unchecked::<World>(&world_data)?;
+    // World must be initialized
+    require!(
+        world.is_initialized(),
+        ProgramError::UninitializedAccount,
+        "world"
+    );
+
+    assert!(world.is_initialized());
+
     let new_instance_state = Instance::new(
         components,
         nonce,

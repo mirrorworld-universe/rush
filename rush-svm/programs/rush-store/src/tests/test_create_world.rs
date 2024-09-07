@@ -1,6 +1,7 @@
 use rush_svm::{client::ix_create_world, pda::WorldPDA, state::World};
 use solana_program_test::*;
 use solana_sdk::{pubkey::Pubkey, signature::Signer, transaction::Transaction};
+use spl_discriminator::SplDiscriminate;
 
 /// Create World
 ///
@@ -74,6 +75,7 @@ async fn test_create_world() {
         .await
         .unwrap();
 
+    assert!(state.is_initialized());
     assert_eq!(state.name, name);
     assert_eq!(state.description, description);
     assert_eq!(state.regions, regions);
