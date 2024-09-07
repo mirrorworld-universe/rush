@@ -68,7 +68,7 @@ impl Eq for ComponentValue {}
 /// Blueprint of a World
 ///
 /// Represents a World in programmable data
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Blueprint {
     /// World's Name
     pub name: String,
