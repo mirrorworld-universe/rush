@@ -3194,15 +3194,16 @@ version = "0.1.0"
 dependencies = [
  "arrayref",
  "assert_matches",
- "bytemuck",
+ "borsh 1.5.1",
  "num-derive",
  "num-traits",
+ "rush-core",
+ "rush-svm",
  "shank",
  "solana-program",
  "solana-program-test",
  "solana-sdk",
  "spl-discriminator",
- "spl-pod 0.4.0",
  "spl-program-error",
  "thiserror",
 ]
@@ -5011,19 +5012,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "spl-pod"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "00e38c99f09d58df06ca9a29fc0211786a4c34f4d099c1df27b1abaa206569a4"
-dependencies = [
- "bytemuck",
- "bytemuck_derive",
- "solana-program",
- "solana-zk-sdk",
- "spl-program-error",
-]
-
-[[package]]
 name = "spl-program-error"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5057,7 +5045,7 @@ dependencies = [
  "bytemuck",
  "solana-program",
  "spl-discriminator",
- "spl-pod 0.3.1",
+ "spl-pod",
  "spl-program-error",
  "spl-type-length-value",
 ]
@@ -5092,7 +5080,7 @@ dependencies = [
  "solana-security-txt",
  "solana-zk-token-sdk",
  "spl-memo",
- "spl-pod 0.3.1",
+ "spl-pod",
  "spl-token",
  "spl-token-group-interface",
  "spl-token-metadata-interface",
@@ -5110,7 +5098,7 @@ dependencies = [
  "bytemuck",
  "solana-program",
  "spl-discriminator",
- "spl-pod 0.3.1",
+ "spl-pod",
  "spl-program-error",
 ]
 
@@ -5123,7 +5111,7 @@ dependencies = [
  "borsh 1.5.1",
  "solana-program",
  "spl-discriminator",
- "spl-pod 0.3.1",
+ "spl-pod",
  "spl-program-error",
  "spl-type-length-value",
 ]
@@ -5138,7 +5126,7 @@ dependencies = [
  "bytemuck",
  "solana-program",
  "spl-discriminator",
- "spl-pod 0.3.1",
+ "spl-pod",
  "spl-program-error",
  "spl-tlv-account-resolution",
  "spl-type-length-value",
@@ -5153,7 +5141,7 @@ dependencies = [
  "bytemuck",
  "solana-program",
  "spl-discriminator",
- "spl-pod 0.3.1",
+ "spl-pod",
  "spl-program-error",
 ]
 

@@ -9,4 +9,4 @@ pub mod entrypoint;
 #[cfg(feature = "test-sbf")]
 pub mod tests;
 
-solana_program::declare_id!("Goufq5ZgywHNe3AU5ptuyykmZcfL2MfBJyatjnuWsQ4p");
+solana_program::declare_id!("DouQLcpRLuXEqyRYMVVRz9UiKqVZJZzud7PANAHqZhSZ");

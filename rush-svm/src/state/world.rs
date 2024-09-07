@@ -1,5 +1,5 @@
-use super::{Entity, Region};
 use borsh::{BorshDeserialize, BorshSerialize};
+use rush_core::blueprint::{Entity, Region};
 use shank::ShankAccount;
 use solana_program::{hash::Hash, pubkey::Pubkey};
 use spl_discriminator::{ArrayDiscriminator, SplDiscriminate};

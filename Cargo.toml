@@ -13,12 +13,5 @@ members = [
 ]
 
 exclude = [
-	# "rush-svm/programs/rush-proxy",
-	# "rush-svm/programs/rush-store",
-
-	# this is excluded with the empty [workspace] table
-	# in its Cargo.toml, but good to have for metadata
-	# and visibility
-	"rush-svm/programs/rush-integration-test",
 	"rush-sdk/examples/*"
 ]

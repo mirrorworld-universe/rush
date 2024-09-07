@@ -1,25 +1,14 @@
-mod entrypoint;
-mod instruction;
-mod macros;
-mod processor;
-mod state;
+#![forbid(unsafe_code)]
+// #![cfg(target_os = "solana")]
 
-use solana_program::{
-    account_info::AccountInfo,
-    entrypoint::ProgramResult,
-    msg,
-    pubkey::Pubkey,
-    // entrypoint
-};
+pub mod cpi;
+pub mod instruction;
+pub mod processor;
 
-// entrypoint!(process_instruction);
+#[cfg(not(feature = "no-entrypoint"))]
+pub mod entrypoint;
 
-pub fn process_instruction(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    instruction_data: &[u8],
-) -> ProgramResult {
-    msg!("Hello, world!");
+#[cfg(feature = "test-sbf")]
+pub mod tests;
 
-    Ok(())
-}
+solana_program::declare_id!("EyQjSPB5s1drBzE5LFT4uwKzQCjndEJGexTkieQcVSJ9");
