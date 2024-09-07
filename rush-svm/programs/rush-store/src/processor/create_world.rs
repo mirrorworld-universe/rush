@@ -1,6 +1,6 @@
-use crate::instruction::accounts::{Context, CreateWorldAccounts};
 use borsh::BorshSerialize;
 use rush_core::blueprint::{Entity, Region};
+use rush_svm::instruction::accounts::{Context, CreateWorldAccounts};
 use rush_svm::{pda::WorldPDA, state::World};
 use solana_program::{
     borsh1, entrypoint::ProgramResult, program::invoke_signed, pubkey::Pubkey, rent::Rent,
@@ -36,6 +36,8 @@ pub fn process_create_world(
     entities: Vec<Entity>,
     bump: u8,
 ) -> ProgramResult {
+    // Ensure only
+
     let new_world_state = World::new(
         name.clone(),
         description.clone(),

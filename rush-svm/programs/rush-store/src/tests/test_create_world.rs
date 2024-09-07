@@ -1,7 +1,6 @@
 use rush_svm::{client::ix_create_world, pda::WorldPDA, state::World};
 use solana_program_test::*;
 use solana_sdk::{pubkey::Pubkey, signature::Signer, transaction::Transaction};
-use spl_discriminator::SplDiscriminate;
 
 /// Create World
 ///

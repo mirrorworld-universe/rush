@@ -1,6 +1,6 @@
-use crate::instruction::accounts::{Context, UpdateWorldAccounts};
 use borsh::BorshSerialize;
 use rush_core::blueprint::{Entity, Region};
+use rush_svm::instruction::accounts::{Context, UpdateWorldAccounts};
 use rush_svm::state::World;
 use solana_program::{
     borsh1, entrypoint::ProgramResult, program::invoke, pubkey::Pubkey, system_instruction,

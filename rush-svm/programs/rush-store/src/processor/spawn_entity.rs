@@ -1,6 +1,6 @@
-use crate::instruction::accounts::{Context, SpawnEntityAccounts};
 use borsh::BorshSerialize;
 use rush_core::blueprint::{Component, ComponentValue, Entity, Region};
+use rush_svm::instruction::accounts::{Context, SpawnEntityAccounts};
 use rush_svm::{
     pda::InstancePDA,
     require,

@@ -1,6 +1,6 @@
-use crate::instruction::accounts::{Context, UpdateEntityAccounts};
 use borsh::BorshSerialize;
 use rush_core::blueprint::{Component, ComponentValue};
+use rush_svm::instruction::accounts::{Context, UpdateEntityAccounts};
 use rush_svm::state::Instance;
 use solana_program::{borsh1, entrypoint::ProgramResult, pubkey::Pubkey};
 
