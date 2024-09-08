@@ -60,7 +60,8 @@ pub fn ix_proxy_create_world(
     regions: Vec<Region>,
     entities: Vec<Entity>,
     world_bump: u8,
-    world_authority: &Pubkey,
+    user_authority: &Pubkey,
+    user: &Pubkey,
     world: &Pubkey,
     rush_store_program_id: &Pubkey,
 ) -> Instruction {
@@ -77,13 +78,9 @@ pub fn ix_proxy_create_world(
     Instruction::new_with_borsh(
         *program_id,
         &instruction,
-        // Accounts
-        // 0. `[SIGNER]`            World Authority
-        // 1. `[WRITE]`             World PDA
-        // 2. `[]`                  Rush Store Program
-        // 3. `[]`                  System Program
         vec![
-            AccountMeta::new(*world_authority, true),
+            AccountMeta::new(*user_authority, true),
+            AccountMeta::new_readonly(*user, false),
             AccountMeta::new(*world, false),
             AccountMeta::new_readonly(*rush_store_program_id, false),
             AccountMeta::new_readonly(SYSTEM_PROGRAM_ID, false),

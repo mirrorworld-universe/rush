@@ -56,6 +56,7 @@ async fn test_proxy() {
         entities.clone(),
         world_bump,
         &ctx.payer.pubkey(),
+        &user_pda,
         &world_pda,
         &store_program_id,
     );
@@ -97,6 +98,11 @@ async fn test_proxy() {
     assert_eq!(world_state.regions, regions);
     assert_eq!(world_state.entities, entities);
     assert_eq!(world_state.world_authority, ctx.payer.pubkey());
+    // println!(
+    //     "DEBUG HERE:\nworld auth {} == user_pda {}",
+    //     world_state.world_authority, user_pda
+    // );
+    // assert_eq!(world_state.world_authority, user_pda);
     assert_eq!(world_state.bump, world_bump);
     assert!(!world_state.is_launched);
 }

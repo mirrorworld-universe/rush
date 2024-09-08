@@ -59,21 +59,21 @@ pub fn process_proxy_create_world(
         entities,
         world_bump,
         ctx.accounts.world.key,
-        ctx.accounts.world_authority.key,
+        ctx.accounts.user.key,
     );
 
     // invoke CPI instruction
     invoke_signed(
         &ix,
         &[
-            ctx.accounts.world_authority.clone(),
+            ctx.accounts.user.clone(),
             ctx.accounts.world.clone(),
             ctx.accounts.system_program.clone(),
         ],
         &[&[
             UserPDA::TAG.as_bytes(),
             ctx.accounts.world.key.as_ref(),
-            ctx.accounts.world_authority.key.as_ref(),
+            ctx.accounts.user_authority.key.as_ref(),
             user_agent_salt.as_bytes(),
             &[user_bump],
         ]],

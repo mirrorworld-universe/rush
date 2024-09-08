@@ -26,15 +26,14 @@ pub enum RushProxyInstruction {
     #[account(1, writable, name = "user", desc = "User State PDA")]
     Deregister,
 
+    #[account(signer, name = "user", desc = "User PDA to be used for signing CPI")]
     #[account(
-        0,
-        signer,
-        name = "world_authority",
-        desc = "World authority who has access to World state changing operations"
+        name = "user_authority",
+        desc = "User authority who owns the User PDA to be used for CPI"
     )]
-    #[account(1, writable, name = "world", desc = "World State PDA")]
-    #[account(2, name = "rush_store_program", desc = "Rush Store Program")]
-    #[account(3, name = "system_program", desc = "System Program")]
+    #[account(writable, name = "world", desc = "World State PDA")]
+    #[account(name = "rush_store_program", desc = "Rush Store Program")]
+    #[account(name = "system_program", desc = "System Program")]
     ProxyCreateWorld {
         user_agent_salt: String,
         user_bump: u8,
