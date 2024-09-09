@@ -10,8 +10,10 @@ members = [
 	"rush-svm",
 	"rush-svm/programs/rush-proxy",
 	"rush-svm/programs/rush-store",
+	"rush-sdk/examples/bevy-farm-game",
+	"rush-sdk/examples/bevy-apple-game",
+	"rush-sdk/examples/bevy-platformer-game"
 ]
 
 exclude = [
-	"rush-sdk/examples/*"
 ]
