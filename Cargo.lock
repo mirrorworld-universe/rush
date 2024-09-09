@@ -5723,6 +5723,8 @@ dependencies = [
  "anyhow",
  "rush-core",
  "rush-parser",
+ "solana-program-test",
+ "solana-sdk",
  "thiserror",
 ]
 
