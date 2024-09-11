@@ -181,7 +181,7 @@ impl Parser for TomlParser {
                 // get each entity in region
                 for entity_name in entities_in_region.iter() {
                     if let Some(instances) = table[&region_name][entity_name].as_array() {
-                        for instance in instances.into_iter() {
+                        for instance in instances.iter() {
                             // build each entity's component tree
                             if let Some(entity_components) = instance.as_table() {
                                 let mut component_tree: BTreeMap<Component, ComponentValue> =
@@ -206,7 +206,7 @@ impl Parser for TomlParser {
                                     region_name.clone(),
                                     entity_name.to_string(),
                                     component_tree,
-                                );
+                                )?;
                             }
                         }
                     }

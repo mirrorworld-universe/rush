@@ -1,19 +1,21 @@
-use crate::auth::IAuth;
-use crate::storage::IStorage;
+use crate::auth::Auth;
+use crate::storage::Storage;
+use anyhow::Result;
+use async_trait::async_trait;
 
 pub struct BevySDK {
     world_path: String,
     keypair_path: String,
-    auth: Box<dyn IAuth>,
-    storage: Box<dyn IStorage>,
+    auth: Box<dyn Auth>,
+    storage: Box<dyn Storage>,
 }
 
 impl BevySDK {
     pub fn new(
         world_path: String,
         keypair_path: String,
-        auth: impl IAuth,
-        storage: impl IStorage,
+        auth: impl Auth,
+        storage: impl Storage,
     ) -> Self {
         Self {
             world_path,
@@ -23,3 +25,8 @@ impl BevySDK {
         }
     }
 }
+
+// impl Auth for BevySDK {
+//     fn signin(&self, path: &str) -> Result<Keypair> {
+//     }
+// }

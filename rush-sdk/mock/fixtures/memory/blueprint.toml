@@ -1,0 +1,20 @@
+[world]
+name = "Sonic's World"
+regions = ["farm", "house"]
+
+[entity]
+player = { name = "string", x = "float", y = "float", w = "float", h = "float", speed = "float" }
+apple = { x = "float", y = "float"}
+
+[farm]
+player = [
+	{ name = "npc", x = 0.0, y = 0.0, w = 0.0, h = 0.0, speed = 0.0 }
+]
+apple = [
+	{ x = 0, y = 0}
+]
+
+[house]
+player = [
+	{ name = "npc", x = 0.0, y = 0.0, w = 0.0, h = 0.0, speed = 0.0 }
+]

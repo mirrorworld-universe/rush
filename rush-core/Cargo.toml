@@ -6,7 +6,9 @@ edition = "2021"
 [features]
 
 [dependencies]
+anyhow = "1.0.87"
 borsh = { version = "1.5.1", features = ["derive"] }
+thiserror = "1.0.63"
 
 [target.'cfg(not(target_os = "solana"))'.dependencies]
 comfy-table = "7.1.1"

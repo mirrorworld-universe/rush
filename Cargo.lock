@@ -5682,8 +5682,10 @@ dependencies = [
 name = "rush-core"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "borsh 1.5.1",
  "comfy-table",
+ "thiserror",
 ]
 
 [[package]]
@@ -5721,11 +5723,13 @@ name = "rush-sdk"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "async-trait",
  "rush-core",
  "rush-parser",
  "solana-program-test",
  "solana-sdk",
  "thiserror",
+ "tokio",
 ]
 
 [[package]]

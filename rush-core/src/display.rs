@@ -1,60 +1,10 @@
 //! Rush Core Utilities
 
-use super::blueprint::{
-    Blueprint, ComponentTree, ComponentTypeTree, ComponentValue, Entity, Region,
-};
+use super::blueprint::{Blueprint, ComponentValue, Entity, Region};
 use comfy_table::{modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Table, *};
-use std::{collections::BTreeMap, fmt::Display};
+use std::fmt::Display;
 
 // implement Display trait for Blueprint
-impl Blueprint {
-    pub fn new(world_name: String) -> Self {
-        Self {
-            name: world_name,
-            entities: BTreeMap::new(),
-            regions: BTreeMap::new(),
-            instances: BTreeMap::new(),
-        }
-    }
-
-    pub fn add_entity(&mut self, name: Entity, component_types: ComponentTypeTree) {
-        self.entities.insert(name, component_types);
-    }
-
-    pub fn add_region(&mut self, name: Region, entities: Vec<Entity>) {
-        self.regions.insert(name, entities);
-    }
-
-    pub fn add_instance(&mut self, region: Region, entity: Entity, component_tree: ComponentTree) {
-        // get mutable region
-        let region_mut = match self.instances.get_mut(&region) {
-            // instance exists
-            Some(e) => e,
-            // insert and get, if not exists
-            None => {
-                self.instances.insert(region.clone(), BTreeMap::new());
-                // unwrap ok
-                self.instances.get_mut(&region).unwrap()
-            }
-        };
-
-        // get mutable entity
-        let entity_mut = match region_mut.get_mut(&entity) {
-            // instance exists
-            Some(e) => e,
-            // insert and get, if not exists
-            None => {
-                region_mut.insert(entity.clone(), Vec::new());
-                // unwrap ok
-                region_mut.get_mut(&entity).unwrap()
-            }
-        };
-
-        // add entity instance to blueprint under region
-        entity_mut.push(component_tree);
-    }
-}
-
 impl Display for Blueprint {
     ///
     /// Displays the blueprint into human-readable format via a
@@ -294,7 +244,8 @@ pub fn get_instances_table_display(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::blueprint::{Blueprint, ComponentTree, ComponentTypeTree, ComponentValue};
+    use std::collections::btree_map::BTreeMap;
 
     // TODO: Strip escape codes from string and match
     #[test]

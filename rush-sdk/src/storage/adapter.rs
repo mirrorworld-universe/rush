@@ -4,7 +4,8 @@
 //! for Rush SDKs
 
 use anyhow::Result;
-use rush_core::blueprint::{Entity, Region};
+use async_trait::async_trait;
+use rush_core::blueprint::{Component, ComponentValue, Entity, Region};
 
 /// Storage Trait
 ///
@@ -15,15 +16,38 @@ use rush_core::blueprint::{Entity, Region};
 // @dev
 // Storage is Send + Sync to enable concurrent parsing
 // Storage is 'static for dynamic dispatch with Box
-pub trait IStorage: Send + Sync + 'static {
+#[async_trait]
+pub trait Storage: Send + Sync + 'static {
     /// Migrate data store from local definition to storage
-    fn migrate(&self);
+    ///
+    /// Used for initializing data storage
+    ///
+    /// (e.g. Uploading World into Solana)
+    async fn migrate(&mut self, path: &str) -> Result<()>;
     /// Create new instance of Entity under a specific Region
-    fn create(&self);
+    ///
+    /// Returns u64 index of new instance in Blueprint instances
+    /// mainly used for nonce
+    async fn create(&mut self, region: Region, entity: Entity) -> Result<u64>;
     /// Delete instance of Entity under a specific Region
-    fn delete(&self);
+    async fn delete(&mut self, region: Region, entity: Entity) -> Result<()>;
+
     /// Get value of a specific Component for a specific Instance
-    fn get(&self);
+    async fn get(
+        &mut self,
+        region: Region,
+        entity: Entity,
+        nonce: u64,
+        component: Component,
+    ) -> Result<ComponentValue>;
+
     /// Set value of a specific Component for a specific Instance
-    fn set(&self);
+    async fn set(
+        &mut self,
+        region: Region,
+        entity: Entity,
+        nonce: u64,
+        component: Component,
+        value: ComponentValue,
+    ) -> Result<()>;
 }
