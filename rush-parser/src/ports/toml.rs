@@ -138,20 +138,25 @@ impl Parser for TomlParser {
         // create Blueprint
         let mut blueprint = Blueprint::new(world_name);
 
-        // load Regions
-        for region_name in regions.iter().cloned() {
+        // TODO: Move this closer to Load Instances
+        // preload Instance Keys
+        blueprint.preload(regions.clone(), entities.clone());
+
+        // load Regions into World
+        for region_name in regions.iter() {
             println!("region_name: {region_name}");
-            if let Some(region_table) = table[&region_name].as_table() {
+            // load into World tree
+            if let Some(region_table) = table[region_name].as_table() {
                 // get entities from keys in the table
                 let entities = region_table.keys().cloned().collect::<Vec<Entity>>();
-                blueprint.add_region(region_name, entities);
+                blueprint.add_region(region_name.clone(), entities);
             }
         }
 
-        // load Entities
+        // load Entities into World
         for entity_name in entities.into_iter() {
             if let Some(component_table) = entity_table[&entity_name].as_table() {
-                // load entities
+                // load Entities
                 let mut component_type_tree: BTreeMap<Component, ComponentType> = BTreeMap::new();
                 for component_name in component_table.keys() {
                     // unwrap ok, a value is expected
@@ -173,6 +178,7 @@ impl Parser for TomlParser {
         //
         // In blueprint.rs:
         //  pub instances: BTreeMap<Region, BTreeMap<Entity, Vec<ComponentTree>>>,
+
         let blueprint_regions = blueprint.regions.clone();
 
         for region_name in regions.into_iter() {
@@ -202,6 +208,10 @@ impl Parser for TomlParser {
                                 }
 
                                 // add to blueprint
+                                println!(
+                                    "Adding to instance {region_name} {entity_name} {:?}",
+                                    component_tree
+                                );
                                 blueprint.add_instance(
                                     region_name.clone(),
                                     entity_name.to_string(),

@@ -5723,6 +5723,7 @@ name = "rush-sdk"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "assert_matches",
  "async-trait",
  "rush-core",
  "rush-parser",

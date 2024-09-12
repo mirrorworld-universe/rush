@@ -25,5 +25,6 @@ name = "bevy-platformer-game"
 path = "examples/bevy-platformer-game/src/main.rs"
 
 [dev-dependencies]
+assert_matches = "1.5.0"
 solana-program-test = "=2.0.5"
 solana-sdk = "=2.0.5"

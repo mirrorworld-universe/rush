@@ -274,12 +274,16 @@ mod tests {
         let mut component_tree1: ComponentTree = BTreeMap::new();
         component_tree1.insert("x".to_string(), ComponentValue::Integer(143));
         component_tree1.insert("y".to_string(), ComponentValue::Integer(143));
-        blueprint.add_instance(region1.clone(), entity1.clone(), component_tree1);
+        blueprint
+            .add_instance(region1.clone(), entity1.clone(), component_tree1)
+            .unwrap();
         // load mock instances2
         let mut component_tree2: ComponentTree = BTreeMap::new();
         component_tree2.insert("w".to_string(), ComponentValue::Float(143.0));
         component_tree2.insert("h".to_string(), ComponentValue::Float(143.0));
-        blueprint.add_instance(region2, entity2, component_tree2);
+        blueprint
+            .add_instance(region2, entity2, component_tree2)
+            .unwrap();
 
         println!("{blueprint}");
     }

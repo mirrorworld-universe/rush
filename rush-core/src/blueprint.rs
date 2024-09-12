@@ -1,5 +1,5 @@
 use crate::error::CoreError;
-use anyhow::{bail, Context, Result};
+use anyhow::{bail, Result};
 use borsh::{BorshDeserialize, BorshSerialize};
 use std::{
     cmp::{Eq, PartialEq},
@@ -144,6 +144,24 @@ impl Blueprint {
             entities: BTreeMap::new(),
             regions: BTreeMap::new(),
             instances: BTreeMap::new(),
+        }
+    }
+
+    /// Preloads Region and Entity Keys
+    ///
+    /// The add_instance associated function will fail when preload
+    /// is not called to preload the Region and Entity keys
+    /// needed in the Instances table
+    pub fn preload(&mut self, regions: Vec<Region>, entities: Vec<Entity>) {
+        for region_name in regions.into_iter() {
+            // preload Regions
+            self.instances.insert(region_name.clone(), BTreeMap::new());
+
+            // preload Entities
+            let region_mut = self.instances.get_mut(&region_name).unwrap();
+            for entity_name in entities.clone().into_iter() {
+                region_mut.insert(entity_name, Vec::new());
+            }
         }
     }
 
@@ -295,7 +313,23 @@ impl Blueprint {
         component: Component,
         value: ComponentValue,
     ) -> Result<()> {
-        let mut component_tree = self.get_instance(region, entity, nonce)?;
+        // get mutable region
+        let region_mut = match self.instances.get_mut(&region) {
+            // instance exists
+            Some(e) => e,
+            // insert and get, if not exists
+            None => bail!(CoreError::RegionNotFound),
+        };
+
+        // get mutable entity
+        let entity_mut = match region_mut.get_mut(&entity) {
+            // instance exists
+            Some(e) => e,
+            // insert and get, if not exists
+            None => bail!(CoreError::EntityNotFound),
+        };
+
+        let component_tree = &mut entity_mut[nonce as usize];
 
         let option_value = component_tree.get_mut(&component);
 

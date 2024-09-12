@@ -3,8 +3,8 @@ use crate::utils::{dir_to_string, file_to_string};
 use anyhow::Result;
 use rush_core::blueprint::Blueprint;
 use std::{
-    fs::{canonicalize, metadata},
-    path::Path,
+    fs::metadata,
+    path::{absolute, Path},
 };
 
 /// [`Blueprint`] Loader
@@ -30,8 +30,7 @@ impl Loader {
     /// [`Path`] can be a **file** or **directory**;
     pub fn load_blueprint(&self, path: &Path) -> Result<Blueprint> {
         // expecting a valid path
-        let abs_path = canonicalize(path)?;
-        println!("abs path: {:?}", abs_path);
+        let abs_path = absolute(path)?;
         let md = metadata(abs_path).expect("invalid path");
 
         // get blueprint string from file or directory

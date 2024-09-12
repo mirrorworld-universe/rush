@@ -4,7 +4,7 @@ use anyhow::{bail, Result};
 use async_trait::async_trait;
 use rush_core::blueprint::{Blueprint, Component, ComponentValue, Entity, Region};
 use rush_parser::{toml::TomlParser, Loader};
-use std::path::Path;
+use std::{fs::canonicalize, path::Path};
 
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Memory {
@@ -38,19 +38,18 @@ impl Storage for Memory {
         if !self.migrated {
             bail!(StorageError::NotYetMigrated);
         }
-        println!("CREATING BEFORE");
 
         // create new instance with default values
         let nonce = self.blueprint.add_default_instance(region, entity)?;
-
-        println!("CREATING AFTER");
 
         // return index (nonce) of new instance
         Ok(nonce)
     }
 
     // TODO: Implement Delete instance
-    async fn delete(&mut self, region: Region, entity: Entity) -> Result<()> {
+    // NOTE: In general, we need to consider the fact that deleting an instance
+    // in the Memory store breaks the Vector indexing
+    async fn delete(&mut self, region: Region, entity: Entity, nonce: u64) -> Result<()> {
         // migration guard
         if !self.migrated {
             bail!(StorageError::NotYetMigrated);
@@ -103,6 +102,7 @@ impl Storage for Memory {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use assert_matches::assert_matches;
     use rush_core::blueprint::*;
     use std::collections::BTreeMap;
 
@@ -111,53 +111,125 @@ mod tests {
     #[tokio::test]
     async fn test_migrate() {
         let mut memory = Memory::new();
-        memory
-            .migrate("mock/fixtures/memory/blueprint")
-            .await
-            .unwrap();
-        println!("{:?}", memory);
+        let path_str = "mock/fixtures/memory/blueprint.toml";
+        memory.migrate(path_str).await.unwrap();
         assert!(memory.migrated);
     }
 
     // Happy path
     #[tokio::test]
     async fn test_create() {
-        let region = String::from("region1");
-        let entity = String::from("entity1");
+        let region1 = String::from("region1");
+        let region2 = String::from("region2");
+        let entity1 = String::from("entity1");
+        let entity2 = String::from("entity2");
+
         let sample_blueprint = get_sample_blueprint();
         let mut memory = Memory::new();
-        memory.blueprint = sample_blueprint;
-        let _ = memory.create(region.clone(), entity.clone()).await.unwrap();
-        let instances = memory
-            .blueprint
-            .instances
-            .get(&region)
-            .unwrap()
-            .get(&entity)
+        memory.migrated = true;
+        memory.blueprint = sample_blueprint.clone();
+
+        let instance_nonce = memory
+            .create(region1.clone(), entity1.clone())
+            .await
             .unwrap();
 
-        assert_eq!(instances.len(), 3);
+        let region1_entity1_instances = memory
+            .blueprint
+            .instances
+            .get(&region1)
+            .unwrap()
+            .get(&entity1)
+            .unwrap();
+
+        let region2_entity2_instances = memory
+            .blueprint
+            .instances
+            .get(&region2)
+            .unwrap()
+            .get(&entity2)
+            .unwrap();
+
+        assert_eq!(instance_nonce, 2); // 2nd instance in region1,entity1
+        assert_eq!(region1_entity1_instances.len(), 2);
+        assert_eq!(region2_entity2_instances.len(), 1);
         assert_eq!(
-            *instances[2].get("x").unwrap(),
+            *region1_entity1_instances[1].get("x").unwrap(),
             ComponentValue::Integer(i64::default())
         );
         assert_eq!(
-            *instances[2].get("y").unwrap(),
+            *region1_entity1_instances[1].get("y").unwrap(),
             ComponentValue::Integer(i64::default())
         );
     }
 
     // Happy path
-    #[tokio::test]
-    async fn test_delete() {}
+    // #[tokio::test]
+    // async fn test_delete() {}
 
     // Happy path
     #[tokio::test]
-    async fn test_get() {}
+    async fn test_get() {
+        let region1 = String::from("region1");
+        let entity1 = String::from("entity1");
+        let component = String::from("x");
+        let nonce = 0;
+
+        let sample_blueprint = get_sample_blueprint();
+        let mut memory = Memory::new();
+        memory.migrated = true;
+        memory.blueprint = sample_blueprint.clone();
+
+        let value = memory
+            .get(region1, entity1, nonce, component)
+            .await
+            .unwrap();
+
+        let expected_parameter = 143;
+        assert_matches!(value, ComponentValue::Integer(expected_parameter));
+        assert_eq!(value.unwrap_int(), expected_parameter);
+    }
 
     // Happy path
     #[tokio::test]
-    async fn test_set() {}
+    async fn test_set() {
+        let region1 = String::from("region1");
+        let entity1 = String::from("entity1");
+        let component = String::from("x");
+        let nonce = 0;
+
+        let sample_blueprint = get_sample_blueprint();
+        let mut memory = Memory::new();
+        memory.migrated = true;
+        memory.blueprint = sample_blueprint.clone();
+
+        let expected_parameter = 1337;
+        let expected_value = ComponentValue::Integer(expected_parameter);
+        memory
+            .set(
+                region1.clone(),
+                entity1.clone(),
+                nonce,
+                component.clone(),
+                expected_value,
+            )
+            .await
+            .unwrap();
+
+        let value = memory
+            .blueprint
+            .instances
+            .get(&region1)
+            .unwrap()
+            .get(&entity1)
+            .unwrap()[nonce as usize]
+            .get(&component)
+            .unwrap();
+
+        assert_matches!(value, _expected_value);
+
+        assert_eq!(value.clone().unwrap_int(), expected_parameter);
+    }
 
     fn get_sample_blueprint() -> Blueprint {
         let mut blueprint = Blueprint::new("Test World".to_string());
@@ -167,18 +239,24 @@ mod tests {
         let entity1 = String::from("entity1");
         let entity2 = String::from("entity2");
 
+        // preload Region and Entity keys
+        blueprint.preload(
+            vec![region1.clone(), region2.clone()],
+            vec![entity1.clone(), entity2.clone()],
+        );
+
         // load mock regions
         blueprint.add_region(region1.clone(), vec![entity1.clone()]);
         blueprint.add_region(region2.clone(), vec![entity2.clone()]);
         // load mock entity1
         let mut component_type_tree1: ComponentTypeTree = BTreeMap::new();
-        component_type_tree1.insert("x".to_string(), "int".to_string());
-        component_type_tree1.insert("y".to_string(), "int".to_string());
+        component_type_tree1.insert("x".to_string(), "i64".to_string());
+        component_type_tree1.insert("y".to_string(), "i64".to_string());
         blueprint.add_entity(entity1.clone(), component_type_tree1);
         // load mock entity2
         let mut component_type_tree2: ComponentTypeTree = BTreeMap::new();
-        component_type_tree2.insert("w".to_string(), "float".to_string());
-        component_type_tree2.insert("h".to_string(), "float".to_string());
+        component_type_tree2.insert("w".to_string(), "f64".to_string());
+        component_type_tree2.insert("h".to_string(), "f64".to_string());
         blueprint.add_entity(entity2.clone(), component_type_tree2);
         // load mock instances1
         let mut component_tree1: ComponentTree = BTreeMap::new();

@@ -29,8 +29,8 @@ pub trait Storage: Send + Sync + 'static {
     /// Returns u64 index of new instance in Blueprint instances
     /// mainly used for nonce
     async fn create(&mut self, region: Region, entity: Entity) -> Result<u64>;
-    /// Delete instance of Entity under a specific Region
-    async fn delete(&mut self, region: Region, entity: Entity) -> Result<()>;
+    /// Delete specific instance of Entity under a specific Region
+    async fn delete(&mut self, region: Region, entity: Entity, nonce: u64) -> Result<()>;
 
     /// Get value of a specific Component for a specific Instance
     async fn get(
