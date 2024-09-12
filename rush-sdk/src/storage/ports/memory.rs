@@ -4,7 +4,7 @@ use anyhow::{bail, Result};
 use async_trait::async_trait;
 use rush_core::blueprint::{Blueprint, Component, ComponentValue, Entity, Region};
 use rush_parser::{toml::TomlParser, Loader};
-use std::{fs::canonicalize, path::Path};
+use std::path::Path;
 
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Memory {
@@ -13,10 +13,10 @@ pub struct Memory {
 }
 
 impl Memory {
-    pub fn new() -> Self {
+    pub fn new(world_name: String, world_description: String) -> Self {
         Self {
             migrated: false,
-            blueprint: Blueprint::new(String::from("In Memory Storage")),
+            blueprint: Blueprint::new(world_name, world_description),
         }
     }
 }
@@ -109,8 +109,11 @@ mod tests {
     // TODO: Assert value
     // Happy path
     #[tokio::test]
-    async fn test_migrate() {
-        let mut memory = Memory::new();
+    async fn test_memory_migrate() {
+        let mut memory = Memory::new(
+            String::from("Sonic's World"),
+            String::from("This is Sonic's world"),
+        );
         let path_str = "mock/fixtures/memory/blueprint.toml";
         memory.migrate(path_str).await.unwrap();
         assert!(memory.migrated);
@@ -118,14 +121,17 @@ mod tests {
 
     // Happy path
     #[tokio::test]
-    async fn test_create() {
+    async fn test_memory_create() {
         let region1 = String::from("region1");
         let region2 = String::from("region2");
         let entity1 = String::from("entity1");
         let entity2 = String::from("entity2");
 
         let sample_blueprint = get_sample_blueprint();
-        let mut memory = Memory::new();
+        let mut memory = Memory::new(
+            String::from("Sonic's World"),
+            String::from("This is Sonic's world"),
+        );
         memory.migrated = true;
         memory.blueprint = sample_blueprint.clone();
 
@@ -169,14 +175,17 @@ mod tests {
 
     // Happy path
     #[tokio::test]
-    async fn test_get() {
+    async fn test_memory_get() {
         let region1 = String::from("region1");
         let entity1 = String::from("entity1");
         let component = String::from("x");
         let nonce = 0;
 
         let sample_blueprint = get_sample_blueprint();
-        let mut memory = Memory::new();
+        let mut memory = Memory::new(
+            String::from("Sonic's World"),
+            String::from("This is Sonic's world"),
+        );
         memory.migrated = true;
         memory.blueprint = sample_blueprint.clone();
 
@@ -192,14 +201,17 @@ mod tests {
 
     // Happy path
     #[tokio::test]
-    async fn test_set() {
+    async fn test_memory_set() {
         let region1 = String::from("region1");
         let entity1 = String::from("entity1");
         let component = String::from("x");
         let nonce = 0;
 
         let sample_blueprint = get_sample_blueprint();
-        let mut memory = Memory::new();
+        let mut memory = Memory::new(
+            String::from("Sonic's World"),
+            String::from("This is Sonic's World"),
+        );
         memory.migrated = true;
         memory.blueprint = sample_blueprint.clone();
 
@@ -232,7 +244,10 @@ mod tests {
     }
 
     fn get_sample_blueprint() -> Blueprint {
-        let mut blueprint = Blueprint::new("Test World".to_string());
+        let mut blueprint = Blueprint::new(
+            String::from("Test World"),
+            String::from("This is Sonic's World"),
+        );
 
         let region1 = String::from("region1");
         let region2 = String::from("region2");

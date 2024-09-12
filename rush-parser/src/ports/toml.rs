@@ -20,6 +20,7 @@ use toml::{Table, Value};
 /// ```toml
 /// [world]
 /// name = "Sonic's World"
+/// description = "This is Sonic's world"
 /// regions = ["farm", "house"]
 ///
 /// [entity]
@@ -71,6 +72,16 @@ impl Parser for TomlParser {
         ensure_syntax(
             "World name must be a string".to_string(),
             world_table["name"].is_str(),
+        );
+
+        ensure_syntax(
+            "World must have a description".to_string(),
+            world_table.contains_key("description"),
+        );
+
+        ensure_syntax(
+            "World description must be a string".to_string(),
+            world_table["description"].is_str(),
         );
 
         ensure_syntax(
@@ -134,9 +145,10 @@ impl Parser for TomlParser {
 
         // parse World's name
         let world_name = world_table["name"].as_str().unwrap().to_string();
+        let world_description = world_table["description"].as_str().unwrap().to_string();
 
         // create Blueprint
-        let mut blueprint = Blueprint::new(world_name);
+        let mut blueprint = Blueprint::new(world_name, world_description);
 
         // TODO: Move this closer to Load Instances
         // preload Instance Keys
@@ -144,7 +156,6 @@ impl Parser for TomlParser {
 
         // load Regions into World
         for region_name in regions.iter() {
-            println!("region_name: {region_name}");
             // load into World tree
             if let Some(region_table) = table[region_name].as_table() {
                 // get entities from keys in the table

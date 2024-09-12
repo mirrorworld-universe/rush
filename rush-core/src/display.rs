@@ -250,7 +250,10 @@ mod tests {
     // TODO: Strip escape codes from string and match
     #[test]
     fn test_blueprint_display() {
-        let mut blueprint = Blueprint::new("Test World".to_string());
+        let mut blueprint = Blueprint::new(
+            "Test World".to_string(),
+            "Test World description".to_string(),
+        );
 
         let region1 = String::from("region1");
         let region2 = String::from("region2");

@@ -129,6 +129,8 @@ impl Eq for ComponentValue {}
 pub struct Blueprint {
     /// World's Name
     pub name: String,
+    /// World's Description
+    pub description: String,
     /// Region names and Entities that exist in it
     pub regions: BTreeMap<Region, Vec<Entity>>,
     /// Entity name and Names of its Components
@@ -138,9 +140,10 @@ pub struct Blueprint {
 }
 
 impl Blueprint {
-    pub fn new(world_name: String) -> Self {
+    pub fn new(world_name: String, world_description: String) -> Self {
         Self {
             name: world_name,
+            description: world_description,
             entities: BTreeMap::new(),
             regions: BTreeMap::new(),
             instances: BTreeMap::new(),

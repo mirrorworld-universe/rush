@@ -6,9 +6,10 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.87"
 async-trait = "0.1.82"
+borsh = "1.5.1"
 rush-core = { version = "0.1.0", path = "../rush-core" }
 rush-parser = { version = "0.1.0", path = "../rush-parser" }
-solana-sdk = "=2.0.5"
+rush-svm = { version = "0.1.0", path = "../rush-svm" }
 thiserror = "1.0.63"
 tokio = "1.40.0"
 
@@ -28,3 +29,10 @@ path = "examples/bevy-platformer-game/src/main.rs"
 assert_matches = "1.5.0"
 solana-program-test = "=2.0.5"
 solana-sdk = "=2.0.5"
+solana-client = "=2.0.5"
+
+# Ensure unsupported crates from solana_sdk/solana_client don't get
+# imported into program specific code
+[target.'cfg(not(target_os = "solana"))'.dependencies]
+solana-sdk = "=2.0.5"
+solana-client = "=2.0.5"
