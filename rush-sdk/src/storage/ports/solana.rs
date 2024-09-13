@@ -11,6 +11,7 @@ use rush_svm::{
 use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_sdk::{
     borsh1,
+    hash::hash,
     instruction::Instruction,
     pubkey::Pubkey,
     signer::{keypair::Keypair, Signer},
@@ -126,11 +127,35 @@ impl Storage for Solana {
         client.send_and_confirm_transaction(&tx).await?;
 
         self.migrated = true;
+        self.world = Some(world_pda);
 
         Ok(())
     }
 
     async fn create(&mut self, region: Region, entity: Entity) -> Result<u64> {
+        // TODO: MIGRATION GUARD HERE
+
+        let client = RpcClient::new(self.rpc_url.clone());
+        // Migration guard ensures self.world is always defined
+        // unwrap is ok here
+        let data = client.get_account_data(&self.world.unwrap()).await.unwrap();
+        let state = borsh1::try_from_slice_unchecked::<World>(&data).unwrap();
+        // Blueprint Preload guarantees all Region and Entity keys exist
+        // unwrap is ok here
+        let hash = hash(format!("{region}{entity}").as_bytes());
+        let instance = state.instances.get(&hash).unwrap();
+
+        // let ix = ix_spawn_entity(
+        //     &self.program_id,
+        //     region,
+        //     entity,
+        //     each_instance.clone(),
+        //     each_index as u64,
+        //     instance_bump,
+        //     &instance_pda,
+        //     &self.signer.pubkey(),
+        //     &world_pda,
+        // );
         Ok(1)
     }
 

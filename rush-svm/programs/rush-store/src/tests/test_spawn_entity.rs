@@ -51,6 +51,7 @@ async fn test_spawn_entity() {
 
     let (world_pda, world_bump) =
         WorldPDA::find_pda(&program_id, &name, &description, &ctx.payer.pubkey());
+
     let ix = ix_create_world(
         &program_id,
         name.clone(),

@@ -34,7 +34,7 @@ pub struct World {
     /// Onchain record of what Regions exist in the world
     pub regions: Vec<Region>,
     /// Source of truth for what Instances exist in the world
-    pub instances: BTreeMap<Hash, u64>,
+    pub instances: BTreeMap<Region, BTreeMap<Entity, u64>>,
     /// Determines if the World is already launched and
     /// instances can now be Created, Updated, and Deleted
     /// outside of the CreateWorld (Initialization) Instruction
