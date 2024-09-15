@@ -1,0 +1,9 @@
+[world]
+name = "Farm World"
+description = "This is a Farm world"
+regions = ["farm"]
+
+[farm]
+player = [
+	{ x = 0.0, y = 0.0, w = 0.0, h = 0.0, speed = 100.0, state = "stand", direction = "down", path = "farm/Player/Player.png" }
+]

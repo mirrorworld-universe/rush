@@ -728,10 +728,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bevy-platformer-game"
-version = "0.1.0"
-
-[[package]]
 name = "bevy_a11y"
 version = "0.14.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"

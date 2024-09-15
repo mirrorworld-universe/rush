@@ -1,0 +1,9 @@
+[entity.pig]
+x = "f64"
+y = "f64"
+w = "f64"
+h = "f64"
+speed = "f64"
+movement = "String"
+movement_duration = "f64"
+path = "String"

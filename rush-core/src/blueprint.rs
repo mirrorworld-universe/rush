@@ -131,6 +131,7 @@ pub struct Blueprint {
     pub name: String,
     /// World's Description
     pub description: String,
+    // TODO: Fix Regions, posssible remove entity identification
     /// Region names and Entities that exist in it
     pub regions: BTreeMap<Region, Vec<Entity>>,
     /// Entity name and Names of its Components

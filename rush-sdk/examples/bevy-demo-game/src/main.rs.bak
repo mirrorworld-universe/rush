@@ -1,0 +1,570 @@
+mod components;
+mod memory;
+
+use bevy::{prelude::*, window::WindowResolution};
+use components::{AnimationIndices, Walker};
+use memory::Memory;
+use rush_core::blueprint::*;
+
+#[tokio::main]
+async fn main() {
+    let mut memory = Memory::new(
+        "Demo World".to_string(),
+        "The Demo World by Gink".to_string(),
+    );
+
+    memory.migrate("blueprints/farm/spawned").unwrap();
+    println!("{}", memory.blueprint);
+
+    let mut player_walker = Walker::new();
+    player_walker.set(
+        String::from("stand"),
+        String::from("up"),
+        AnimationIndices {
+            first: 12,
+            last: 17,
+        },
+    );
+    player_walker.set(
+        String::from("stand"),
+        String::from("down"),
+        AnimationIndices { first: 0, last: 5 },
+    );
+    player_walker.set(
+        String::from("stand"),
+        String::from("left"),
+        AnimationIndices { first: 6, last: 11 },
+    );
+    player_walker.set(
+        String::from("stand"),
+        String::from("right"),
+        AnimationIndices { first: 6, last: 11 },
+    );
+    player_walker.set(
+        String::from("walk"),
+        String::from("up"),
+        AnimationIndices {
+            first: 30,
+            last: 35,
+        },
+    );
+    player_walker.set(
+        String::from("walk"),
+        String::from("down"),
+        AnimationIndices {
+            first: 18,
+            last: 23,
+        },
+    );
+    player_walker.set(
+        String::from("walk"),
+        String::from("left"),
+        AnimationIndices {
+            first: 24,
+            last: 29,
+        },
+    );
+    player_walker.set(
+        String::from("walk"),
+        String::from("right"),
+        AnimationIndices {
+            first: 24,
+            last: 29,
+        },
+    );
+
+    // load manifest onchain
+    App::new()
+        .insert_resource(Storage { storage: memory })
+        .insert_resource(PlayerWalker {
+            walker: player_walker,
+        })
+        .add_plugins(
+            DefaultPlugins
+                .set(WindowPlugin {
+                    primary_window: Some(Window {
+                        resolution: WindowResolution::new(500., 500.),
+                        // .with_scale_factor_override(3.0),
+                        ..default()
+                    }),
+                    ..default()
+                })
+                .set(ImagePlugin::default_nearest()),
+        )
+        .add_systems(Startup, setup)
+        .add_systems(
+            Update,
+            (input_player, update_player, animate_player).chain(),
+        )
+        .run();
+}
+
+#[derive(Resource)]
+struct Storage {
+    pub storage: Memory,
+}
+
+#[derive(Resource)]
+struct PlayerWalker {
+    pub walker: Walker,
+}
+
+#[derive(Clone, Component, Debug, Eq, PartialEq)]
+struct Player {
+    state: State,
+    direction: Direction,
+    is_new_direction: bool,
+}
+
+#[derive(Clone, Component, Debug, Eq, PartialEq)]
+struct Pig;
+
+#[derive(Clone, Component, Debug, Eq, PartialEq)]
+struct Tree;
+
+#[derive(Clone, Component, Debug, PartialEq)]
+struct Speed(f64);
+
+#[derive(Clone, Component, Debug, PartialEq)]
+struct Rect {
+    x: f64,
+    y: f64,
+    w: f64,
+    h: f64,
+}
+
+#[derive(Clone, Component, Debug, Eq, PartialEq)]
+struct AssetPath(String);
+
+#[derive(Component, Deref, DerefMut)]
+struct AnimationTimer(Timer);
+
+impl Rect {
+    pub fn from(x: f64, y: f64, w: f64, h: f64) -> Self {
+        Self { x, y, w, h }
+    }
+
+    pub fn left(&self) -> f64 {
+        self.x - self.w / 2.0
+    }
+
+    pub fn right(&self) -> f64 {
+        self.x + self.w / 2.0
+    }
+
+    pub fn top(&self) -> f64 {
+        self.y + self.h / 2.0
+    }
+
+    pub fn bottom(&self) -> f64 {
+        self.y - self.h / 2.0
+    }
+}
+
+pub enum World {
+    Farm,
+    Dungeon,
+}
+
+fn setup(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
+    mut storage: ResMut<Storage>,
+    mut player_walker: ResMut<PlayerWalker>,
+) {
+    commands.spawn(Camera2dBundle::default());
+
+    // spawn player
+    let x = storage
+        .storage
+        .get(
+            String::from("farm"),
+            String::from("player"),
+            0,
+            String::from("x"),
+        )
+        .unwrap()
+        .unwrap_float();
+    let y = storage
+        .storage
+        .get(
+            String::from("farm"),
+            String::from("player"),
+            0,
+            String::from("y"),
+        )
+        .unwrap()
+        .unwrap_float();
+    let w = storage
+        .storage
+        .get(
+            String::from("farm"),
+            String::from("player"),
+            0,
+            String::from("w"),
+        )
+        .unwrap()
+        .unwrap_float();
+    let h = storage
+        .storage
+        .get(
+            String::from("farm"),
+            String::from("player"),
+            0,
+            String::from("h"),
+        )
+        .unwrap()
+        .unwrap_float();
+    let speed = storage
+        .storage
+        .get(
+            String::from("farm"),
+            String::from("player"),
+            0,
+            String::from("speed"),
+        )
+        .unwrap()
+        .unwrap_float();
+    let asset_path = storage
+        .storage
+        .get(
+            String::from("farm"),
+            String::from("player"),
+            0,
+            String::from("path"),
+        )
+        .unwrap()
+        .unwrap_string();
+
+    let texture = asset_server.load(asset_path);
+    let layout = TextureAtlasLayout::from_grid(UVec2::splat(32), 8, 25, None, None);
+    let atlas = texture_atlas_layouts.add(layout);
+    let rect = Rect::from(x, y, w, h);
+
+    commands.spawn((
+        Player {
+            state: State::Standing,
+            direction: Direction::Down,
+            is_new_direction: true,
+        },
+        rect,
+        Speed(speed),
+        SpriteBundle {
+            transform: Transform::from_scale(Vec3::splat(1.0)),
+            texture,
+            ..default()
+        },
+        TextureAtlas {
+            layout: atlas,
+            index: 0,
+        },
+        AnimationTimer(Timer::from_seconds(0.1, TimerMode::Repeating)),
+    ));
+}
+
+// SET STATE HERE
+fn input_player(
+    time: Res<Time>,
+    keys: Res<ButtonInput<KeyCode>>,
+    mut storage: ResMut<Storage>,
+    mut players: Query<&mut Player>,
+) {
+    let speed = storage
+        .storage
+        .get(
+            String::from("farm"),
+            String::from("player"),
+            0,
+            String::from("speed"),
+        )
+        .unwrap()
+        .unwrap_float();
+
+    let x = storage
+        .storage
+        .get(
+            String::from("farm"),
+            String::from("player"),
+            0,
+            String::from("x"),
+        )
+        .unwrap()
+        .unwrap_float();
+    let y = storage
+        .storage
+        .get(
+            String::from("farm"),
+            String::from("player"),
+            0,
+            String::from("x"),
+        )
+        .unwrap()
+        .unwrap_float();
+
+    for (nonce, mut player) in players.iter_mut().enumerate() {
+        if keys.pressed(KeyCode::KeyW) {
+            let mut value = x;
+            value += speed * time.delta_seconds() as f64;
+            storage
+                .storage
+                .set(
+                    String::from("farm"),
+                    String::from("player"),
+                    nonce as u64,
+                    String::from("x"),
+                    ComponentValue::Float(value),
+                )
+                .unwrap();
+
+            storage
+                .storage
+                .set(
+                    String::from("farm"),
+                    String::from("player"),
+                    nonce as u64,
+                    String::from("state"),
+                    ComponentValue::String(String::from("walk")),
+                )
+                .unwrap();
+
+            storage
+                .storage
+                .set(
+                    String::from("farm"),
+                    String::from("player"),
+                    nonce as u64,
+                    String::from("direction"),
+                    ComponentValue::String(String::from("up")),
+                )
+                .unwrap();
+
+            if keys.just_pressed(KeyCode::KeyW) {
+                player.is_new_direction = true;
+            }
+        } else if keys.pressed(KeyCode::KeyS) {
+            let mut value = x;
+            value -= speed * time.delta_seconds() as f64;
+            storage
+                .storage
+                .set(
+                    String::from("farm"),
+                    String::from("player"),
+                    nonce as u64,
+                    String::from("x"),
+                    ComponentValue::Float(value),
+                )
+                .unwrap();
+
+            storage
+                .storage
+                .set(
+                    String::from("farm"),
+                    String::from("player"),
+                    nonce as u64,
+                    String::from("state"),
+                    ComponentValue::String(String::from("walk")),
+                )
+                .unwrap();
+
+            storage
+                .storage
+                .set(
+                    String::from("farm"),
+                    String::from("player"),
+                    nonce as u64,
+                    String::from("direction"),
+                    ComponentValue::String(String::from("down")),
+                )
+                .unwrap();
+
+            if keys.just_pressed(KeyCode::KeyS) {
+                player.is_new_direction = true;
+            }
+        } else if keys.pressed(KeyCode::KeyA) {
+            let mut value = y;
+            value -= speed * time.delta_seconds() as f64;
+            storage
+                .storage
+                .set(
+                    String::from("farm"),
+                    String::from("player"),
+                    nonce as u64,
+                    String::from("y"),
+                    ComponentValue::Float(value),
+                )
+                .unwrap();
+
+            storage
+                .storage
+                .set(
+                    String::from("farm"),
+                    String::from("player"),
+                    nonce as u64,
+                    String::from("state"),
+                    ComponentValue::String(String::from("walk")),
+                )
+                .unwrap();
+
+            storage
+                .storage
+                .set(
+                    String::from("farm"),
+                    String::from("player"),
+                    nonce as u64,
+                    String::from("direction"),
+                    ComponentValue::String(String::from("left")),
+                )
+                .unwrap();
+
+            if keys.just_pressed(KeyCode::KeyA) {
+                player.is_new_direction = true;
+            }
+        } else if keys.pressed(KeyCode::KeyD) {
+            let mut value = y;
+            value += speed * time.delta_seconds() as f64;
+            storage
+                .storage
+                .set(
+                    String::from("farm"),
+                    String::from("player"),
+                    nonce as u64,
+                    String::from("y"),
+                    ComponentValue::Float(value),
+                )
+                .unwrap();
+
+            storage
+                .storage
+                .set(
+                    String::from("farm"),
+                    String::from("player"),
+                    nonce as u64,
+                    String::from("state"),
+                    ComponentValue::String(String::from("walk")),
+                )
+                .unwrap();
+
+            storage
+                .storage
+                .set(
+                    String::from("farm"),
+                    String::from("player"),
+                    nonce as u64,
+                    String::from("direction"),
+                    ComponentValue::String(String::from("right")),
+                )
+                .unwrap();
+
+            if keys.just_pressed(KeyCode::KeyD) {
+                player.is_new_direction = true;
+            }
+        } else {
+            storage
+                .storage
+                .set(
+                    String::from("farm"),
+                    String::from("player"),
+                    nonce as u64,
+                    String::from("state"),
+                    ComponentValue::String(String::from("stand")),
+                )
+                .unwrap();
+
+            player.is_new_direction = true;
+        }
+    }
+}
+
+// GET STATE HERE
+fn update_player(
+    mut commands: Commands,
+    // mut apple_query: Query<(Entity, &Index), With<Apple>>,
+    mut storage: ResMut<Storage>,
+    mut player_walker: ResMut<PlayerWalker>,
+    mut player_query: Query<(&mut Player, &mut Rect)>,
+) {
+    for (nonce, (mut player, mut rect)) in player_query.iter_mut().enumerate() {
+        let x = storage
+            .storage
+            .get(
+                String::from("farm"),
+                String::from("player"),
+                nonce as u64,
+                String::from("x"),
+            )
+            .unwrap()
+            .unwrap_float();
+        let y = storage
+            .storage
+            .get(
+                String::from("farm"),
+                String::from("player"),
+                nonce as u64,
+                String::from("y"),
+            )
+            .unwrap()
+            .unwrap_float();
+        let state = storage
+            .storage
+            .get(
+                String::from("farm"),
+                String::from("player"),
+                nonce as u64,
+                String::from("state"),
+            )
+            .unwrap()
+            .unwrap_string();
+        let direction = storage
+            .storage
+            .get(
+                String::from("farm"),
+                String::from("player"),
+                nonce as u64,
+                String::from("direction"),
+            )
+            .unwrap()
+            .unwrap_string();
+
+        rect.x = x;
+        rect.y = y;
+
+        player.state = match state.as_str() {
+            "walk" => State::Walking,
+            "stand" => State::Standing,
+            _ => panic!("Unsupported Player State"),
+        };
+
+        player.direction = match direction.as_str() {
+            "up" => Direction::Up,
+            "down" => Direction::Down,
+            "left" => Direction::Left,
+            "right" => Direction::Right,
+            _ => panic!("Unsupported Player Direction"),
+        };
+    }
+}
+
+fn animate_player(
+    time: Res<Time>,
+    player_walker: Res<PlayerWalker>,
+    mut query: Query<(&mut Player, &mut AnimationTimer, &mut TextureAtlas)>,
+) {
+    for (mut player, mut timer, mut atlas) in &mut query {
+        let indices = player_walker.walker.get(player.state, player.direction);
+
+        timer.tick(time.delta());
+        if timer.just_finished() {
+            if player.is_new_direction {
+                atlas.index = indices.first;
+                player.is_new_direction = false;
+            }
+
+            atlas.index = if atlas.index == indices.last {
+                indices.first
+            } else {
+                atlas.index + 1
+            };
+        }
+    }
+}

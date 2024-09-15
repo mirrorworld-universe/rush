@@ -106,7 +106,7 @@ Rush is a **Rapid** and **Declarative** development framework for Fully Onchain 
         <td></td>
     </tr>
     <tr>
-        <td>bevy-platformer-game</td>
+        <td>bevy-demo-game</td>
         <td>Exploring world state side-effect (e.g. gravity) with Bevy</td>
         <td></td>
         <td></td>

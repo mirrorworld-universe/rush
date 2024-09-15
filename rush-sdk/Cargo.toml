@@ -22,8 +22,8 @@ name = "bevy-farm-game"
 path = "examples/bevy-farm-game/src/main.rs"
 
 [[example]]
-name = "bevy-platformer-game"
-path = "examples/bevy-platformer-game/src/main.rs"
+name = "bevy-demo-game"
+path = "examples/bevy-demo-game/src/main.rs"
 
 [dev-dependencies]
 assert_matches = "1.5.0"
