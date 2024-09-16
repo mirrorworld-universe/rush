@@ -160,21 +160,17 @@ pub fn input_animals(
         }
 
         if animal.rect.right() > (config.screen_width / 3.) as f64 / 2.0 {
-            println!("COLLIDE RIGHT");
             animal.direction = Direction::Left;
             animal.is_new_direction = true;
         } else if animal.rect.left() < -((config.screen_width / 3.) as f64 / 2.0) {
-            println!("COLLIDE LEFT");
             animal.direction = Direction::Right;
             animal.is_new_direction = true;
         }
 
         if animal.rect.top() > (config.screen_height / 3.) as f64 / 2.0 {
-            println!("COLLIDE TOP");
             animal.direction = Direction::Down;
             animal.is_new_direction = true;
         } else if animal.rect.bottom() < -((config.screen_height / 3.) as f64 / 2.0) {
-            println!("COLLIDE BOTTOM");
             animal.direction = Direction::Up;
             animal.is_new_direction = true;
         }
@@ -345,24 +341,16 @@ pub fn animate_animals(
 
         timer.tick(time.delta());
         if timer.just_finished() {
-            println!("{:?}", indices);
-
-            println!("Curr State = {:?}", animal.state);
-
             if animal.is_new_direction {
-                println!("New Direction = {:?}", animal.direction);
                 atlas.index = indices.first;
                 animal.is_new_direction = false;
             } else {
-                println!("Curr Direction = {:?}", animal.direction);
                 atlas.index = if atlas.index == indices.last {
                     indices.first
                 } else {
                     atlas.index + 1
                 };
             }
-
-            println!("Index = {:?}", atlas.index);
         }
     }
 }

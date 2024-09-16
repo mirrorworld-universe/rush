@@ -5,32 +5,32 @@ regions = ["farm"]
 
 [farm]
 player = [
-	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 100.0, state = "stand", direction = "down", path = "farm/Player/Player.png" }
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 100.0, path = "farm/Player/Player.png" }
 ]
-# pig = [
-# 	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, state = "stand", direction = "down", path = "farm/Animals/Pig/Pig_01.png" },
-# 	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, state = "stand", direction = "down", path = "farm/Animals/Pig/Pig_02.png" },
-# 	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, state = "stand", direction = "down", path = "farm/Animals/Pig/Pig_03.png" },
-# 	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, state = "stand", direction = "down", path = "farm/Animals/Pig/Pig_04.png" }
-# ]
-# sheep = [
-# 	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, state = "stand", direction = "down", path = "farm/Animals/Sheep/Sheep_01.png" },
-# 	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, state = "stand", direction = "down", path = "farm/Animals/Sheep/Sheep_02.png" },
-# 	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, state = "stand", direction = "down", path = "farm/Animals/Sheep/Sheep_03.png" },
-# 	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, state = "stand", direction = "down", path = "farm/Animals/Sheep/Sheep_04.png" }
-# ]
-# cow = [
-# 	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, state = "stand", direction = "down", path = "farm/Animals/Cow/Cow_01.png" },
-# 	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, state = "stand", direction = "down", path = "farm/Animals/Cow/Cow_02.png" },
-# 	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, state = "stand", direction = "down", path = "farm/Animals/Cow/Cow_03.png" },
-# 	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, state = "stand", direction = "down", path = "farm/Animals/Cow/Cow_04.png" }
-# ]
-# chicken = [
-# 	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, state = "stand", direction = "down", path = "farm/Animals/Chicken/Chicken_01.png" },
-# 	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, state = "stand", direction = "down", path = "farm/Animals/Chicken/Chicken_02.png" },
-# 	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, state = "stand", direction = "down", path = "farm/Animals/Chicken/Chicken_03.png" },
-# 	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, state = "stand", direction = "down", path = "farm/Animals/Chicken/Chicken_04.png" }
-# ]
-# horse = [
-# 	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, state = "stand", direction = "down", path = "farm/Animals/Horse/Horse_01.png" }
-# ]
+pig = [
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, path = "farm/Animals/Pig/Pig_01.png" },
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, path = "farm/Animals/Pig/Pig_02.png" },
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, path = "farm/Animals/Pig/Pig_03.png" },
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, path = "farm/Animals/Pig/Pig_04.png" }
+]
+sheep = [
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 200.0, path = "farm/Animals/Sheep/Sheep_01.png" },
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, path = "farm/Animals/Sheep/Sheep_02.png" },
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, path = "farm/Animals/Sheep/Sheep_03.png" },
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, path = "farm/Animals/Sheep/Sheep_04.png" }
+]
+cow = [
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, path = "farm/Animals/Cow/Cow_01.png" },
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, path = "farm/Animals/Cow/Cow_02.png" },
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, path = "farm/Animals/Cow/Cow_03.png" },
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, path = "farm/Animals/Cow/Cow_04.png" }
+]
+chicken = [
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, path = "farm/Animals/Chicken/Chicken_01.png" },
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, path = "farm/Animals/Chicken/Chicken_02.png" },
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, path = "farm/Animals/Chicken/Chicken_03.png" },
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, path = "farm/Animals/Chicken/Chicken_04.png" }
+]
+horse = [
+	{ x = 0.0, y = 0.0, w = 32.0, h = 32.0, speed = 20.0, path = "farm/Animals/Horse/Horse_01.png" }
+]
