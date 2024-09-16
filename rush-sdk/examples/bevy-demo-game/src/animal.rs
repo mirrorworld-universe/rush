@@ -9,6 +9,7 @@ use rush_core::blueprint::*;
 
 #[derive(Clone, Component, Debug)]
 pub struct Animal {
+    pub name: String,
     pub state: State,
     pub direction: Direction,
     pub is_new_direction: bool,
@@ -22,102 +23,119 @@ pub fn setup_animals(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
-    mut storage: ResMut<Storage>,
+    storage: ResMut<Storage>,
 ) {
-    let mut animals = storage
+    let animal_types = storage
         .storage
         .blueprint
         .instances
-        .get_mut("farm")
+        .get("farm")
         .unwrap()
-        .get_mut("animal")
-        .unwrap()
-        .to_vec();
+        .keys()
+        .cloned()
+        .collect::<Vec<_>>();
 
-    for (nonce, animal) in animals.iter_mut().enumerate() {
-        // spawn player
-        let x = animal.get_mut("x").unwrap().clone().unwrap_float();
-        let y = animal.get_mut("y").unwrap().clone().unwrap_float();
-        let w = animal.get_mut("w").unwrap().clone().unwrap_float();
-        let h = animal.get_mut("h").unwrap().clone().unwrap_float();
-        let speed = animal.get_mut("speed").unwrap().clone().unwrap_float();
-        let asset_path = animal.get_mut("path").unwrap().clone().unwrap_string();
+    for animal_type in animal_types.iter() {
+        if animal_type == "player" {
+            continue;
+        }
 
-        let mut walker = Walker::new();
-        walker.set(
-            State::Standing,
-            Direction::Up,
-            AnimationIndices { first: 0, last: 1 },
-        );
-        walker.set(
-            State::Standing,
-            Direction::Down,
-            AnimationIndices { first: 0, last: 1 },
-        );
-        walker.set(
-            State::Standing,
-            Direction::Left,
-            AnimationIndices { first: 0, last: 1 },
-        );
-        walker.set(
-            State::Standing,
-            Direction::Right,
-            AnimationIndices { first: 0, last: 1 },
-        );
-        walker.set(
-            State::Walking,
-            Direction::Up,
-            AnimationIndices { first: 9, last: 16 },
-        );
-        walker.set(
-            State::Walking,
-            Direction::Down,
-            AnimationIndices { first: 9, last: 16 },
-        );
-        walker.set(
-            State::Walking,
-            Direction::Left,
-            AnimationIndices { first: 9, last: 16 },
-        );
-        walker.set(
-            State::Walking,
-            Direction::Right,
-            AnimationIndices { first: 9, last: 16 },
-        );
+        let animals = storage
+            .storage
+            .blueprint
+            .instances
+            .get("farm")
+            .unwrap()
+            .get(animal_type)
+            .unwrap()
+            .to_vec();
 
-        let texture = asset_server.load(asset_path.clone());
-        let layout = TextureAtlasLayout::from_grid(UVec2::splat(32), 9, 9, None, None);
-        let atlas = texture_atlas_layouts.add(layout);
-        let rect = Rect::from(x, y, w, h);
-        let animation_timer = AnimationTimer(Timer::from_seconds(0.5, TimerMode::Repeating));
-        let direction_timer = DirectionTimer(Timer::from_seconds(1.0, TimerMode::Repeating));
-        let sprite_bundle = SpriteBundle {
-            transform: Transform::from_scale(Vec3::splat(1.0)),
-            texture,
-            ..default()
-        };
-        let texture_atlas = TextureAtlas {
-            layout: atlas,
-            index: 0,
-        };
+        for animal in animals.iter() {
+            // spawn player
+            let x = animal.get("x").unwrap().clone().unwrap_float();
+            let y = animal.get("y").unwrap().clone().unwrap_float();
+            let w = animal.get("w").unwrap().clone().unwrap_float();
+            let h = animal.get("h").unwrap().clone().unwrap_float();
+            let speed = animal.get("speed").unwrap().clone().unwrap_float();
+            let asset_path = animal.get("path").unwrap().clone().unwrap_string();
 
-        let animal = Animal {
-            state: State::Standing,
-            direction: Direction::Down,
-            is_new_direction: true,
-            asset_path,
-            rect,
-            speed,
-            walker,
-        };
+            let mut walker = Walker::new();
+            walker.set(
+                State::Standing,
+                Direction::Up,
+                AnimationIndices { first: 0, last: 1 },
+            );
+            walker.set(
+                State::Standing,
+                Direction::Down,
+                AnimationIndices { first: 0, last: 1 },
+            );
+            walker.set(
+                State::Standing,
+                Direction::Left,
+                AnimationIndices { first: 0, last: 1 },
+            );
+            walker.set(
+                State::Standing,
+                Direction::Right,
+                AnimationIndices { first: 0, last: 1 },
+            );
+            walker.set(
+                State::Walking,
+                Direction::Up,
+                AnimationIndices { first: 9, last: 16 },
+            );
+            walker.set(
+                State::Walking,
+                Direction::Down,
+                AnimationIndices { first: 9, last: 16 },
+            );
+            walker.set(
+                State::Walking,
+                Direction::Left,
+                AnimationIndices { first: 9, last: 16 },
+            );
+            walker.set(
+                State::Walking,
+                Direction::Right,
+                AnimationIndices { first: 9, last: 16 },
+            );
 
-        commands.spawn((
-            animal,
-            sprite_bundle,
-            texture_atlas,
-            animation_timer,
-            direction_timer,
-        ));
+            let texture = asset_server.load(asset_path.clone());
+            let layout = TextureAtlasLayout::from_grid(UVec2::splat(32), 9, 9, None, None);
+            let atlas = texture_atlas_layouts.add(layout);
+            let rect = Rect::from(x, y, w, h);
+            let animation_timer = AnimationTimer(Timer::from_seconds(0.5, TimerMode::Repeating));
+            let direction_timer = DirectionTimer(Timer::from_seconds(1.0, TimerMode::Repeating));
+            let sprite_bundle = SpriteBundle {
+                transform: Transform::from_scale(Vec3::splat(1.0)),
+                texture,
+                ..default()
+            };
+            let texture_atlas = TextureAtlas {
+                layout: atlas,
+                index: 0,
+            };
+
+            let animal = Animal {
+                name: animal_type.clone(),
+                state: State::Standing,
+                direction: Direction::Down,
+                is_new_direction: true,
+                asset_path,
+                rect,
+                speed,
+                walker,
+            };
+
+            commands.spawn((
+                animal,
+                sprite_bundle,
+                texture_atlas,
+                animation_timer,
+                direction_timer,
+            ));
+        }
     }
 }
 
@@ -165,74 +183,95 @@ pub fn input_animals(
 
 // Update Storage here
 pub fn set_animals(time: Res<Time>, mut storage: ResMut<Storage>, mut query: Query<&mut Animal>) {
-    for (nonce, mut animal) in query.iter_mut().enumerate() {
-        if animal.state == State::Walking {
-            match animal.direction {
-                Direction::Up => {
-                    let new_y = animal.rect.y + animal.speed * time.delta_seconds_f64();
+    let animal_types = storage
+        .storage
+        .blueprint
+        .instances
+        .get("farm")
+        .unwrap()
+        .keys()
+        .cloned()
+        .collect::<Vec<_>>();
 
-                    storage
-                        .storage
-                        .set(
-                            String::from("farm"),
-                            String::from("animal"),
-                            nonce as u64,
-                            String::from("y"),
-                            ComponentValue::Float(new_y),
-                        )
-                        .unwrap();
+    for animal_type in animal_types.iter() {
+        if animal_type == "player" {
+            continue;
+        }
 
-                    animal.rect.y = new_y;
-                }
+        let mut filtered = query
+            .iter_mut()
+            .filter(|x| x.name == *animal_type)
+            .collect::<Vec<_>>();
 
-                Direction::Down => {
-                    let new_y = animal.rect.y - animal.speed * time.delta_seconds_f64();
+        for (nonce, animal) in filtered.iter_mut().enumerate() {
+            if animal.state == State::Walking {
+                match animal.direction {
+                    Direction::Up => {
+                        let new_y = animal.rect.y + animal.speed * time.delta_seconds_f64();
 
-                    storage
-                        .storage
-                        .set(
-                            String::from("farm"),
-                            String::from("animal"),
-                            nonce as u64,
-                            String::from("y"),
-                            ComponentValue::Float(new_y),
-                        )
-                        .unwrap();
+                        storage
+                            .storage
+                            .set(
+                                String::from("farm"),
+                                animal_type.to_string(),
+                                nonce as u64,
+                                String::from("y"),
+                                ComponentValue::Float(new_y),
+                            )
+                            .unwrap();
 
-                    animal.rect.y = new_y;
-                }
-                Direction::Left => {
-                    let new_x = animal.rect.x - animal.speed * time.delta_seconds_f64();
+                        animal.rect.y = new_y;
+                    }
 
-                    storage
-                        .storage
-                        .set(
-                            String::from("farm"),
-                            String::from("animal"),
-                            nonce as u64,
-                            String::from("x"),
-                            ComponentValue::Float(new_x),
-                        )
-                        .unwrap();
+                    Direction::Down => {
+                        let new_y = animal.rect.y - animal.speed * time.delta_seconds_f64();
 
-                    animal.rect.x = new_x;
-                }
+                        storage
+                            .storage
+                            .set(
+                                String::from("farm"),
+                                animal_type.to_string(),
+                                nonce as u64,
+                                String::from("y"),
+                                ComponentValue::Float(new_y),
+                            )
+                            .unwrap();
 
-                Direction::Right => {
-                    let new_x = animal.rect.x + animal.speed * time.delta_seconds_f64();
+                        animal.rect.y = new_y;
+                    }
+                    Direction::Left => {
+                        let new_x = animal.rect.x - animal.speed * time.delta_seconds_f64();
 
-                    storage
-                        .storage
-                        .set(
-                            String::from("farm"),
-                            String::from("animal"),
-                            nonce as u64,
-                            String::from("x"),
-                            ComponentValue::Float(new_x),
-                        )
-                        .unwrap();
+                        storage
+                            .storage
+                            .set(
+                                String::from("farm"),
+                                animal_type.to_string(),
+                                nonce as u64,
+                                String::from("x"),
+                                ComponentValue::Float(new_x),
+                            )
+                            .unwrap();
 
-                    animal.rect.x = new_x;
+                        animal.rect.x = new_x;
+                    }
+
+                    Direction::Right => {
+                        let new_x = animal.rect.x + animal.speed * time.delta_seconds_f64();
+
+                        storage
+                            .storage
+                            .set(
+                                String::from("farm"),
+                                animal_type.to_string(),
+                                nonce as u64,
+                                String::from("x"),
+                                ComponentValue::Float(new_x),
+                            )
+                            .unwrap();
+
+                        animal.rect.x = new_x;
+                    }
                 }
             }
         }
@@ -241,36 +280,54 @@ pub fn set_animals(time: Res<Time>, mut storage: ResMut<Storage>, mut query: Que
 
 // Sync Bevy Entities by getting from Storage to update game
 pub fn get_animals(mut storage: ResMut<Storage>, mut query: Query<(&Animal, &mut Transform)>) {
-    for (nonce, (animal, mut animal_transform)) in query.iter_mut().enumerate() {
-        let x = storage
-            .storage
-            .get(
-                String::from("farm"),
-                String::from("animal"),
-                nonce as u64,
-                String::from("x"),
-            )
-            .unwrap()
-            .unwrap_float();
-        let y = storage
-            .storage
-            .get(
-                String::from("farm"),
-                String::from("animal"),
-                nonce as u64,
-                String::from("y"),
-            )
-            .unwrap()
-            .unwrap_float();
+    let animal_types = storage
+        .storage
+        .blueprint
+        .instances
+        .get("farm")
+        .unwrap()
+        .keys()
+        .cloned()
+        .collect::<Vec<_>>();
 
-        animal_transform.translation.x = x as f32;
-        animal_transform.translation.y = y as f32;
+    for animal_type in animal_types.iter() {
+        if animal_type == "player" {
+            continue;
+        }
 
-        // Flip animal based on LEFT and RIGHT
-        if animal.direction == Direction::Right {
-            animal_transform.rotation = Quat::from_rotation_y(std::f32::consts::PI);
-        } else if animal.direction == Direction::Left {
-            animal_transform.rotation = Quat::default();
+        let filtered = query.iter_mut().filter(|x| x.0.name == *animal_type);
+
+        for (nonce, (animal, mut animal_transform)) in filtered.enumerate() {
+            let x = storage
+                .storage
+                .get(
+                    String::from("farm"),
+                    animal_type.to_string(),
+                    nonce as u64,
+                    String::from("x"),
+                )
+                .unwrap()
+                .unwrap_float();
+            let y = storage
+                .storage
+                .get(
+                    String::from("farm"),
+                    animal_type.to_string(),
+                    nonce as u64,
+                    String::from("y"),
+                )
+                .unwrap()
+                .unwrap_float();
+
+            animal_transform.translation.x = x as f32;
+            animal_transform.translation.y = y as f32;
+
+            // Flip animal based on LEFT and RIGHT
+            if animal.direction == Direction::Right {
+                animal_transform.rotation = Quat::from_rotation_y(std::f32::consts::PI);
+            } else if animal.direction == Direction::Left {
+                animal_transform.rotation = Quat::default();
+            }
         }
     }
 }

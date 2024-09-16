@@ -1,4 +1,4 @@
-[entity.animal]
+[entity.cow]
 x = "f64"
 y = "f64"
 w = "f64"
