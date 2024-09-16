@@ -1,9 +1,22 @@
 use bevy::prelude::*;
+use rand::{
+    distributions::{Distribution, Standard},
+    Rng,
+};
 
 #[derive(Clone, Component, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub enum State {
     Standing,
     Walking,
+}
+
+impl Distribution<State> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> State {
+        match rng.gen_range(0..=1) {
+            0 => State::Standing,
+            _ => State::Walking,
+        }
+    }
 }
 
 #[derive(Clone, Component, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -14,6 +27,17 @@ pub enum Direction {
     Right,
 }
 
+impl Distribution<Direction> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Direction {
+        match rng.gen_range(0..=3) {
+            0 => Direction::Up,
+            1 => Direction::Down,
+            2 => Direction::Left,
+            _ => Direction::Right,
+        }
+    }
+}
+
 #[derive(Clone, Component, Debug, Default, Eq, PartialEq)]
 pub struct AnimationIndices {
     pub first: usize,
@@ -22,6 +46,9 @@ pub struct AnimationIndices {
 
 #[derive(Clone, Component, Deref, DerefMut)]
 pub struct AnimationTimer(pub Timer);
+
+#[derive(Clone, Component, Deref, DerefMut)]
+pub struct DirectionTimer(pub Timer);
 
 #[derive(Clone, Component, Debug, PartialEq)]
 pub struct Rect {

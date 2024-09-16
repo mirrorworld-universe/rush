@@ -6,6 +6,8 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.88"
 bevy = "0.14.2"
+clap = { version = "4.5.17", features = ["derive"] }
+rand = "0.8.5"
 rush-core = { version = "0.1.0", path = "../../../rush-core" }
 rush-parser= { version = "0.1.0", path = "../../../rush-parser" }
 rush-sdk = { version = "0.1.0", path = "../.." }
