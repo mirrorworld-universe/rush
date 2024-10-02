@@ -1,4 +1,3 @@
-use crate::cpi::ix_create_world;
 use crate::instruction::accounts::{Context, ProxyCreateWorldAccounts};
 use borsh::BorshSerialize;
 use rush_core::blueprint::{Entity, Region};
@@ -51,7 +50,7 @@ pub fn process_proxy_create_world(
     entities: Vec<Entity>,
     world_bump: u8,
 ) -> ProgramResult {
-    let ix = ix_create_world(
+    let ix = store_cpi::ix_create_world(
         ctx.accounts.rush_store_program.key,
         name.clone(),
         description.clone(),

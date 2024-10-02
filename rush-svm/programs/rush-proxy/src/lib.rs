@@ -1,9 +1,9 @@
 #![forbid(unsafe_code)]
 // #![cfg(target_os = "solana")]
 
-pub mod cpi;
 pub mod instruction;
 pub mod processor;
+pub mod store_cpi;
 
 #[cfg(not(feature = "no-entrypoint"))]
 pub mod entrypoint;
