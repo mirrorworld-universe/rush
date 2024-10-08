@@ -3,10 +3,9 @@ use rush_core::blueprint::{Entity, Region};
 use rush_svm::instruction::accounts::{Context, CreateWorldAccounts};
 use rush_svm::{pda::WorldPDA, state::World};
 use solana_program::{
-    borsh1, entrypoint::ProgramResult, hash::hash, program::invoke_signed, pubkey::Pubkey,
-    rent::Rent, system_instruction, sysvar::Sysvar,
+    borsh1, entrypoint::ProgramResult, program::invoke_signed, pubkey::Pubkey, rent::Rent,
+    system_instruction, sysvar::Sysvar,
 };
-use std::collections::BTreeMap;
 
 /// Create World
 ///
@@ -37,22 +36,15 @@ pub fn process_create_world(
     entities: Vec<Entity>,
     bump: u8,
 ) -> ProgramResult {
-    let mut new_world_state = World::new(
+    let new_world_state = World::new(
         name.clone(),
         description.clone(),
         *ctx.accounts.world_authority.key,
         regions.clone(),
         entities.clone(),
         bump,
+        true,
     );
-
-    // preload regions and entities
-    for region_name in regions.iter() {
-        let region_mut = new_world_state.instances.get_mut(region_name).unwrap();
-        for entity_name in entities.iter() {
-            region_mut.insert(entity_name.clone(), 0);
-        }
-    }
 
     // need to use Borsh version 1 for dynamic data
     // else, de/serialization will fail with Account Unknown Error at runtime

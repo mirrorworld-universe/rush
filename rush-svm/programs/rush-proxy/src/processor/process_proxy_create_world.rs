@@ -1,4 +1,5 @@
 use crate::instruction::accounts::{Context, ProxyCreateWorldAccounts};
+use crate::store_cpi;
 use borsh::BorshSerialize;
 use rush_core::blueprint::{Entity, Region};
 use rush_svm::{

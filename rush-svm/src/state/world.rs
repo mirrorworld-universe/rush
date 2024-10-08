@@ -1,7 +1,7 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use rush_core::blueprint::{Entity, Region};
 use shank::ShankAccount;
-use solana_program::{hash::Hash, pubkey::Pubkey};
+use solana_program::pubkey::Pubkey;
 use spl_discriminator::{ArrayDiscriminator, SplDiscriminate};
 use std::collections::BTreeMap;
 
@@ -66,7 +66,23 @@ impl World {
         regions: Vec<Region>,
         entities: Vec<Entity>,
         bump: u8,
+        preload: bool,
     ) -> Self {
+        let mut instances = BTreeMap::new();
+
+        // preload regions and entities in instances BTreeMap
+        if preload {
+            for r in regions.iter() {
+                instances.insert(r.clone(), BTreeMap::new());
+                // unwrap is ok, None case already checked
+                let curr_region_mut = instances.get_mut(r).unwrap();
+
+                for e in entities.iter() {
+                    curr_region_mut.insert(e.clone(), u64::MIN);
+                }
+            }
+        }
+
         Self {
             name,
             description,
@@ -75,8 +91,8 @@ impl World {
             entities,
             bump,
             discriminator: World::SPL_DISCRIMINATOR.into(),
-            instances: BTreeMap::new(),
             is_launched: false,
+            instances,
         }
     }
 }
