@@ -59,6 +59,17 @@ impl World {
     }
 
     /// Create new World state
+    ///
+    /// # Arguments
+    ///
+    /// * `name` - A [`String`] that holds the name of the world
+    /// * `description` - A [`String`] that holds the description of the world
+    /// * `world_authority` - A [`Pubkey`] of the authority who can change the world's account data
+    /// * `regions` - A Vector of the new type [`Region`] holding all the existing regions in the world
+    /// * `entities` - A Vector of the new type [`Entity`] holding all the existing entities in the world
+    /// * `bump` - A [`u8`] holding the canonical bump of the World's onchain account used for PDA derivation
+    /// * `preload` - A [`bool`] that allows preloading of [`BTreeMap`] keys in the [`World`] `instances` property
+    ///
     pub fn new(
         name: String,
         description: String,
