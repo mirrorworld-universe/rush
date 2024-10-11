@@ -36,19 +36,6 @@ pub fn ix_register(
         ],
     )
 }
-// let ix_proxy_create_world = ix_proxy_create_world(
-//     &store_program_id,
-//     user_agent_salt,
-//     name.clone(),
-//     description.clone(),
-//     regions.clone(),
-//     entities.clone(),
-//     world_bump,
-//     &ctx.payer.pubkey(),
-//     &ctx.payer.pubkey(),
-//     &world_pda,
-//     &program_id,
-// );
 
 #[allow(clippy::too_many_arguments)]
 pub fn ix_proxy_create_world(
@@ -79,8 +66,8 @@ pub fn ix_proxy_create_world(
         *program_id,
         &instruction,
         vec![
-            AccountMeta::new(*user_authority, true),
             AccountMeta::new_readonly(*user, false),
+            AccountMeta::new(*user_authority, true),
             AccountMeta::new(*world, false),
             AccountMeta::new_readonly(*rush_store_program_id, false),
             AccountMeta::new_readonly(SYSTEM_PROGRAM_ID, false),
