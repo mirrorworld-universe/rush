@@ -66,7 +66,7 @@ pub fn ix_proxy_create_world(
         *program_id,
         &instruction,
         vec![
-            AccountMeta::new_readonly(*user, false),
+            AccountMeta::new(*user, false),
             AccountMeta::new(*user_authority, true),
             AccountMeta::new(*world, false),
             AccountMeta::new_readonly(*rush_store_program_id, false),

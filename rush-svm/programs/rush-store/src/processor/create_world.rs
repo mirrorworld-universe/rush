@@ -57,7 +57,7 @@ pub fn process_create_world(
 
     // build create_account instruction
     let create_world_account_ix = system_instruction::create_account(
-        ctx.accounts.world_authority.key,
+        ctx.accounts.payer.key,
         ctx.accounts.world.key,
         rent_exempt_cost,
         space_needed,
@@ -67,10 +67,7 @@ pub fn process_create_world(
     // invoke CPI instruction
     invoke_signed(
         &create_world_account_ix,
-        &[
-            ctx.accounts.world_authority.clone(),
-            ctx.accounts.world.clone(),
-        ],
+        &[ctx.accounts.payer.clone(), ctx.accounts.world.clone()],
         &[&[
             WorldPDA::TAG.as_bytes(),
             name.as_bytes(),

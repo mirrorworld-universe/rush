@@ -61,6 +61,7 @@ async fn test_spawn_entity() {
         world_bump,
         &world_pda,
         &ctx.payer.pubkey(),
+        &ctx.payer.pubkey(),
     );
 
     let region = String::from("region1");

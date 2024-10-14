@@ -25,8 +25,14 @@ pub enum RushStoreInstruction {
         name = "world_authority",
         desc = "World authority who has access to World state changing operations"
     )]
-    #[account(1, writable, name = "world", desc = "World State PDA")]
-    #[account(2, name = "system_program", desc = "System Program")]
+    #[account(
+        1,
+        signer,
+        name = "payer",
+        desc = "Payer who funds the state account creation"
+    )]
+    #[account(2, writable, name = "world", desc = "World State PDA")]
+    #[account(3, name = "system_program", desc = "System Program")]
     CreateWorld {
         name: String,
         description: String,

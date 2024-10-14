@@ -52,6 +52,7 @@ async fn test_create_world() {
         world_bump,
         &world_pda,
         &ctx.payer.pubkey(),
+        &ctx.payer.pubkey(),
     );
 
     let transaction = Transaction::new_signed_with_payer(

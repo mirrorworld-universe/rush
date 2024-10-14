@@ -17,6 +17,7 @@ pub fn ix_create_world(
     bump: u8,
     world: &Pubkey,
     world_authority: &Pubkey,
+    payer: &Pubkey,
 ) -> Instruction {
     let instruction = RushStoreInstruction::CreateWorld {
         name,
@@ -31,6 +32,7 @@ pub fn ix_create_world(
         &instruction,
         vec![
             AccountMeta::new(*world_authority, true),
+            AccountMeta::new(*payer, true),
             AccountMeta::new(*world, false),
             AccountMeta::new_readonly(SYSTEM_PROGRAM_ID, false),
         ],

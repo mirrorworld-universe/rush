@@ -16,6 +16,7 @@ use solana_program::{
     pubkey::Pubkey,
     rent::Rent,
     system_instruction,
+    system_program::ID as SYSTEM_PROGRAM_ID,
     sysvar::Sysvar,
 };
 ///
@@ -52,35 +53,53 @@ pub fn process_proxy_create_world(
     entities: Vec<Entity>,
     world_bump: u8,
 ) -> ProgramResult {
-    let ix = store_cpi::ix_create_world(
-        ctx.accounts.rush_store_program.key,
-        name.clone(),
-        description.clone(),
+    // let ix = store_cpi::ix_create_world(
+    //     ctx.accounts.rush_store_program.key,
+    //     name.clone(),
+    //     description.clone(),
+    //     regions,
+    //     entities,
+    //     world_bump,
+    //     ctx.accounts.world.key,
+    //     ctx.accounts.user.key,
+    // );
+
+    let instruction = RushStoreInstruction::CreateWorld {
+        name,
+        description,
         regions,
         entities,
-        world_bump,
-        ctx.accounts.world.key,
-        ctx.accounts.user.key,
+        bump: world_bump,
+    };
+
+    let ix = Instruction::new_with_borsh(
+        *ctx.accounts.rush_store_program.key,
+        &instruction,
+        vec![
+            AccountMeta::new(*ctx.accounts.user.key, true),
+            AccountMeta::new(*ctx.accounts.user_authority.key, true),
+            AccountMeta::new(*ctx.accounts.world.key, false),
+            AccountMeta::new_readonly(SYSTEM_PROGRAM_ID, false),
+        ],
     );
 
-    msg!("HOTDOG HERE {:?}", ctx.accounts.rush_store_program.key);
-
-    // // invoke CPI instruction
-    // invoke_signed(
-    //     &ix,
-    //     &[
-    //         ctx.accounts.user.clone(),
-    //         ctx.accounts.world.clone(),
-    //         ctx.accounts.system_program.clone(),
-    //     ],
-    //     &[&[
-    //         UserPDA::TAG.as_bytes(),
-    //         ctx.accounts.world.key.as_ref(),
-    //         ctx.accounts.user_authority.key.as_ref(),
-    //         user_agent_salt.as_bytes(),
-    //         &[user_bump],
-    //     ]],
-    // )?;
+    // invoke CPI instruction
+    invoke_signed(
+        &ix,
+        &[
+            ctx.accounts.user.clone(),
+            ctx.accounts.user_authority.clone(),
+            ctx.accounts.world.clone(),
+            ctx.accounts.system_program.clone(),
+        ],
+        &[&[
+            UserPDA::TAG.as_bytes(),
+            ctx.accounts.world.key.as_ref(),
+            ctx.accounts.user_authority.key.as_ref(),
+            user_agent_salt.as_bytes(),
+            &[user_bump],
+        ]],
+    )?;
 
     Ok(())
 }

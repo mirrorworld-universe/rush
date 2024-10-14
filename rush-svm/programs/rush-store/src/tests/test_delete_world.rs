@@ -55,6 +55,7 @@ async fn test_delete_world() {
         world_bump,
         &world_pda,
         &ctx.payer.pubkey(),
+        &ctx.payer.pubkey(),
     );
 
     // UpdateWorld

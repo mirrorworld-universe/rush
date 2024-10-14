@@ -54,6 +54,7 @@ async fn test_update_world() {
         world_bump,
         &world_pda,
         &ctx.payer.pubkey(),
+        &ctx.payer.pubkey(),
     );
 
     let regions2 = vec![
