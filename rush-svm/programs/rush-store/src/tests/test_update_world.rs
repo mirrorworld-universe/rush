@@ -41,8 +41,7 @@ async fn test_update_world() {
     let regions = vec!["region1".to_string(), "region2".to_string()];
     let entities = vec!["entity1".to_string(), "entity2".to_string()];
 
-    let (world_pda, world_bump) =
-        WorldPDA::find_pda(&program_id, &name, &description, &ctx.payer.pubkey());
+    let (world_pda, world_bump) = WorldPDA::find_pda(&program_id, &name, &description);
 
     // CreateWorld
     let ix = ix_create_world(

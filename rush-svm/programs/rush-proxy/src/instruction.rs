@@ -26,7 +26,7 @@ pub enum RushProxyInstruction {
     #[account(1, writable, name = "user", desc = "User State PDA")]
     Deregister,
 
-    #[account(writable, name = "user", desc = "User PDA to be used for signing CPI")]
+    #[account(name = "user", desc = "User PDA to be used for signing CPI")]
     #[account(
         signer,
         name = "user_authority",

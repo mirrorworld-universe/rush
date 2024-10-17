@@ -19,18 +19,12 @@ impl WorldPDA {
     /// use [`Self::create_pda`] instead
     ///
     /// Returns (PDA, Bump Seed)
-    pub fn find_pda(
-        program_id: &Pubkey,
-        name: &str,
-        description: &str,
-        world_authority: &Pubkey,
-    ) -> (Pubkey, u8) {
+    pub fn find_pda(program_id: &Pubkey, name: &str, description: &str) -> (Pubkey, u8) {
         Pubkey::find_program_address(
             &[
                 Self::TAG.as_bytes(),
                 name.as_bytes(),
                 description.as_bytes(),
-                world_authority.as_ref(),
             ],
             program_id,
         )

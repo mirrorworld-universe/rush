@@ -59,8 +59,7 @@ pub fn process_proxy_create_world(
     //     description.clone(),
     //     regions,
     //     entities,
-    //     world_bump,
-    //     ctx.accounts.world.key,
+    //     world_bump, ctx.accounts.world.key,
     //     ctx.accounts.user.key,
     // );
 
@@ -76,12 +75,44 @@ pub fn process_proxy_create_world(
         *ctx.accounts.rush_store_program.key,
         &instruction,
         vec![
-            AccountMeta::new(*ctx.accounts.user.key, true),
+            AccountMeta::new_readonly(*ctx.accounts.user.key, false),
             AccountMeta::new(*ctx.accounts.user_authority.key, true),
             AccountMeta::new(*ctx.accounts.world.key, false),
             AccountMeta::new_readonly(SYSTEM_PROGRAM_ID, false),
         ],
     );
+
+    msg!(
+        "SIGNER SEEDS: {}, {}, {}, {}, {}",
+        UserPDA::TAG,
+        ctx.accounts.world.key,
+        ctx.accounts.user_authority.key,
+        user_agent_salt,
+        user_bump
+    );
+
+    msg!(
+        "LENGTH of SIGNER SEEDS: {}, {}, {}, {}, {}",
+        UserPDA::TAG,
+        ctx.accounts.world.key,
+        ctx.accounts.user_authority.key,
+        user_agent_salt,
+        user_bump
+    );
+
+    let created_user_pda = UserPDA::create_pda(
+        _program_id,
+        ctx.accounts.user_authority.key,
+        ctx.accounts.world.key,
+        user_agent_salt.clone(),
+        user_bump,
+    );
+
+    msg!("PROXY PROGRAM ID INSIDE: {}", _program_id);
+    msg!("USER ACCOUNT INFO: {:?}", *ctx.accounts.user);
+    msg!("USER PDA INSIDE: {}", *ctx.accounts.user.key);
+    msg!("CREATED USER PDA INSIDE: {}", created_user_pda);
+    msg!("USER BUMP: {}", user_bump);
 
     // invoke CPI instruction
     invoke_signed(
