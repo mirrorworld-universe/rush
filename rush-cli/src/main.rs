@@ -1,4 +1,6 @@
+mod error;
 mod handlers;
+mod utils;
 
 use anyhow::Result;
 use clap::{Arg, Command};
@@ -15,6 +17,7 @@ fn main() -> Result<()> {
         .arg_required_else_help(true) .subcommand(
             Command::new("new")
                 .about("Create a new Rush project.")
+                .arg(Arg::new("NAME").help("Project name").required(true))
                 .arg(Arg::new("PATH").help("Project path.").long("path").short('p'))
         )
         .subcommand(
