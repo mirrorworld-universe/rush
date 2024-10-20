@@ -2,7 +2,6 @@ use crate::error::*;
 use crate::handlers::CliHandler;
 use anyhow::{bail, Result};
 use clap::ArgMatches;
-use std::path::Path;
 
 pub struct NewHandler;
 
@@ -24,6 +23,8 @@ pub struct NewHandler;
 impl CliHandler for NewHandler {
     // TODO: Validate arguments
     fn handle_matches(matches: &ArgMatches) -> Result<()> {
+        let mut is_current_dir = false;
+
         // Get Name
         let name_value = match matches.get_one::<String>("NAME") {
             Some(n) => n,
@@ -34,10 +35,15 @@ impl CliHandler for NewHandler {
         let current_dir = String::from(".");
         let path_value = matches.get_one::<String>("PATH").unwrap_or(&current_dir);
 
-        let path = match Path::new(path_value).canonicalize() {
-            Ok(p) => p,
-            Err(e) => bail!(e),
-        };
+        if path_value == current_dir {
+            is_current_dir = true;
+        }
+
+        if is_current_dir {
+            // Doesn't create project folder, just files
+        } else {
+            // Creates project folder and files
+        }
 
         Ok(())
     }

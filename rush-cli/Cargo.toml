@@ -27,6 +27,7 @@ clap = "4.5.16"
 rush-core = { version = "0.1.0", path = "../rush-core" }
 rush-parser = { version = "0.1.0", path = "../rush-parser" }
 thiserror = "1.0.63"
+toml = "0.8.19"
 
 [[bin]]
 name = "rush"
