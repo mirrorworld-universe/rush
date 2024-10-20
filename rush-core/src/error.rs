@@ -2,21 +2,21 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum CoreError {
-    #[error("Region not found in World")]
+    #[error("region not found in world")]
     RegionNotFound,
 
-    #[error("Entity not found in World")]
+    #[error("entity not found in world")]
     EntityNotFound,
 
-    #[error("Instance not found in World")]
+    #[error("instance not found in world")]
     InstanceNotFound,
 
-    #[error("Component not in Entity's tree")]
+    #[error("component not in entity's tree")]
     ComponentNotFound,
 
-    #[error("Cannot set a different data type")]
+    #[error("cannot set a different data type")]
     MismatchedDataType,
 
-    #[error("Unsupported component data type")]
+    #[error("unsupported component data type")]
     UnsupportedDataType,
 }
