@@ -5672,6 +5672,7 @@ dependencies = [
  "rush-core",
  "rush-parser",
  "thiserror",
+ "toml 0.8.19",
 ]
 
 [[package]]
@@ -5686,6 +5687,10 @@ dependencies = [
 
 [[package]]
 name = "rush-keystore"
+version = "0.1.0"
+
+[[package]]
+name = "rush-manifest"
 version = "0.1.0"
 
 [[package]]
