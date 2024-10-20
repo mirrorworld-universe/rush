@@ -8,7 +8,7 @@ use thiserror::Error;
 
 #[derive(Debug, Error, FromPrimitive)]
 pub enum RushStoreError {
-    #[error("Invalid account data length")]
+    #[error("invalid account data length")]
     InvalidAccountDataLength, // 0
 }
 
