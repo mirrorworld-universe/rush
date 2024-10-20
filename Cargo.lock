@@ -5685,6 +5685,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "rush-keystore"
+version = "0.1.0"
+
+[[package]]
 name = "rush-parser"
 version = "0.1.0"
 dependencies = [
