@@ -79,7 +79,7 @@ fn create_blueprint_files(path: &str, folder_name: &str, filename: &str) -> Resu
     // create default blueprint file
     let mut blueprint_file = File::create(file_path)?;
     blueprint_file
-        .write_all(b"[world]\nname = \"My Onchain World\"\nentities = []\nregions = []")?;
+        .write_all(b"[world]\nname = \"My Onchain World\"\ndescription = \"My Onchain World Description\"\nentities = [\"player\"]\nregions = [\"base\"]\n\n[entity]\nplayer = { name = \"String\", x =\"f64\", y = \"f64\"}\n\n[base]")?;
 
     Ok(())
 }
