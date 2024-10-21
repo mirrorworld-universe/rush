@@ -31,34 +31,35 @@ fn main() -> Result<()> {
             Command::new("view")
                 .about("Create a new Rush project.")
         )
-        .subcommand(
-            Command::new("config")
-                .about("Change or view your current Rush CLI configurations.")
-                .arg_required_else_help(true)
-                .subcommand(
-                    Command::new("get").about("Get your current Rush CLI configurations.")
-                )
-                .subcommand(
-                    Command::new("set")
-                        .about("Get your current Rush CLI configurations.")
-                        .subcommand(
-                            Command::new("rpc").about("Change your RPC URL.")
-                            .arg(Arg::new("URL").required(true).long("url").short('u'))
-                        )
-                        .subcommand(
-                            Command::new("ws").about("Change your Websockets URL.")
-                            .arg(Arg::new("URL").required(true).long("url").short('u'))
-                        )
-                        .subcommand(
-                            Command::new("keypair").about("Change your keypair path.")
-                            .arg(Arg::new("PATH").required(true).long("path").short('p'))
-                        )
-                        .subcommand(
-                            Command::new("blueprint").about("Change your Blueprint path. Can be a FILE or DIRECTORY.")
-                            .arg(Arg::new("PATH").required(true).long("path").short('p'))
-                        )
-                )
-        )
+        // TODO: Config Subcommand
+        // .subcommand(
+        //     Command::new("config")
+        //         .about("Change or view your current Rush CLI configurations.")
+        //         .arg_required_else_help(true)
+        //         .subcommand(
+        //             Command::new("get").about("Get your current Rush CLI configurations.")
+        //         )
+        //         .subcommand(
+        //             Command::new("set")
+        //                 .about("Get your current Rush CLI configurations.")
+        //                 .subcommand(
+        //                     Command::new("rpc").about("Change your RPC URL.")
+        //                     .arg(Arg::new("URL").required(true).long("url").short('u'))
+        //                 )
+        //                 .subcommand(
+        //                     Command::new("ws").about("Change your Websockets URL.")
+        //                     .arg(Arg::new("URL").required(true).long("url").short('u'))
+        //                 )
+        //                 .subcommand(
+        //                     Command::new("keypair").about("Change your keypair path.")
+        //                     .arg(Arg::new("PATH").required(true).long("path").short('p'))
+        //                 )
+        //                 .subcommand(
+        //                     Command::new("blueprint").about("Change your Blueprint path. Can be a FILE or DIRECTORY.")
+        //                     .arg(Arg::new("PATH").required(true).long("path").short('p'))
+        //                 )
+        //         )
+        // )
         .get_matches();
 
     match top_level_matches.subcommand() {
