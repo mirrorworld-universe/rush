@@ -40,9 +40,9 @@ pub enum Chain {
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Manifest {
-    name: String,
-    storage: Repository,
-    chain: Chain,
+    pub name: String,
+    pub storage: Repository,
+    pub chain: Chain,
 }
 
 impl Manifest {
