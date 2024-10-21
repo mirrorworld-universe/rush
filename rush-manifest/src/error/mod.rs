@@ -4,6 +4,8 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum ManifestError {
-    #[error("Expected table: {0}")]
+    #[error("expected table: {0}")]
     MissingTable(String),
+    #[error("unsupported repository: {0}")]
+    UnsupportedRepo(String),
 }

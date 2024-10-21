@@ -1,0 +1,12 @@
+[workspace]
+name = "WORKSPACE"
+
+[storage]
+repository = "solana"
+
+[solana]
+# proxy = "PROXY"
+store = "STORE"
+rpc = "RPC"
+# websocket = "WEBSOCKET"
+keypair = "KEYPAIR"
