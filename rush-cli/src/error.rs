@@ -6,4 +6,8 @@ pub enum CliError {
     MissingArgument(String),
     #[error("error converting path to string")]
     InvalidPathConversion,
+    #[error("can't find Blueprint")]
+    MissingBlueprint,
+    #[error("not in a Rush workspace")]
+    NotRushWorkspace,
 }
