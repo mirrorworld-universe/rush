@@ -1,10 +1,8 @@
-use crate::{error::*, handlers::CliHandler, utils::print_happy_peepo};
+use crate::{error::*, handlers::CliHandler};
 use anyhow::{bail, Result};
 use clap::ArgMatches;
-use colored::Colorize;
-use rush_manifest::{Chain, Manifest};
 use rush_parser::{toml::TomlParser, Loader};
-use std::{fs::canonicalize, path::Path};
+use std::path::Path;
 
 pub struct ViewHandler;
 
