@@ -10,7 +10,7 @@ use std::{
     io::Write,
     path::Path,
 };
-use toml::{Table, Value};
+use toml::Table;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum Repository {
@@ -185,7 +185,11 @@ impl Manifest {
             keypair,
         } = manifest.chain;
 
-        let mut toml_file = File::create(path)?;
+        let filename = Self::FILENAME;
+
+        let path = Path::new(path);
+        let manifest_path = path.join(filename);
+        let mut toml_file = File::create(manifest_path)?;
 
         // TODO: (REVIEW) Find better formatting (r#?)
         toml_file.write_all(
@@ -227,7 +231,7 @@ mod tests {
 
     #[test]
     // TODO: Add string matching for test
-    fn test_save_toml() {
+    fn test_save_toml_without_trailing_slash() {
         let mut manifest = Manifest::new_solana("WORKSPACE".to_string());
         let store = "STORE".to_string();
         let rpc = "RPC".to_string();
@@ -239,6 +243,23 @@ mod tests {
             keypair: keypair.clone(),
         };
 
-        Manifest::save_toml(manifest, "fixtures/save/Rush.toml").unwrap();
+        Manifest::save_toml(manifest, "fixtures/save").unwrap();
+    }
+
+    #[test]
+    // TODO: Add string matching for test
+    fn test_save_toml_with_trailing_slash() {
+        let mut manifest = Manifest::new_solana("WORKSPACE".to_string());
+        let store = "STORE".to_string();
+        let rpc = "RPC".to_string();
+        let keypair = "KEYPAIR".to_string();
+
+        manifest.chain = Chain::Solana {
+            store: store.clone(),
+            rpc: rpc.clone(),
+            keypair: keypair.clone(),
+        };
+
+        Manifest::save_toml(manifest, "fixtures/save/").unwrap();
     }
 }
