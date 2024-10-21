@@ -24,6 +24,7 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.86"
 clap = "4.5.16"
+colored = "2.1.0"
 rush-core = { version = "0.1.0", path = "../rush-core" }
 rush-manifest = { version = "0.1.0", path = "../rush-manifest" }
 rush-parser = { version = "0.1.0", path = "../rush-parser" }

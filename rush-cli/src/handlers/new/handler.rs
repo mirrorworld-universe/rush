@@ -1,6 +1,7 @@
-use crate::{error::*, handlers::CliHandler};
+use crate::{error::*, handlers::CliHandler, utils::print_happy_peepo};
 use anyhow::{bail, Result};
 use clap::ArgMatches;
+use colored::Colorize;
 use rush_manifest::{Chain, Manifest};
 use std::{
     fs::{create_dir, File},
@@ -57,6 +58,9 @@ impl CliHandler for NewHandler {
 
         create_dir(folder_path)?;
         create_project_files(manifest, folder_path_str)?;
+
+        print_happy_peepo();
+        println!("[{}] Rush project created.", "SUCCESS".green().bold());
 
         Ok(())
     }
