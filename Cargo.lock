@@ -5670,6 +5670,7 @@ dependencies = [
  "anyhow",
  "clap 4.5.16",
  "rush-core",
+ "rush-manifest",
  "rush-parser",
  "thiserror",
  "toml 0.8.19",

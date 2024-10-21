@@ -25,6 +25,7 @@ edition = "2021"
 anyhow = "1.0.86"
 clap = "4.5.16"
 rush-core = { version = "0.1.0", path = "../rush-core" }
+rush-manifest = { version = "0.1.0", path = "../rush-manifest" }
 rush-parser = { version = "0.1.0", path = "../rush-parser" }
 thiserror = "1.0.63"
 toml = "0.8.19"
