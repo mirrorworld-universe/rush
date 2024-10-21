@@ -4,7 +4,7 @@
 
 use crate::error::{utils::ensure_syntax, ManifestError};
 use anyhow::{bail, Result};
-use std::{collections::BTreeMap, fs::read_to_string, path::Path};
+use std::{fs::read_to_string, path::Path};
 use toml::Table;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
