@@ -4,4 +4,6 @@ use thiserror::Error;
 pub enum CliError {
     #[error("expected argument: {0}")]
     MissingArgument(String),
+    #[error("error converting path to string")]
+    InvalidPathConversion,
 }
