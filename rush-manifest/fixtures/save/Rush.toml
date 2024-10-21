@@ -1,0 +1,10 @@
+[workspace]
+name = "WORKSPACE"
+
+[storage]
+repository = "solana"
+
+[solana]
+store = "STORE"
+rpc = "RPC"
+keypair = "KEYPAIR"

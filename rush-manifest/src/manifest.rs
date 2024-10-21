@@ -4,13 +4,27 @@
 
 use crate::error::{utils::ensure_syntax, ManifestError};
 use anyhow::{bail, Result};
-use std::{fs::read_to_string, path::Path};
-use toml::Table;
+use std::{
+    convert::From,
+    fs::{read_to_string, File},
+    io::Write,
+    path::Path,
+};
+use toml::{Table, Value};
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum Repository {
     InMemory,
     Solana,
+}
+
+impl From<Repository> for String {
+    fn from(repository: Repository) -> Self {
+        match repository {
+            Repository::InMemory => "memory".to_string(),
+            Repository::Solana => "solana".to_string(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -32,12 +46,12 @@ pub struct Manifest {
 }
 
 impl Manifest {
-    const FILENAME: &'static str = "Rush.toml";
+    pub const FILENAME: &'static str = "Rush.toml";
 
-    pub fn new_solana(name: String, storage: Repository) -> Self {
+    pub fn new_solana(name: String) -> Self {
         Self {
             name,
-            storage,
+            storage: Repository::Solana,
             chain: Chain::Solana {
                 // proxy: String::default(),
                 store: String::default(),
@@ -99,7 +113,8 @@ impl Manifest {
         let repo_value = storage_table.get("repository").unwrap().as_str().unwrap();
         let repository = Self::parse_repository(repo_value.to_string())?;
 
-        let mut manifest = Self::new_solana(name.to_string(), repository);
+        let mut manifest = Self::new_solana(name.to_string());
+        manifest.storage = repository;
 
         /*
          * Solana Table
@@ -161,14 +176,24 @@ impl Manifest {
         Ok(manifest)
     }
 
-    // pub save_toml(path: String) -> Result<Manifest> {
-    //     let manifest_path = match Path::new(path).canonicalize() {
-    //         Ok(p) => p,
-    //         Err(e) => bail!(e),
-    //     };
-    //
-    //     let manifest_string = read_to_string(manifest_path)?;
-    // }
+    pub fn save_toml(manifest: Manifest, path: &str) -> Result<()> {
+        let name = manifest.name;
+        let repo: String = manifest.storage.into();
+        let Chain::Solana {
+            store,
+            rpc,
+            keypair,
+        } = manifest.chain;
+
+        let mut toml_file = File::create(path)?;
+
+        // TODO: (REVIEW) Find better formatting (r#?)
+        toml_file.write_all(
+            format!("[workspace]\nname = \"{name}\"\n\n[storage]\nrepository = \"{repo}\"\n\n[solana]\nstore = \"{store}\"\nrpc = \"{rpc}\"\nkeypair = \"{keypair}\"",
+            ).as_bytes())?;
+
+        Ok(())
+    }
 
     pub fn parse_repository(repo_string: String) -> Result<Repository> {
         let repo = match repo_string.as_str() {
@@ -201,7 +226,19 @@ mod tests {
     }
 
     #[test]
+    // TODO: Add string matching for test
     fn test_save_toml() {
-        assert!(true);
+        let mut manifest = Manifest::new_solana("WORKSPACE".to_string());
+        let store = "STORE".to_string();
+        let rpc = "RPC".to_string();
+        let keypair = "KEYPAIR".to_string();
+
+        manifest.chain = Chain::Solana {
+            store: store.clone(),
+            rpc: rpc.clone(),
+            keypair: keypair.clone(),
+        };
+
+        Manifest::save_toml(manifest, "fixtures/save/Rush.toml").unwrap();
     }
 }
