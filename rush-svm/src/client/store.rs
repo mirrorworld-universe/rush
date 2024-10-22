@@ -31,7 +31,7 @@ pub fn ix_create_world(
         *program_id,
         &instruction,
         vec![
-            AccountMeta::new(*world_authority, true),
+            AccountMeta::new_readonly(*world_authority, false),
             AccountMeta::new(*payer, true),
             AccountMeta::new(*world, false),
             AccountMeta::new_readonly(SYSTEM_PROGRAM_ID, false),

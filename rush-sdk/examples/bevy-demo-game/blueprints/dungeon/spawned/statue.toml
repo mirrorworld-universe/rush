@@ -1,6 +1,0 @@
-[entity.statue]
-x = "f64"
-y = "f64"
-w = "f64"
-h = "f64"
-path = "String"

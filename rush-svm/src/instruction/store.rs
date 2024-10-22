@@ -21,7 +21,6 @@ use shank::{ShankContext, ShankInstruction};
 pub enum RushStoreInstruction {
     #[account(
         0,
-        signer,
         name = "world_authority",
         desc = "World authority who has access to World state changing operations"
     )]

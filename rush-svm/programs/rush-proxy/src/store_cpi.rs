@@ -33,7 +33,7 @@ pub fn ix_create_world(
         &instruction,
         vec![
             AccountMeta::new(*world_authority, true),
-            AccountMeta::new(*world, false),
+            AccountMeta::new(*world, true),
             AccountMeta::new_readonly(SYSTEM_PROGRAM_ID, false),
         ],
     )

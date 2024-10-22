@@ -13,18 +13,6 @@ rush-svm = { version = "0.1.0", path = "../rush-svm" }
 thiserror = "1.0.63"
 tokio = "1.40.0"
 
-[[example]]
-name = "bevy-apple-game"
-path = "examples/bevy-apple-game/src/main.rs"
-
-[[example]]
-name = "bevy-farm-game"
-path = "examples/bevy-farm-game/src/main.rs"
-
-[[example]]
-name = "bevy-demo-game"
-path = "examples/bevy-demo-game/src/main.rs"
-
 [dev-dependencies]
 assert_matches = "1.5.0"
 solana-program-test = "=2.0.13"

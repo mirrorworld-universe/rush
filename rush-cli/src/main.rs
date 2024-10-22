@@ -4,7 +4,7 @@ mod utils;
 
 use anyhow::Result;
 use clap::{Arg, Command};
-use handlers::{CliHandler, NewHandler, ViewHandler};
+use handlers::{CliHandler, DeployHandler, NewHandler, ViewHandler};
 
 fn main() -> Result<()> {
     /*
@@ -64,13 +64,12 @@ fn main() -> Result<()> {
 
     match top_level_matches.subcommand() {
         Some(("new", sub_matches)) => NewHandler::handle_matches(sub_matches),
-
-        // Some(("deploy", sub_matches)) => {}
+        Some(("deploy", sub_matches)) => DeployHandler::handle_matches(sub_matches),
         Some(("view", sub_matches)) => ViewHandler::handle_matches(sub_matches),
-
         // Some(("config", sub_matches)) => {}
 
         // impossible to reach due to arg_required_else_help()
+        // if no subcommand is given, CLI help is printed
         _ => Ok(()),
     }
 }

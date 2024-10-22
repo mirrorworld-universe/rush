@@ -72,7 +72,6 @@ pub fn process_create_world(
             WorldPDA::TAG.as_bytes(),
             name.as_bytes(),
             description.as_bytes(),
-            ctx.accounts.world_authority.key.as_ref(),
             &[bump],
         ]],
     )?;

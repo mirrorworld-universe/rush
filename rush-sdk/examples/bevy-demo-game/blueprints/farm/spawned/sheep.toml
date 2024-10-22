@@ -1,7 +1,0 @@
-[entity.sheep]
-x = "f64"
-y = "f64"
-w = "f64"
-h = "f64"
-speed = "f64"
-path = "String"
