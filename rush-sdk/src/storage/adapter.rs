@@ -23,7 +23,7 @@ pub trait Storage: Send + Sync + 'static {
     /// Used for initializing data storage
     ///
     /// (e.g. Uploading World into Solana)
-    async fn migrate(&mut self, path: &str) -> Result<()>;
+    async fn migrate(&mut self) -> Result<()>;
     /// Create new instance of Entity under a specific Region
     ///
     /// Returns u64 index of new instance in Blueprint instances

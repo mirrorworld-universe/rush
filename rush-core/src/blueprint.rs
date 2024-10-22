@@ -261,6 +261,42 @@ impl Blueprint {
         Ok(entity_mut.len() as u64)
     }
 
+    /// Return Instance with default values
+    ///
+    /// Fetches the component tree structure from self.entities
+    /// and creates an Instance with default values according
+    /// to the Entity's ComponentTypeTree
+    ///
+    pub fn get_default_components(&self, entity: &Entity) -> Result<ComponentTree> {
+        // get entity component type tree
+        let component_type_tree = self.entities.get(entity).unwrap();
+
+        // populate component tree based on type tree
+        let mut component_tree: ComponentTree = BTreeMap::new();
+        for k in component_type_tree.keys() {
+            let v_type = component_type_tree.get(k).unwrap().clone();
+
+            let v: ComponentValue;
+            if v_type == "String" {
+                v = ComponentValue::String(String::default())
+            } else if v_type == "f64" {
+                v = ComponentValue::Float(f64::default())
+            } else if v_type == "i64" {
+                v = ComponentValue::Integer(i64::default())
+            } else if v_type == "bool" {
+                v = ComponentValue::Boolean(bool::default())
+            } else {
+                bail!(CoreError::UnsupportedDataType);
+            }
+
+            // push type default into component tree
+            component_tree.insert(k.to_string(), v);
+        }
+
+        // return component tree
+        Ok(component_tree)
+    }
+
     pub fn get_instance(
         &mut self,
         region: Region,

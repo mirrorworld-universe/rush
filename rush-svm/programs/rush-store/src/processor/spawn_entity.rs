@@ -7,11 +7,10 @@ use rush_svm::{
     state::{Instance, World},
 };
 use solana_program::{
-    borsh1, entrypoint::ProgramResult, hash::hash, program::invoke_signed,
+    borsh1, entrypoint::ProgramResult, hash::hash, msg, program::invoke_signed,
     program_error::ProgramError, pubkey::Pubkey, rent::Rent, system_instruction, sysvar::Sysvar,
 };
 use std::collections::BTreeMap;
-
 /// Spawn Entity
 ///
 /// - Creates a new account for Instance state
@@ -43,7 +42,7 @@ pub fn process_spawn_entity(
     bump: u8,
 ) -> ProgramResult {
     // Make sure World exists
-    let world_data = ctx.accounts.world.try_borrow_data()?;
+    let mut world_data = ctx.accounts.world.try_borrow_mut_data()?;
     let mut world = borsh1::try_from_slice_unchecked::<World>(&world_data)?;
     // World must be initialized
     require!(
@@ -62,8 +61,13 @@ pub fn process_spawn_entity(
     // update world_data instances
     //
     // create_world guarantees existence of keys, unwrap here is okay
-    let instance_mut = world.instances.get_mut(&region).unwrap();
-    // instance_mut.insert(key, value);
+    let instance_mut = world
+        .instances
+        .get_mut(&region)
+        .unwrap()
+        .get_mut(&entity)
+        .unwrap();
+    *instance_mut += 1;
 
     // need to use Borsh version 1 for dynamic data
     // else, de/serialization will fail with Account Unknown Error at runtime
@@ -99,6 +103,9 @@ pub fn process_spawn_entity(
             &[bump],
         ]],
     )?;
+
+    // store new World state into newly created account
+    world.serialize(&mut &mut world_data[..])?;
 
     // store new Instance state into newly created account
     let mut new_instance_raw_bytes = ctx.accounts.instance.try_borrow_mut_data()?;

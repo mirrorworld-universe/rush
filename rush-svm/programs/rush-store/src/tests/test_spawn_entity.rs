@@ -4,7 +4,7 @@ use rush_core::blueprint::{Component, ComponentValue};
 use rush_svm::{
     client::{ix_create_world, ix_spawn_entity},
     pda::{InstancePDA, WorldPDA},
-    state::Instance,
+    state::{Instance, World},
 };
 use solana_program_test::*;
 use solana_sdk::{pubkey::Pubkey, signature::Signer, transaction::Transaction};
@@ -64,7 +64,7 @@ async fn test_spawn_entity() {
     );
 
     let region = String::from("region1");
-    let entity = String::from("entity");
+    let entity = String::from("entity1");
     let mut components: BTreeMap<Component, ComponentValue> = BTreeMap::new();
     let value = 143;
     components.insert(String::from("x"), ComponentValue::Integer(value));
@@ -76,8 +76,8 @@ async fn test_spawn_entity() {
 
     let ix2 = ix_spawn_entity(
         &program_id,
-        region,
-        entity,
+        region.clone(),
+        entity.clone(),
         components.clone(),
         nonce,
         instance_bump,
@@ -99,16 +99,32 @@ async fn test_spawn_entity() {
         .await
         .unwrap();
 
+    let world_state = ctx
+        .banks_client
+        .get_account_data_with_borsh::<World>(world_pda)
+        .await
+        .unwrap();
+
+    assert_eq!(
+        *world_state
+            .instances
+            .get(&region)
+            .unwrap()
+            .get(&entity)
+            .unwrap(),
+        nonce
+    );
+
     // confirm state
-    let state = ctx
+    let instance_state = ctx
         .banks_client
         .get_account_data_with_borsh::<Instance>(instance_pda)
         .await
         .unwrap();
 
-    state.is_initialized();
-    assert_eq!(state.components, components);
-    assert_eq!(state.nonce, nonce);
-    assert_eq!(state.instance_authority, ctx.payer.pubkey());
-    assert_eq!(state.bump, instance_bump);
+    instance_state.is_initialized();
+    assert_eq!(instance_state.components, components);
+    assert_eq!(instance_state.nonce, nonce);
+    assert_eq!(instance_state.instance_authority, ctx.payer.pubkey());
+    assert_eq!(instance_state.bump, instance_bump);
 }

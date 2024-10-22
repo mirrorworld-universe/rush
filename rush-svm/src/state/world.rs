@@ -1,7 +1,7 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use rush_core::blueprint::{Entity, Region};
 use shank::ShankAccount;
-use solana_program::pubkey::Pubkey;
+use solana_program::{msg, pubkey::Pubkey};
 use spl_discriminator::{ArrayDiscriminator, SplDiscriminate};
 use std::collections::BTreeMap;
 

@@ -1,6 +1,7 @@
 use crate::{error::StorageError, storage::Storage};
 use anyhow::{bail, Result};
 use async_trait::async_trait;
+use borsh::BorshDeserialize;
 use rush_core::blueprint::{Blueprint, Component, ComponentValue, Entity, Region};
 use rush_parser::{toml::TomlParser, Loader};
 use rush_svm::{
@@ -17,12 +18,13 @@ use solana_sdk::{
     signer::{keypair::Keypair, Signer},
     transaction::Transaction,
 };
-use std::path::Path;
+use std::{collections::BTreeMap, path::Path};
 
 // #[derive(Clone, Debug, Default, Eq, PartialEq)]
 #[derive(Debug, PartialEq)]
 pub struct Solana {
     pub migrated: bool,
+    pub blueprint: Blueprint,
     pub program_id: Pubkey,
     pub signer: Keypair,
     pub rpc_url: String,
@@ -31,9 +33,18 @@ pub struct Solana {
 
 // TODO: Fix data type
 impl Solana {
-    pub fn new(program_id: Pubkey, signer: Keypair, rpc_url: String) -> Self {
+    pub fn new(program_id: Pubkey, signer: Keypair, rpc_url: String, path: &str) -> Self {
+        // TODO: Support other parsers. Pinned to TOML for now
+        let toml_parser = TomlParser {};
+        let loader = Loader::new(toml_parser);
+        let path = Path::new(path);
+        let blueprint = loader
+            .load_blueprint(path)
+            .expect("Expected a valid blueprint path");
+
         Self {
             migrated: false,
+            blueprint,
             program_id,
             signer,
             rpc_url,
@@ -44,27 +55,21 @@ impl Solana {
 
 #[async_trait]
 impl Storage for Solana {
-    async fn migrate(&mut self, path: &str) -> Result<()> {
-        // TODO: Support other parsers. Pinned to TOML for now
-        let toml_parser = TomlParser {};
-        let loader = Loader::new(toml_parser);
-        let path = Path::new(path);
-        let blueprint = loader.load_blueprint(path)?;
-
+    async fn migrate(&mut self) -> Result<()> {
         let client = RpcClient::new(self.rpc_url.clone());
 
-        let regions = blueprint.regions.keys().cloned().collect::<Vec<_>>();
-        let entities = blueprint.entities.keys().cloned().collect::<Vec<_>>();
+        let regions = self.blueprint.regions.keys().cloned().collect::<Vec<_>>();
+        let entities = self.blueprint.entities.keys().cloned().collect::<Vec<_>>();
         let (world_pda, world_bump) = WorldPDA::find_pda(
             &self.program_id,
-            blueprint.name.as_str(),
-            blueprint.description.as_str(),
+            self.blueprint.name.as_str(),
+            self.blueprint.description.as_str(),
         );
 
         let ix = ix_create_world(
             &self.program_id,
-            blueprint.name,
-            blueprint.description,
+            self.blueprint.name.clone(),
+            self.blueprint.description.clone(),
             regions.clone(),
             entities.clone(),
             world_bump,
@@ -81,76 +86,109 @@ impl Storage for Solana {
             recent_blockhash,
         );
         client.send_and_confirm_transaction(&tx).await?;
-        //
-        // // push spawn_entity instructions
-        // for region_name in regions.iter() {
-        //     for entity_name in entities.iter() {
-        //         println!("{region_name}, {entity_name}");
-        //         // Blueprint preload ensures that unwrap is ok here
-        //         let instances = blueprint
-        //             .instances
-        //             .get(region_name)
-        //             .unwrap()
-        //             .get(entity_name)
-        //             .unwrap();
-        //         println!("instances: {:?}", instances);
-        //
-        //         for (each_index, each_instance) in instances.iter().enumerate() {
-        //             let (instance_pda, instance_bump) = InstancePDA::find_pda(
-        //                 &self.program_id,
-        //                 &world_pda,
-        //                 region_name,
-        //                 entity_name,
-        //                 each_index as u64,
-        //             );
-        //
-        //             let ix = ix_spawn_entity(
-        //                 &self.program_id,
-        //                 region_name.to_string(),
-        //                 entity_name.to_string(),
-        //                 each_instance.clone(),
-        //                 each_index as u64,
-        //                 instance_bump,
-        //                 &instance_pda,
-        //                 &self.signer.pubkey(),
-        //                 &world_pda,
-        //             );
-        //
-        //             let recent_blockhash = client.get_latest_blockhash().await?;
-        //             let tx = Transaction::new_signed_with_payer(
-        //                 &[ix],
-        //                 Some(&self.signer.pubkey()),
-        //                 &[&self.signer],
-        //                 recent_blockhash,
-        //             );
-        //             client.send_and_confirm_transaction(&tx).await?;
-        //         }
-        //     }
-        // }
-        //
-        // // let recent_blockhash = client.get_latest_blockhash().await?;
-        // // let tx = Transaction::new_signed_with_payer(
-        // //     ixs.as_slice(),
-        // //     Some(&self.signer.pubkey()),
-        // //     &[&self.signer],
-        // //     recent_blockhash,
-        // // );
-        // // client.send_and_confirm_transaction(&tx).await?;
-        //
-        // self.migrated = true;
-        // self.world = Some(world_pda);
-        //
+
+        // push spawn_entity instructions
+        for region_name in regions.iter() {
+            for entity_name in entities.iter() {
+                // Blueprint preload ensures that unwrap is ok here
+                let instances = self
+                    .blueprint
+                    .instances
+                    .get(region_name)
+                    .unwrap()
+                    .get(entity_name)
+                    .unwrap();
+
+                for (each_index, each_instance) in instances.iter().enumerate() {
+                    let (instance_pda, instance_bump) = InstancePDA::find_pda(
+                        &self.program_id,
+                        &world_pda,
+                        region_name,
+                        entity_name,
+                        each_index as u64,
+                    );
+
+                    let ix = ix_spawn_entity(
+                        &self.program_id,
+                        region_name.to_string(),
+                        entity_name.to_string(),
+                        each_instance.clone(),
+                        each_index as u64,
+                        instance_bump,
+                        &instance_pda,
+                        &self.signer.pubkey(),
+                        &world_pda,
+                    );
+
+                    let recent_blockhash = client.get_latest_blockhash().await?;
+                    let tx = Transaction::new_signed_with_payer(
+                        &[ix],
+                        Some(&self.signer.pubkey()),
+                        &[&self.signer],
+                        recent_blockhash,
+                    );
+                    client.send_and_confirm_transaction(&tx).await?;
+                }
+            }
+        }
+
+        self.migrated = true;
+        self.world = Some(world_pda);
+
         Ok(())
     }
 
     async fn create(&mut self, region: Region, entity: Entity) -> Result<u64> {
-        panic!("Not yet implemented");
+        if !self.migrated {
+            bail!(StorageError::NotMigrated);
+        }
+
+        let client = RpcClient::new(self.rpc_url.clone());
+
+        // fetch nonce
+        let world_pda = self.world.unwrap();
+        let world_account_data = client.get_account_data(&world_pda).await.unwrap();
+        let world = World::try_from_slice(&world_account_data)?;
+        let nonce = world.instances.get(&region).unwrap().get(&entity).unwrap() + 1;
+
+        let default_components = self.blueprint.get_default_components(&entity).unwrap();
+        let (instance_pda, instance_bump) = InstancePDA::find_pda(
+            &self.program_id,
+            &self.world.unwrap(),
+            &region,
+            &entity,
+            nonce,
+        );
+
+        let ix = ix_spawn_entity(
+            &self.program_id,
+            region,
+            entity,
+            default_components,
+            nonce,
+            instance_bump,
+            &instance_pda,
+            &self.signer.pubkey(),
+            &self.world.unwrap(),
+        );
+
+        let recent_blockhash = client.get_latest_blockhash().await?;
+        let tx = Transaction::new_signed_with_payer(
+            &[ix],
+            Some(&self.signer.pubkey()),
+            &[&self.signer],
+            recent_blockhash,
+        );
+        client.send_and_confirm_transaction(&tx).await?;
 
         Ok(1)
     }
+
     // TODO: Implement Delete instance
     async fn delete(&mut self, region: Region, entity: Entity, nonce: u64) -> Result<()> {
-        panic!("Not yet implemented");
+        if !self.migrated {
+            bail!(StorageError::NotMigrated);
+        }
 
         Ok(())
     }
@@ -162,7 +200,9 @@ impl Storage for Solana {
         nonce: u64,
         component: Component,
     ) -> Result<ComponentValue> {
-        panic!("Not yet implemented");
+        if !self.migrated {
+            bail!(StorageError::NotMigrated);
+        }
 
         Ok(ComponentValue::Integer(0))
     }
@@ -175,7 +215,9 @@ impl Storage for Solana {
         component: Component,
         value: ComponentValue,
     ) -> Result<()> {
-        panic!("Not yet implemented");
+        if !self.migrated {
+            bail!(StorageError::NotMigrated);
+        }
 
         Ok(())
     }
@@ -187,6 +229,7 @@ mod tests {
     use assert_matches::assert_matches;
     use borsh::{BorshDeserialize, BorshSerialize};
     use rush_core::blueprint::*;
+    use rush_svm::state::Instance;
     use solana_program_test::*;
     use solana_sdk::{
         account::Account,
@@ -208,8 +251,9 @@ mod tests {
 
         let signer = Keypair::from_seed(&seed).unwrap();
 
+        let path_str = "fixtures/blueprint.toml";
         let loader = Loader::new(TomlParser {});
-        let path = Path::new("fixtures/blueprint.toml");
+        let path = Path::new(path_str);
         let blueprint = loader.load_blueprint(path).unwrap();
 
         let (world_pda, world_bump) =
@@ -217,9 +261,9 @@ mod tests {
 
         let rpc_url = String::from("http://127.0.0.1:8899");
         let client = RpcClient::new(rpc_url.clone());
-        let mut solana = Solana::new(program_id, signer.insecure_clone(), rpc_url);
+        let mut solana = Solana::new(program_id, signer.insecure_clone(), rpc_url, path_str);
 
-        solana.migrate("fixtures/blueprint.toml").await.unwrap();
+        solana.migrate().await.unwrap();
 
         let data = client.get_account_data(&world_pda).await.unwrap();
         let state = borsh1::try_from_slice_unchecked::<World>(&data).unwrap();
@@ -240,10 +284,64 @@ mod tests {
         assert!(!state.is_launched);
     }
 
-    // // Happy path
-    // #[tokio::test]
-    // async fn test_solana_create() {}
-    //
+    // Happy path
+    #[tokio::test]
+    async fn test_solana_create() {
+        // prepare test context
+        let program_id = Pubkey::from_str("FXm4HiySCyKv3HrynYKY7yfanyH7dJGMuvxXsbnvtW5c").unwrap();
+        let seed = [
+            192, 45, 79, 47, 38, 198, 135, 27, 191, 116, 8, 103, 96, 204, 251, 131, 110, 7, 179, 0,
+            236, 71, 217, 202, 191, 140, 13, 148, 165, 62, 107, 20, 118, 252, 252, 98, 134, 2, 49,
+            17, 166, 221, 114, 65, 149, 220, 228, 81, 254, 57, 227, 230, 70, 178, 135, 176, 103,
+            235, 188, 54, 173, 91, 232, 57,
+        ];
+
+        let signer = Keypair::from_seed(&seed).unwrap();
+
+        let path_str = "fixtures/blueprint.toml";
+        let loader = Loader::new(TomlParser {});
+        let path = Path::new(path_str);
+        let blueprint = loader.load_blueprint(path).unwrap();
+
+        let (world_pda, world_bump) =
+            WorldPDA::find_pda(&program_id, &blueprint.name, &blueprint.description);
+
+        let rpc_url = String::from("http://127.0.0.1:8899");
+        let client = RpcClient::new(rpc_url.clone());
+        let mut solana = Solana::new(program_id, signer.insecure_clone(), rpc_url, path_str);
+
+        solana.migrate().await.unwrap();
+        let region = "farm".to_string();
+        let entity = "player".to_string();
+
+        solana.create(region.clone(), entity.clone()).await.unwrap();
+
+        let expected_nonce = 2;
+
+        let data = client.get_account_data(&world_pda).await.unwrap();
+        let world_state = borsh1::try_from_slice_unchecked::<World>(&data).unwrap();
+
+        assert_eq!(
+            *world_state
+                .instances
+                .get(&region)
+                .unwrap()
+                .get(&entity)
+                .unwrap(),
+            expected_nonce
+        );
+
+        let (instance_pda, instance_bump) =
+            InstancePDA::find_pda(&program_id, &world_pda, &region, &entity, expected_nonce);
+        let data = client.get_account_data(&instance_pda).await.unwrap();
+        let instance_state = borsh1::try_from_slice_unchecked::<Instance>(&data).unwrap();
+        let default_components = blueprint.get_default_components(&entity).unwrap();
+        assert_eq!(instance_state.components, default_components);
+        assert_eq!(instance_state.nonce, expected_nonce);
+        assert_eq!(instance_state.instance_authority, signer.pubkey());
+        assert_eq!(instance_state.bump, instance_bump);
+    }
+
     // // Happy path
     // // #[tokio::test]
     // // async fn test_delete() {}

@@ -102,7 +102,7 @@ pub fn ix_spawn_entity(
         vec![
             AccountMeta::new(*instance_authority, true),
             AccountMeta::new(*instance, false),
-            AccountMeta::new_readonly(*world, false),
+            AccountMeta::new(*world, false),
             AccountMeta::new_readonly(SYSTEM_PROGRAM_ID, false),
         ],
     )

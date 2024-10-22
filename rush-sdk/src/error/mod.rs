@@ -3,7 +3,7 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum StorageError {
     #[error("storage not yet migrated")]
-    NotYetMigrated,
+    NotMigrated,
 }
 
 #[derive(Error, Debug)]

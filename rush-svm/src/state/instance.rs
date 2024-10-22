@@ -38,16 +38,6 @@ pub struct Instance {
 }
 
 impl Instance {
-    /// Is `true` if Instances is initialized
-    pub fn is_initialized(&self) -> bool {
-        self.discriminator.as_slice() == Instance::SPL_DISCRIMINATOR_SLICE
-    }
-
-    /// Is `true` if Instance is uninitialized
-    pub fn is_uninitialized(&self) -> bool {
-        self.discriminator.as_slice() == ArrayDiscriminator::UNINITIALIZED.as_slice()
-    }
-
     /// Create new Instance state
     pub fn new(
         components: BTreeMap<Component, ComponentValue>,
@@ -62,5 +52,15 @@ impl Instance {
             bump,
             discriminator: Self::SPL_DISCRIMINATOR.into(),
         }
+    }
+
+    /// Is `true` if Instances is initialized
+    pub fn is_initialized(&self) -> bool {
+        self.discriminator.as_slice() == Instance::SPL_DISCRIMINATOR_SLICE
+    }
+
+    /// Is `true` if Instance is uninitialized
+    pub fn is_uninitialized(&self) -> bool {
+        self.discriminator.as_slice() == ArrayDiscriminator::UNINITIALIZED.as_slice()
     }
 }
