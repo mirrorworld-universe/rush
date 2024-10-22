@@ -342,61 +342,15 @@ mod tests {
         assert_eq!(instance_state.bump, instance_bump);
     }
 
-    // // Happy path
-    // // #[tokio::test]
-    // // async fn test_delete() {}
-    //
-    // // Happy path
-    // #[tokio::test]
-    // async fn test_solana_get() {}
-    //
-    // // Happy path
-    // #[tokio::test]
-    // async fn test_solana_set() {}
-    //
-    // fn get_sample_blueprint() -> Blueprint {
-    //     let mut blueprint =
-    //         Blueprint::new("Test World".to_string(), "This is Test World".to_string());
-    //
-    //     let region1 = String::from("region1");
-    //     let region2 = String::from("region2");
-    //     let entity1 = String::from("entity1");
-    //     let entity2 = String::from("entity2");
-    //
-    //     // preload Region and Entity keys
-    //     blueprint.preload(
-    //         vec![region1.clone(), region2.clone()],
-    //         vec![entity1.clone(), entity2.clone()],
-    //     );
-    //
-    //     // load mock regions
-    //     blueprint.add_region(region1.clone(), vec![entity1.clone()]);
-    //     blueprint.add_region(region2.clone(), vec![entity2.clone()]);
-    //     // load mock entity1
-    //     let mut component_type_tree1: ComponentTypeTree = BTreeMap::new();
-    //     component_type_tree1.insert("x".to_string(), "i64".to_string());
-    //     component_type_tree1.insert("y".to_string(), "i64".to_string());
-    //     blueprint.add_entity(entity1.clone(), component_type_tree1);
-    //     // load mock entity2
-    //     let mut component_type_tree2: ComponentTypeTree = BTreeMap::new();
-    //     component_type_tree2.insert("w".to_string(), "f64".to_string());
-    //     component_type_tree2.insert("h".to_string(), "f64".to_string());
-    //     blueprint.add_entity(entity2.clone(), component_type_tree2);
-    //     // load mock instances1
-    //     let mut component_tree1: ComponentTree = BTreeMap::new();
-    //     component_tree1.insert("x".to_string(), ComponentValue::Integer(143));
-    //     component_tree1.insert("y".to_string(), ComponentValue::Integer(143));
-    //     blueprint
-    //         .add_instance(region1.clone(), entity1.clone(), component_tree1)
-    //         .unwrap();
-    //     // load mock instances2
-    //     let mut component_tree2: ComponentTree = BTreeMap::new();
-    //     component_tree2.insert("w".to_string(), ComponentValue::Float(143.0));
-    //     component_tree2.insert("h".to_string(), ComponentValue::Float(143.0));
-    //     blueprint
-    //         .add_instance(region2, entity2, component_tree2)
-    //         .unwrap();
-    //
-    //     blueprint
-    // }
+    // Happy path
+    #[tokio::test]
+    async fn test_delete() {}
+
+    // Happy path
+    #[tokio::test]
+    async fn test_solana_get() {}
+
+    // Happy path
+    #[tokio::test]
+    async fn test_solana_set() {}
 }
