@@ -24,7 +24,6 @@ pub struct Solana {
     pub program_id: Pubkey,
     pub signer: Keypair,
     pub rpc_url: String,
-    pub world: Option<Pubkey>,
 }
 
 // TODO: Fix data type
@@ -43,7 +42,6 @@ impl Solana {
             program_id,
             signer,
             rpc_url,
-            world: None,
         }
     }
 }
@@ -142,8 +140,6 @@ impl Storage for Solana {
             }
         }
 
-        self.world = Some(world_pda);
-
         Ok(())
     }
 
@@ -151,20 +147,19 @@ impl Storage for Solana {
         let client = RpcClient::new(self.rpc_url.clone());
 
         // fetch nonce
-        let world_pda = self.world.unwrap();
+        let (world_pda, _) = WorldPDA::find_pda(
+            &self.program_id,
+            self.blueprint.name.as_str(),
+            self.blueprint.description.as_str(),
+        );
         let world_account_data = client.get_account_data(&world_pda)?;
         let world = World::try_from_slice(&world_account_data)?;
         // TODO: Consider using the nonce internally in spawn_entity instruction
         let nonce = world.instances.get(&region).unwrap().get(&entity).unwrap() + 1;
 
         let default_components = self.blueprint.get_default_components(&entity).unwrap();
-        let (instance_pda, instance_bump) = InstancePDA::find_pda(
-            &self.program_id,
-            &self.world.unwrap(),
-            &region,
-            &entity,
-            nonce,
-        );
+        let (instance_pda, instance_bump) =
+            InstancePDA::find_pda(&self.program_id, &world_pda, &region, &entity, nonce);
 
         let ix = ix_spawn_entity(
             &self.program_id,
@@ -175,7 +170,7 @@ impl Storage for Solana {
             instance_bump,
             &instance_pda,
             &self.signer.pubkey(),
-            &self.world.unwrap(),
+            &world_pda,
         );
 
         let recent_blockhash = client.get_latest_blockhash()?;
@@ -211,13 +206,16 @@ impl Storage for Solana {
         component: Component,
     ) -> Result<ComponentValue> {
         let client = RpcClient::new(self.rpc_url.clone());
-        let (instance_pda, _) = InstancePDA::find_pda(
+
+        let (world_pda, _) = WorldPDA::find_pda(
             &self.program_id,
-            &self.world.unwrap(),
-            &region,
-            &entity,
-            nonce,
+            self.blueprint.name.as_str(),
+            self.blueprint.description.as_str(),
         );
+
+        let (instance_pda, _) =
+            InstancePDA::find_pda(&self.program_id, &world_pda, &region, &entity, nonce);
+
         let data = client.get_account_data(&instance_pda)?;
         let instance_state = Instance::try_from_slice(&data)?;
         let value = instance_state.components.get(&component).unwrap().clone();
@@ -242,13 +240,14 @@ impl Storage for Solana {
     ) -> Result<()> {
         let client = RpcClient::new(self.rpc_url.clone());
 
-        let (instance_pda, _) = InstancePDA::find_pda(
+        let (world_pda, _) = WorldPDA::find_pda(
             &self.program_id,
-            &self.world.unwrap(),
-            &region,
-            &entity,
-            nonce,
+            self.blueprint.name.as_str(),
+            self.blueprint.description.as_str(),
         );
+
+        let (instance_pda, _) =
+            InstancePDA::find_pda(&self.program_id, &world_pda, &region, &entity, nonce);
 
         let ix = ix_update_entity(
             &self.program_id,

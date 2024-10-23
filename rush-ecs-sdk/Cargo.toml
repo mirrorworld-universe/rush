@@ -1,6 +1,6 @@
 [package]
 name = "rush-ecs-sdk"
-version = "0.2.2"
+version = "0.2.3"
 edition = "2021"
 authors = ["Sonic Engineering"]
 description = "Rush ECS Framework SDK"
