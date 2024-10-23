@@ -214,6 +214,7 @@ impl Manifest {
 mod tests {
     use super::*;
 
+    // TODO: CHANGE ALL TESTS TO TOKIO
     #[test]
     fn test_from_toml() {
         let manifest = Manifest::from_toml("fixtures/Rush.toml").unwrap();

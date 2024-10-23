@@ -14,7 +14,7 @@ impl FilesystemAuth {
 
 impl Auth for FilesystemAuth {
     fn signin(&self, path: &str) -> Result<Keypair> {
-        let key_path = Path::new(path);
+        let key_path = Path::new(path).canonicalize()?;
         let keypair = read_keypair_file(key_path);
 
         match keypair {
