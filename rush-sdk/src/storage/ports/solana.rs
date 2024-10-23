@@ -5,7 +5,7 @@ use borsh::BorshDeserialize;
 use rush_core::blueprint::{Blueprint, Component, ComponentValue, Entity, Region};
 use rush_parser::{toml::TomlParser, Loader};
 use rush_svm::{
-    client::{ix_create_world, ix_spawn_entity},
+    client::{ix_create_world, ix_spawn_entity, ix_update_entity},
     pda::{InstancePDA, WorldPDA},
     state::{Instance, World},
 };
@@ -99,10 +99,8 @@ impl Storage for Solana {
                     .get(entity_name)
                     .unwrap();
 
-                println!("IN MIGRATE INSTANCES: {:?}", instances);
                 for (each_index, each_instance) in instances.iter().enumerate() {
                     let nonce = each_index as u64 + 1;
-                    println!("IN MIGRATE NONCE: {}", nonce);
                     let (instance_pda, instance_bump) = InstancePDA::find_pda(
                         &self.program_id,
                         &world_pda,
@@ -110,7 +108,6 @@ impl Storage for Solana {
                         entity_name,
                         nonce,
                     );
-                    println!("{instance_pda}");
 
                     let ix = ix_spawn_entity(
                         &self.program_id,
@@ -186,7 +183,7 @@ impl Storage for Solana {
         );
         client.send_and_confirm_transaction(&tx).await?;
 
-        Ok(1)
+        Ok(nonce)
     }
 
     // TODO: Implement Delete instance
@@ -235,6 +232,33 @@ impl Storage for Solana {
         if !self.migrated {
             bail!(StorageError::NotMigrated);
         }
+
+        let client = RpcClient::new(self.rpc_url.clone());
+
+        let (instance_pda, _) = InstancePDA::find_pda(
+            &self.program_id,
+            &self.world.unwrap(),
+            &region,
+            &entity,
+            nonce,
+        );
+
+        let ix = ix_update_entity(
+            &self.program_id,
+            component,
+            value,
+            &instance_pda,
+            &self.signer.pubkey(),
+        );
+
+        let recent_blockhash = client.get_latest_blockhash().await?;
+        let tx = Transaction::new_signed_with_payer(
+            &[ix],
+            Some(&self.signer.pubkey()),
+            &[&self.signer],
+            recent_blockhash,
+        );
+        client.send_and_confirm_transaction(&tx).await?;
 
         Ok(())
     }
@@ -361,10 +385,6 @@ mod tests {
 
     // Happy path
     #[tokio::test]
-    async fn test_delete() {}
-
-    // Happy path
-    #[tokio::test]
     async fn test_solana_get() {
         // prepare test context
         let program_id = Pubkey::from_str("FXm4HiySCyKv3HrynYKY7yfanyH7dJGMuvxXsbnvtW5c").unwrap();
@@ -389,10 +409,7 @@ mod tests {
         let mut solana = Solana::new(program_id, signer.insecure_clone(), rpc_url, path_str);
 
         solana.migrate().await.unwrap();
-        // region: Region,
-        // entity: Entity,
-        // nonce: u64,
-        // component: Component,
+
         let region = "farm".to_string();
         let entity = "apple".to_string();
         let component = "x".to_string();
@@ -405,5 +422,56 @@ mod tests {
 
     // Happy path
     #[tokio::test]
-    async fn test_solana_set() {}
+
+    async fn test_solana_set() {
+        // prepare test context
+        let program_id = Pubkey::from_str("FXm4HiySCyKv3HrynYKY7yfanyH7dJGMuvxXsbnvtW5c").unwrap();
+        let seed = [
+            192, 45, 79, 47, 38, 198, 135, 27, 191, 116, 8, 103, 96, 204, 251, 131, 110, 7, 179, 0,
+            236, 71, 217, 202, 191, 140, 13, 148, 165, 62, 107, 20, 118, 252, 252, 98, 134, 2, 49,
+            17, 166, 221, 114, 65, 149, 220, 228, 81, 254, 57, 227, 230, 70, 178, 135, 176, 103,
+            235, 188, 54, 173, 91, 232, 57,
+        ];
+
+        let signer = Keypair::from_seed(&seed).unwrap();
+
+        let path_str = "fixtures/blueprint.toml";
+        let loader = Loader::new(TomlParser {});
+        let path = Path::new(path_str);
+        let blueprint = loader.load_blueprint(path).unwrap();
+
+        let (world_pda, world_bump) =
+            WorldPDA::find_pda(&program_id, &blueprint.name, &blueprint.description);
+
+        let rpc_url = String::from("http://127.0.0.1:8899");
+        let client = RpcClient::new(rpc_url.clone());
+        let mut solana = Solana::new(program_id, signer.insecure_clone(), rpc_url, path_str);
+
+        solana.migrate().await.unwrap();
+
+        let region = "farm".to_string();
+        let entity = "player".to_string();
+        let component = "x".to_string();
+        let nonce = 1;
+        let value = ComponentValue::Integer(143);
+
+        solana
+            .set(
+                region.clone(),
+                entity.clone(),
+                nonce,
+                component.clone(),
+                value,
+            )
+            .await
+            .unwrap();
+
+        let (instance_pda, _) =
+            InstancePDA::find_pda(&program_id, &world_pda, &region, &entity, nonce);
+
+        let data = client.get_account_data(&instance_pda).await.unwrap();
+        let instance_state = Instance::try_from_slice(&data).unwrap();
+        let component_value = instance_state.components.get(&component).unwrap().clone();
+        assert_matches!(component_value, value);
+    }
 }
