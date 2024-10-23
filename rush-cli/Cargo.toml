@@ -28,7 +28,9 @@ colored = "2.1.0"
 rush-core = { version = "0.1.0", path = "../rush-core" }
 rush-manifest = { version = "0.1.0", path = "../rush-manifest" }
 rush-parser = { version = "0.1.0", path = "../rush-parser" }
+rush-sdk = { version = "0.1.0", path = "../rush-sdk" }
 thiserror = "1.0.63"
+tokio = "1.41.0"
 toml = "0.8.19"
 
 [[bin]]

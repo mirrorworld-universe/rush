@@ -218,11 +218,6 @@ impl Parser for TomlParser {
                                     component_tree.insert(component, value);
                                 }
 
-                                // add to blueprint
-                                println!(
-                                    "Adding to instance {region_name} {entity_name} {:?}",
-                                    component_tree
-                                );
                                 blueprint.add_instance(
                                     region_name.clone(),
                                     entity_name.to_string(),

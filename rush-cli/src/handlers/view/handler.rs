@@ -9,7 +9,7 @@ pub struct ViewHandler;
 impl CliHandler for ViewHandler {
     // TODO: Validate arguments
     // TODO: Make view command work even if not in root folder
-    fn handle_matches(_matches: &ArgMatches) -> Result<()> {
+    async fn handle_matches(_matches: &ArgMatches) -> Result<()> {
         if !Path::new("./Rush.toml").exists() {
             bail!(CliError::NotRushWorkspace)
         }

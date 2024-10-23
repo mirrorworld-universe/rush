@@ -71,8 +71,6 @@ impl Manifest {
 
         let manifest_string = read_to_string(manifest_path)?;
 
-        println!("Manifest String: {}", manifest_string);
-
         let table: Table = match manifest_string.parse::<Table>() {
             Ok(t) => t,
             Err(e) => bail!(e),
@@ -199,7 +197,7 @@ impl Manifest {
         Ok(())
     }
 
-    pub fn parse_repository(repo_string: String) -> Result<Repository> {
+    fn parse_repository(repo_string: String) -> Result<Repository> {
         let repo = match repo_string.as_str() {
             "solana" => Repository::Solana,
             "memory" => Repository::InMemory,

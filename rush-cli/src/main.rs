@@ -6,7 +6,8 @@ use anyhow::Result;
 use clap::{Arg, Command};
 use handlers::{CliHandler, DeployHandler, NewHandler, ViewHandler};
 
-fn main() -> Result<()> {
+#[tokio::main]
+async fn main() -> Result<()> {
     /*
      * @dev We'll leave the matchers here despite it being bulky to have a quick
      * single point overview of all the commands and subcommands available
@@ -23,9 +24,6 @@ fn main() -> Result<()> {
         .subcommand(
             Command::new("deploy")
                 .about("Deploy current Rush project")
-                .arg_required_else_help(true)
-                .arg(Arg::new("PATH").help("Path of the Rush project.").long("path").short('p'))
-                .arg(Arg::new("DRY-RUN").help("Parse the current Gaming Blueprint without deploying. Useful for catching predeploy bugs.").long("dry-run").action(clap::ArgAction::SetTrue))
         )
         .subcommand(
             Command::new("view")
@@ -63,9 +61,9 @@ fn main() -> Result<()> {
         .get_matches();
 
     match top_level_matches.subcommand() {
-        Some(("new", sub_matches)) => NewHandler::handle_matches(sub_matches),
-        Some(("deploy", sub_matches)) => DeployHandler::handle_matches(sub_matches),
-        Some(("view", sub_matches)) => ViewHandler::handle_matches(sub_matches),
+        Some(("new", sub_matches)) => NewHandler::handle_matches(sub_matches).await,
+        Some(("deploy", sub_matches)) => DeployHandler::handle_matches(sub_matches).await,
+        Some(("view", sub_matches)) => ViewHandler::handle_matches(sub_matches).await,
         // Some(("config", sub_matches)) => {}
 
         // impossible to reach due to arg_required_else_help()

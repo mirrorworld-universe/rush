@@ -27,7 +27,7 @@ pub struct NewHandler;
 ///
 impl CliHandler for NewHandler {
     // TODO: Validate arguments
-    fn handle_matches(matches: &ArgMatches) -> Result<()> {
+    async fn handle_matches(matches: &ArgMatches) -> Result<()> {
         // Get Name
         let name_value = match matches.get_one::<String>("NAME") {
             Some(n) => n,

@@ -2,6 +2,7 @@ use crate::{error::StorageError, storage::Storage};
 use anyhow::{bail, Result};
 use async_trait::async_trait;
 use borsh::BorshDeserialize;
+use colored::Colorize;
 use rush_core::blueprint::{Blueprint, Component, ComponentValue, Entity, Region};
 use rush_parser::{toml::TomlParser, Loader};
 use rush_svm::{
@@ -85,7 +86,15 @@ impl Storage for Solana {
             &[&self.signer],
             recent_blockhash,
         );
-        client.send_and_confirm_transaction(&tx).await?;
+
+        let signature = client.send_and_confirm_transaction(&tx).await?;
+
+        println!(
+            "[{}] Created world: {}, Signature: {}",
+            "SUCCESS".green().bold(),
+            world_pda,
+            signature
+        );
 
         // push spawn_entity instructions
         for region_name in regions.iter() {
@@ -128,7 +137,14 @@ impl Storage for Solana {
                         &[&self.signer],
                         recent_blockhash,
                     );
-                    client.send_and_confirm_transaction(&tx).await?;
+                    let signature = client.send_and_confirm_transaction(&tx).await?;
+                    println!(
+                        "[{}] Spawned #{}: {}, Signature: {}",
+                        "SUCCESS".green().bold(),
+                        nonce,
+                        instance_pda,
+                        signature
+                    );
                 }
             }
         }

@@ -1,14 +1,15 @@
 use crate::{error::*, handlers::CliHandler};
 use anyhow::{bail, Result};
 use clap::ArgMatches;
-use rush_parser::{toml::TomlParser, Loader};
+use rush_manifest::{Chain, Manifest};
+use rush_sdk::bevy::BevySDK;
 use std::path::Path;
 
 pub struct DeployHandler;
 
 impl CliHandler for DeployHandler {
     // TODO: Validate arguments
-    fn handle_matches(matches: &ArgMatches) -> Result<()> {
+    async fn handle_matches(matches: &ArgMatches) -> Result<()> {
         if !Path::new("./Rush.toml").exists() {
             bail!(CliError::NotRushWorkspace)
         }
@@ -16,13 +17,16 @@ impl CliHandler for DeployHandler {
             bail!(CliError::MissingBlueprint)
         }
 
-        let loader = Loader::new(TomlParser {});
-        let blueprint_path = Path::new("./blueprint").canonicalize()?;
-        let blueprint = loader.load_blueprint(&blueprint_path)?;
+        let manifest = Manifest::from_toml("./Rush.toml")?;
 
-        println!("{blueprint}");
+        let Chain::Solana {
+            store,
+            rpc,
+            keypair,
+        } = manifest.chain;
+        let mut sdk = BevySDK::new(rpc, &store, "./blueprint", &keypair);
 
-        Ok(())
+        sdk.migrate().await
     }
 }
 
