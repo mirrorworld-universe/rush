@@ -197,7 +197,15 @@ impl Storage for Solana {
             &[&self.signer],
             recent_blockhash,
         );
-        client.send_and_confirm_transaction(&tx).await?;
+        let signature = client.send_and_confirm_transaction(&tx).await?;
+
+        println!(
+            "[{}] Spawned #{}: {}, Signature: {}",
+            "SUCCESS".green().bold(),
+            nonce,
+            instance_pda,
+            signature
+        );
 
         Ok(nonce)
     }
@@ -233,6 +241,13 @@ impl Storage for Solana {
         let data = client.get_account_data(&instance_pda).await?;
         let instance_state = Instance::try_from_slice(&data)?;
         let value = instance_state.components.get(&component).unwrap().clone();
+
+        println!(
+            "[{}] Fetching #{}: {}",
+            "SUCCESS".green().bold(),
+            nonce,
+            instance_pda
+        );
 
         Ok(value)
     }
@@ -274,7 +289,15 @@ impl Storage for Solana {
             &[&self.signer],
             recent_blockhash,
         );
-        client.send_and_confirm_transaction(&tx).await?;
+        let signature = client.send_and_confirm_transaction(&tx).await?;
+
+        println!(
+            "[{}] Updating #{}: {}, Signature: {}",
+            "SUCCESS".green().bold(),
+            nonce,
+            instance_pda,
+            signature
+        );
 
         Ok(())
     }
