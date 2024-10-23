@@ -13,22 +13,25 @@
 // }
 //
 // impl Memory {
-//     pub fn new(world_name: String, world_description: String) -> Self {
+//     pub fn new(path: &str) -> Self {
+//         // TODO: Support other parsers. Pinned to TOML for now
+//         let toml_parser = TomlParser {};
+//         let loader = Loader::new(toml_parser);
+//         let path = Path::new(path);
+//         let blueprint = loader
+//             .load_blueprint(path)
+//             .expect("Expected a valid blueprint path");
+//
 //         Self {
 //             migrated: false,
-//             blueprint: Blueprint::new(world_name, world_description),
+//             blueprint,
 //         }
 //     }
 // }
 //
 // #[async_trait]
 // impl Storage for Memory {
-//     async fn migrate(&mut self, path: &str) -> Result<()> {
-//         // TODO: Support other parsers. Pinned to TOML for now
-//         let toml_parser = TomlParser {};
-//         let loader = Loader::new(toml_parser);
-//         let path = Path::new(path);
-//         self.blueprint = loader.load_blueprint(path)?;
+//     async fn migrate(&mut self) -> Result<()> {
 //         self.migrated = true;
 //         Ok(())
 //     }
@@ -36,7 +39,7 @@
 //     async fn create(&mut self, region: Region, entity: Entity) -> Result<u64> {
 //         // migration guard
 //         if !self.migrated {
-//             bail!(StorageError::NotYetMigrated);
+//             bail!(StorageError::NotMigrated);
 //         }
 //
 //         // create new instance with default values
@@ -52,7 +55,7 @@
 //     async fn delete(&mut self, region: Region, entity: Entity, nonce: u64) -> Result<()> {
 //         // migration guard
 //         if !self.migrated {
-//             bail!(StorageError::NotYetMigrated);
+//             bail!(StorageError::NotMigrated);
 //         }
 //
 //         panic!("Not yet implemented");
@@ -69,7 +72,7 @@
 //     ) -> Result<ComponentValue> {
 //         // migration guard
 //         if !self.migrated {
-//             bail!(StorageError::NotYetMigrated);
+//             bail!(StorageError::NotMigrated);
 //         }
 //
 //         let value = self
@@ -89,7 +92,7 @@
 //     ) -> Result<()> {
 //         // migration guard
 //         if !self.migrated {
-//             bail!(StorageError::NotYetMigrated);
+//             bail!(StorageError::NotMigrated);
 //         }
 //
 //         self.blueprint
@@ -110,12 +113,9 @@
 //     // Happy path
 //     #[tokio::test]
 //     async fn test_memory_migrate() {
-//         let mut memory = Memory::new(
-//             String::from("Sonic's World"),
-//             String::from("This is Sonic's world"),
-//         );
-//         let path_str = "mock/fixtures/memory/blueprint.toml";
-//         memory.migrate(path_str).await.unwrap();
+//         let path_str = "fixtures/memory/blueprint.toml";
+//         let mut memory = Memory::new(path_str);
+//         memory.migrate().await.unwrap();
 //         assert!(memory.migrated);
 //     }
 //
@@ -127,13 +127,10 @@
 //         let entity1 = String::from("entity1");
 //         let entity2 = String::from("entity2");
 //
-//         let sample_blueprint = get_sample_blueprint();
-//         let mut memory = Memory::new(
-//             String::from("Sonic's World"),
-//             String::from("This is Sonic's world"),
-//         );
-//         memory.migrated = true;
-//         memory.blueprint = sample_blueprint.clone();
+//         let mut memory = Memory {
+//             migrated: true,
+//             blueprint: sample_blueprint.clone(),
+//         };
 //
 //         let instance_nonce = memory
 //             .create(region1.clone(), entity1.clone())
@@ -174,120 +171,120 @@
 //     // async fn test_delete() {}
 //
 //     // Happy path
-//     #[tokio::test]
-//     async fn test_memory_get() {
-//         let region1 = String::from("region1");
-//         let entity1 = String::from("entity1");
-//         let component = String::from("x");
-//         let nonce = 0;
-//
-//         let sample_blueprint = get_sample_blueprint();
-//         let mut memory = Memory::new(
-//             String::from("Sonic's World"),
-//             String::from("This is Sonic's world"),
-//         );
-//         memory.migrated = true;
-//         memory.blueprint = sample_blueprint.clone();
-//
-//         let value = memory
-//             .get(region1, entity1, nonce, component)
-//             .await
-//             .unwrap();
-//
-//         let expected_parameter = 143;
-//         assert_matches!(value, ComponentValue::Integer(expected_parameter));
-//         assert_eq!(value.unwrap_int(), expected_parameter);
-//     }
-//
-//     // Happy path
-//     #[tokio::test]
-//     async fn test_memory_set() {
-//         let region1 = String::from("region1");
-//         let entity1 = String::from("entity1");
-//         let component = String::from("x");
-//         let nonce = 0;
-//
-//         let sample_blueprint = get_sample_blueprint();
-//         let mut memory = Memory::new(
-//             String::from("Sonic's World"),
-//             String::from("This is Sonic's World"),
-//         );
-//         memory.migrated = true;
-//         memory.blueprint = sample_blueprint.clone();
-//
-//         let expected_parameter = 1337;
-//         let expected_value = ComponentValue::Integer(expected_parameter);
-//         memory
-//             .set(
-//                 region1.clone(),
-//                 entity1.clone(),
-//                 nonce,
-//                 component.clone(),
-//                 expected_value,
-//             )
-//             .await
-//             .unwrap();
-//
-//         let value = memory
-//             .blueprint
-//             .instances
-//             .get(&region1)
-//             .unwrap()
-//             .get(&entity1)
-//             .unwrap()[nonce as usize]
-//             .get(&component)
-//             .unwrap();
-//
-//         assert_matches!(value, _expected_value);
-//
-//         assert_eq!(value.clone().unwrap_int(), expected_parameter);
-//     }
-//
-//     fn get_sample_blueprint() -> Blueprint {
-//         let mut blueprint = Blueprint::new(
-//             String::from("Test World"),
-//             String::from("This is Sonic's World"),
-//         );
-//
-//         let region1 = String::from("region1");
-//         let region2 = String::from("region2");
-//         let entity1 = String::from("entity1");
-//         let entity2 = String::from("entity2");
-//
-//         // preload Region and Entity keys
-//         blueprint.preload(
-//             vec![region1.clone(), region2.clone()],
-//             vec![entity1.clone(), entity2.clone()],
-//         );
-//
-//         // load mock regions
-//         blueprint.add_region(region1.clone(), vec![entity1.clone()]);
-//         blueprint.add_region(region2.clone(), vec![entity2.clone()]);
-//         // load mock entity1
-//         let mut component_type_tree1: ComponentTypeTree = BTreeMap::new();
-//         component_type_tree1.insert("x".to_string(), "i64".to_string());
-//         component_type_tree1.insert("y".to_string(), "i64".to_string());
-//         blueprint.add_entity(entity1.clone(), component_type_tree1);
-//         // load mock entity2
-//         let mut component_type_tree2: ComponentTypeTree = BTreeMap::new();
-//         component_type_tree2.insert("w".to_string(), "f64".to_string());
-//         component_type_tree2.insert("h".to_string(), "f64".to_string());
-//         blueprint.add_entity(entity2.clone(), component_type_tree2);
-//         // load mock instances1
-//         let mut component_tree1: ComponentTree = BTreeMap::new();
-//         component_tree1.insert("x".to_string(), ComponentValue::Integer(143));
-//         component_tree1.insert("y".to_string(), ComponentValue::Integer(143));
-//         blueprint
-//             .add_instance(region1.clone(), entity1.clone(), component_tree1)
-//             .unwrap();
-//         // load mock instances2
-//         let mut component_tree2: ComponentTree = BTreeMap::new();
-//         component_tree2.insert("w".to_string(), ComponentValue::Float(143.0));
-//         component_tree2.insert("h".to_string(), ComponentValue::Float(143.0));
-//         blueprint
-//             .add_instance(region2, entity2, component_tree2)
-//             .unwrap();
-//
-//         blueprint
-//     }
+//     //     #[tokio::test]
+//     //     async fn test_memory_get() {
+//     //         let region1 = String::from("region1");
+//     //         let entity1 = String::from("entity1");
+//     //         let component = String::from("x");
+//     //         let nonce = 0;
+//     //
+//     //         let sample_blueprint = get_sample_blueprint();
+//     //         let mut memory = Memory::new(
+//     //             String::from("Sonic's World"),
+//     //             String::from("This is Sonic's world"),
+//     //         );
+//     //         memory.migrated = true;
+//     //         memory.blueprint = sample_blueprint.clone();
+//     //
+//     //         let value = memory
+//     //             .get(region1, entity1, nonce, component)
+//     //             .await
+//     //             .unwrap();
+//     //
+//     //         let expected_parameter = 143;
+//     //         assert_matches!(value, ComponentValue::Integer(expected_parameter));
+//     //         assert_eq!(value.unwrap_int(), expected_parameter);
+//     //     }
+//     //
+//     //     // Happy path
+//     //     #[tokio::test]
+//     //     async fn test_memory_set() {
+//     //         let region1 = String::from("region1");
+//     //         let entity1 = String::from("entity1");
+//     //         let component = String::from("x");
+//     //         let nonce = 0;
+//     //
+//     //         let sample_blueprint = get_sample_blueprint();
+//     //         let mut memory = Memory::new(
+//     //             String::from("Sonic's World"),
+//     //             String::from("This is Sonic's World"),
+//     //         );
+//     //         memory.migrated = true;
+//     //         memory.blueprint = sample_blueprint.clone();
+//     //
+//     //         let expected_parameter = 1337;
+//     //         let expected_value = ComponentValue::Integer(expected_parameter);
+//     //         memory
+//     //             .set(
+//     //                 region1.clone(),
+//     //                 entity1.clone(),
+//     //                 nonce,
+//     //                 component.clone(),
+//     //                 expected_value,
+//     //             )
+//     //             .await
+//     //             .unwrap();
+//     //
+//     //         let value = memory
+//     //             .blueprint
+//     //             .instances
+//     //             .get(&region1)
+//     //             .unwrap()
+//     //             .get(&entity1)
+//     //             .unwrap()[nonce as usize]
+//     //             .get(&component)
+//     //             .unwrap();
+//     //
+//     //         assert_matches!(value, _expected_value);
+//     //
+//     //         assert_eq!(value.clone().unwrap_int(), expected_parameter);
+//     //     }
+//     //
+//     //     fn get_sample_blueprint() -> Blueprint {
+//     //         let mut blueprint = Blueprint::new(
+//     //             String::from("Test World"),
+//     //             String::from("This is Sonic's World"),
+//     //         );
+//     //
+//     //         let region1 = String::from("region1");
+//     //         let region2 = String::from("region2");
+//     //         let entity1 = String::from("entity1");
+//     //         let entity2 = String::from("entity2");
+//     //
+//     //         // preload Region and Entity keys
+//     //         blueprint.preload(
+//     //             vec![region1.clone(), region2.clone()],
+//     //             vec![entity1.clone(), entity2.clone()],
+//     //         );
+//     //
+//     //         // load mock regions
+//     //         blueprint.add_region(region1.clone(), vec![entity1.clone()]);
+//     //         blueprint.add_region(region2.clone(), vec![entity2.clone()]);
+//     //         // load mock entity1
+//     //         let mut component_type_tree1: ComponentTypeTree = BTreeMap::new();
+//     //         component_type_tree1.insert("x".to_string(), "i64".to_string());
+//     //         component_type_tree1.insert("y".to_string(), "i64".to_string());
+//     //         blueprint.add_entity(entity1.clone(), component_type_tree1);
+//     //         // load mock entity2
+//     //         let mut component_type_tree2: ComponentTypeTree = BTreeMap::new();
+//     //         component_type_tree2.insert("w".to_string(), "f64".to_string());
+//     //         component_type_tree2.insert("h".to_string(), "f64".to_string());
+//     //         blueprint.add_entity(entity2.clone(), component_type_tree2);
+//     //         // load mock instances1
+//     //         let mut component_tree1: ComponentTree = BTreeMap::new();
+//     //         component_tree1.insert("x".to_string(), ComponentValue::Integer(143));
+//     //         component_tree1.insert("y".to_string(), ComponentValue::Integer(143));
+//     //         blueprint
+//     //             .add_instance(region1.clone(), entity1.clone(), component_tree1)
+//     //             .unwrap();
+//     //         // load mock instances2
+//     //         let mut component_tree2: ComponentTree = BTreeMap::new();
+//     //         component_tree2.insert("w".to_string(), ComponentValue::Float(143.0));
+//     //         component_tree2.insert("h".to_string(), ComponentValue::Float(143.0));
+//     //         blueprint
+//     //             .add_instance(region2, entity2, component_tree2)
+//     //             .unwrap();
+//     //
+//     //         blueprint
+//     //     }
 // }
