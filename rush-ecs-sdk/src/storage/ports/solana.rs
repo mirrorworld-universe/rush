@@ -20,7 +20,6 @@ use std::path::Path;
 // #[derive(Clone, Debug, Default, Eq, PartialEq)]
 #[derive(Debug, PartialEq)]
 pub struct Solana {
-    pub migrated: bool,
     pub blueprint: Blueprint,
     pub program_id: Pubkey,
     pub signer: Keypair,
@@ -40,7 +39,6 @@ impl Solana {
             .expect("Expected a valid blueprint path");
 
         Self {
-            migrated: false,
             blueprint,
             program_id,
             signer,
@@ -144,17 +142,12 @@ impl Storage for Solana {
             }
         }
 
-        self.migrated = true;
         self.world = Some(world_pda);
 
         Ok(())
     }
 
     fn create(&mut self, region: Region, entity: Entity) -> Result<u64> {
-        if !self.migrated {
-            bail!(StorageError::NotMigrated);
-        }
-
         let client = RpcClient::new(self.rpc_url.clone());
 
         // fetch nonce
@@ -207,10 +200,6 @@ impl Storage for Solana {
 
     // TODO: Implement Delete instance
     fn delete(&mut self, region: Region, entity: Entity, nonce: u64) -> Result<()> {
-        if !self.migrated {
-            bail!(StorageError::NotMigrated);
-        }
-
         Ok(())
     }
 
@@ -221,10 +210,6 @@ impl Storage for Solana {
         nonce: u64,
         component: Component,
     ) -> Result<ComponentValue> {
-        if !self.migrated {
-            bail!(StorageError::NotMigrated);
-        }
-
         let client = RpcClient::new(self.rpc_url.clone());
         let (instance_pda, _) = InstancePDA::find_pda(
             &self.program_id,
@@ -255,10 +240,6 @@ impl Storage for Solana {
         component: Component,
         value: ComponentValue,
     ) -> Result<()> {
-        if !self.migrated {
-            bail!(StorageError::NotMigrated);
-        }
-
         let client = RpcClient::new(self.rpc_url.clone());
 
         let (instance_pda, _) = InstancePDA::find_pda(
