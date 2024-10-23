@@ -18,13 +18,13 @@ rush-ecs-core = { version = "0.1.0", path = "../rush-ecs-core" }
 rush-ecs-parser = { version = "0.1.0", path = "../rush-ecs-parser" }
 rush-ecs-svm = { version = "0.1.0", path = "../rush-ecs-svm" }
 thiserror = "1.0.63"
-tokio = "1.40.0"
 
 [dev-dependencies]
 assert_matches = "1.5.0"
 solana-program-test = "=2.0.13"
 solana-sdk = "=2.0.13"
 solana-client = "=2.0.13"
+tokio = { version = "1.40.0", features = ["rt-multi-thread"] }
 
 # Ensure unsupported crates from solana_sdk/solana_client don't get
 # imported into program specific code

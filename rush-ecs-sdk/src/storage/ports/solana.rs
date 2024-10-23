@@ -1,6 +1,5 @@
 use crate::{error::StorageError, storage::Storage};
 use anyhow::{bail, Result};
-use async_trait::async_trait;
 use borsh::BorshDeserialize;
 use colored::Colorize;
 use rush_ecs_core::blueprint::{Blueprint, Component, ComponentValue, Entity, Region};
@@ -10,16 +9,13 @@ use rush_ecs_svm::{
     pda::{InstancePDA, WorldPDA},
     state::{Instance, World},
 };
-use solana_client::nonblocking::rpc_client::RpcClient;
+use solana_client::rpc_client::RpcClient;
 use solana_sdk::{
-    borsh1,
-    hash::hash,
-    instruction::Instruction,
     pubkey::Pubkey,
     signer::{keypair::Keypair, Signer},
     transaction::Transaction,
 };
-use std::{collections::BTreeMap, path::Path};
+use std::path::Path;
 
 // #[derive(Clone, Debug, Default, Eq, PartialEq)]
 #[derive(Debug, PartialEq)]
@@ -54,9 +50,8 @@ impl Solana {
     }
 }
 
-#[async_trait]
 impl Storage for Solana {
-    async fn migrate(&mut self) -> Result<()> {
+    fn migrate(&mut self) -> Result<()> {
         let client = RpcClient::new(self.rpc_url.clone());
 
         let regions = self.blueprint.regions.keys().cloned().collect::<Vec<_>>();
@@ -79,7 +74,7 @@ impl Storage for Solana {
             &self.signer.pubkey(),
         );
 
-        let recent_blockhash = client.get_latest_blockhash().await?;
+        let recent_blockhash = client.get_latest_blockhash()?;
         let tx = Transaction::new_signed_with_payer(
             &[ix],
             Some(&self.signer.pubkey()),
@@ -87,7 +82,7 @@ impl Storage for Solana {
             recent_blockhash,
         );
 
-        let signature = client.send_and_confirm_transaction(&tx).await?;
+        let signature = client.send_and_confirm_transaction(&tx)?;
 
         println!(
             "[{}] Created world: {}, Signature: {}",
@@ -130,14 +125,14 @@ impl Storage for Solana {
                         &world_pda,
                     );
 
-                    let recent_blockhash = client.get_latest_blockhash().await?;
+                    let recent_blockhash = client.get_latest_blockhash()?;
                     let tx = Transaction::new_signed_with_payer(
                         &[ix],
                         Some(&self.signer.pubkey()),
                         &[&self.signer],
                         recent_blockhash,
                     );
-                    let signature = client.send_and_confirm_transaction(&tx).await?;
+                    let signature = client.send_and_confirm_transaction(&tx)?;
                     println!(
                         "[{}] Spawned #{}: {}, Signature: {}",
                         "SUCCESS".green().bold(),
@@ -155,7 +150,7 @@ impl Storage for Solana {
         Ok(())
     }
 
-    async fn create(&mut self, region: Region, entity: Entity) -> Result<u64> {
+    fn create(&mut self, region: Region, entity: Entity) -> Result<u64> {
         if !self.migrated {
             bail!(StorageError::NotMigrated);
         }
@@ -164,7 +159,7 @@ impl Storage for Solana {
 
         // fetch nonce
         let world_pda = self.world.unwrap();
-        let world_account_data = client.get_account_data(&world_pda).await.unwrap();
+        let world_account_data = client.get_account_data(&world_pda)?;
         let world = World::try_from_slice(&world_account_data)?;
         // TODO: Consider using the nonce internally in spawn_entity instruction
         let nonce = world.instances.get(&region).unwrap().get(&entity).unwrap() + 1;
@@ -190,14 +185,14 @@ impl Storage for Solana {
             &self.world.unwrap(),
         );
 
-        let recent_blockhash = client.get_latest_blockhash().await?;
+        let recent_blockhash = client.get_latest_blockhash()?;
         let tx = Transaction::new_signed_with_payer(
             &[ix],
             Some(&self.signer.pubkey()),
             &[&self.signer],
             recent_blockhash,
         );
-        let signature = client.send_and_confirm_transaction(&tx).await?;
+        let signature = client.send_and_confirm_transaction(&tx)?;
 
         println!(
             "[{}] Spawned #{}: {}, Signature: {}",
@@ -211,7 +206,7 @@ impl Storage for Solana {
     }
 
     // TODO: Implement Delete instance
-    async fn delete(&mut self, region: Region, entity: Entity, nonce: u64) -> Result<()> {
+    fn delete(&mut self, region: Region, entity: Entity, nonce: u64) -> Result<()> {
         if !self.migrated {
             bail!(StorageError::NotMigrated);
         }
@@ -219,7 +214,7 @@ impl Storage for Solana {
         Ok(())
     }
 
-    async fn get(
+    fn get(
         &mut self,
         region: Region,
         entity: Entity,
@@ -238,7 +233,7 @@ impl Storage for Solana {
             &entity,
             nonce,
         );
-        let data = client.get_account_data(&instance_pda).await?;
+        let data = client.get_account_data(&instance_pda)?;
         let instance_state = Instance::try_from_slice(&data)?;
         let value = instance_state.components.get(&component).unwrap().clone();
 
@@ -252,7 +247,7 @@ impl Storage for Solana {
         Ok(value)
     }
 
-    async fn set(
+    fn set(
         &mut self,
         region: Region,
         entity: Entity,
@@ -282,14 +277,14 @@ impl Storage for Solana {
             &self.signer.pubkey(),
         );
 
-        let recent_blockhash = client.get_latest_blockhash().await?;
+        let recent_blockhash = client.get_latest_blockhash()?;
         let tx = Transaction::new_signed_with_payer(
             &[ix],
             Some(&self.signer.pubkey()),
             &[&self.signer],
             recent_blockhash,
         );
-        let signature = client.send_and_confirm_transaction(&tx).await?;
+        let signature = client.send_and_confirm_transaction(&tx)?;
 
         println!(
             "[{}] Updating #{}: {}, Signature: {}",
@@ -307,19 +302,18 @@ impl Storage for Solana {
 mod tests {
     use super::*;
     use assert_matches::assert_matches;
-    use borsh::{BorshDeserialize, BorshSerialize};
-    use rush_ecs_core::blueprint::*;
+    use borsh::BorshDeserialize;
     use rush_ecs_svm::state::Instance;
     use solana_program_test::*;
     use solana_sdk::{
-        account::Account,
+        borsh1,
         signer::{keypair::Keypair, SeedDerivable},
     };
-    use std::{collections::BTreeMap, str::FromStr};
+    use std::str::FromStr;
 
     // Happy path
-    #[tokio::test]
-    async fn test_solana_migrate() {
+    #[test]
+    fn test_solana_migrate() {
         // prepare test context
         let program_id = Pubkey::from_str("FXm4HiySCyKv3HrynYKY7yfanyH7dJGMuvxXsbnvtW5c").unwrap();
         let seed = [
@@ -343,9 +337,9 @@ mod tests {
         let client = RpcClient::new(rpc_url.clone());
         let mut solana = Solana::new(program_id, signer.insecure_clone(), rpc_url, path_str);
 
-        solana.migrate().await.unwrap();
+        solana.migrate().unwrap();
 
-        let data = client.get_account_data(&world_pda).await.unwrap();
+        let data = client.get_account_data(&world_pda).unwrap();
         let state = borsh1::try_from_slice_unchecked::<World>(&data).unwrap();
 
         assert!(state.is_initialized());
@@ -365,8 +359,8 @@ mod tests {
     }
 
     // Happy path
-    #[tokio::test]
-    async fn test_solana_create() {
+    #[test]
+    fn test_solana_create() {
         // prepare test context
         let program_id = Pubkey::from_str("FXm4HiySCyKv3HrynYKY7yfanyH7dJGMuvxXsbnvtW5c").unwrap();
         let seed = [
@@ -390,15 +384,15 @@ mod tests {
         let client = RpcClient::new(rpc_url.clone());
         let mut solana = Solana::new(program_id, signer.insecure_clone(), rpc_url, path_str);
 
-        solana.migrate().await.unwrap();
+        solana.migrate().unwrap();
         let region = "farm".to_string();
         let entity = "player".to_string();
 
-        solana.create(region.clone(), entity.clone()).await.unwrap();
+        solana.create(region.clone(), entity.clone()).unwrap();
 
         let expected_nonce = 2;
 
-        let data = client.get_account_data(&world_pda).await.unwrap();
+        let data = client.get_account_data(&world_pda).unwrap();
         let world_state = borsh1::try_from_slice_unchecked::<World>(&data).unwrap();
 
         assert_eq!(
@@ -413,7 +407,7 @@ mod tests {
 
         let (instance_pda, instance_bump) =
             InstancePDA::find_pda(&program_id, &world_pda, &region, &entity, expected_nonce);
-        let data = client.get_account_data(&instance_pda).await.unwrap();
+        let data = client.get_account_data(&instance_pda).unwrap();
         let instance_state = borsh1::try_from_slice_unchecked::<Instance>(&data).unwrap();
         let default_components = blueprint.get_default_components(&entity).unwrap();
         assert_eq!(instance_state.components, default_components);
@@ -423,8 +417,8 @@ mod tests {
     }
 
     // Happy path
-    #[tokio::test]
-    async fn test_solana_get() {
+    #[test]
+    fn test_solana_get() {
         // prepare test context
         let program_id = Pubkey::from_str("FXm4HiySCyKv3HrynYKY7yfanyH7dJGMuvxXsbnvtW5c").unwrap();
         let seed = [
@@ -447,22 +441,21 @@ mod tests {
         let rpc_url = String::from("http://127.0.0.1:8899");
         let mut solana = Solana::new(program_id, signer.insecure_clone(), rpc_url, path_str);
 
-        solana.migrate().await.unwrap();
+        solana.migrate().unwrap();
 
         let region = "farm".to_string();
         let entity = "apple".to_string();
         let component = "x".to_string();
 
-        let component_value = solana.get(region, entity, 1, component).await.unwrap();
+        let component_value = solana.get(region, entity, 1, component).unwrap();
 
         let expected_parameter = 0;
         assert_matches!(component_value, ComponentValue::Integer(expected_parameter));
     }
 
     // Happy path
-    #[tokio::test]
-
-    async fn test_solana_set() {
+    #[test]
+    fn test_solana_set() {
         // prepare test context
         let program_id = Pubkey::from_str("FXm4HiySCyKv3HrynYKY7yfanyH7dJGMuvxXsbnvtW5c").unwrap();
         let seed = [
@@ -486,7 +479,7 @@ mod tests {
         let client = RpcClient::new(rpc_url.clone());
         let mut solana = Solana::new(program_id, signer.insecure_clone(), rpc_url, path_str);
 
-        solana.migrate().await.unwrap();
+        solana.migrate().unwrap();
 
         let region = "farm".to_string();
         let entity = "player".to_string();
@@ -502,13 +495,12 @@ mod tests {
                 component.clone(),
                 value,
             )
-            .await
             .unwrap();
 
         let (instance_pda, _) =
             InstancePDA::find_pda(&program_id, &world_pda, &region, &entity, nonce);
 
-        let data = client.get_account_data(&instance_pda).await.unwrap();
+        let data = client.get_account_data(&instance_pda).unwrap();
         let instance_state = Instance::try_from_slice(&data).unwrap();
         let component_value = instance_state.components.get(&component).unwrap().clone();
         assert_matches!(component_value, value);

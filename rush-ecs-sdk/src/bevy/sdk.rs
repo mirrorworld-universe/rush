@@ -38,11 +38,11 @@ impl BevySDK {
     }
 
     pub async fn migrate(&mut self) -> Result<()> {
-        self.storage.migrate().await
+        self.storage.migrate()
     }
 
     pub async fn create(&mut self, region: Region, entity: Entity) -> Result<u64> {
-        self.storage.create(region, entity).await
+        self.storage.create(region, entity)
     }
 
     pub async fn get(
@@ -52,7 +52,7 @@ impl BevySDK {
         nonce: u64,
         component: Component,
     ) -> Result<ComponentValue> {
-        self.storage.get(region, entity, nonce, component).await
+        self.storage.get(region, entity, nonce, component)
     }
 
     pub async fn set(
@@ -63,9 +63,7 @@ impl BevySDK {
         component: Component,
         value: ComponentValue,
     ) -> Result<()> {
-        self.storage
-            .set(region, entity, nonce, component, value)
-            .await
+        self.storage.set(region, entity, nonce, component, value)
     }
 
     pub fn signin(&self) -> Keypair {
