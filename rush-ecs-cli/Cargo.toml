@@ -1,5 +1,5 @@
 [package]
-name = "rush-cli"
+name = "rush-ecs-cli"
 version = "0.1.0"
 edition = "2021"
 authors = ["Sonic Engineering"]
@@ -31,10 +31,10 @@ keywords = ["rush", "sonic", "solana", "gamedev", "ecs", "web3", "blockchain"]
 anyhow = "1.0.86"
 clap = "4.5.16"
 colored = "2.1.0"
-rush-core = { version = "0.1.0", path = "../rush-core" }
-rush-manifest = { version = "0.1.0", path = "../rush-manifest" }
-rush-parser = { version = "0.1.0", path = "../rush-parser" }
-rush-sdk = { version = "0.1.0", path = "../rush-sdk" }
+rush-ecs-core = { version = "0.1.0", path = "../rush-ecs-core" }
+rush-ecs-manifest = { version = "0.1.0", path = "../rush-ecs-manifest" }
+rush-ecs-parser = { version = "0.1.0", path = "../rush-ecs-parser" }
+rush-ecs-sdk = { version = "0.1.0", path = "../rush-ecs-sdk" }
 thiserror = "1.0.63"
 tokio = "1.41.0"
 toml = "0.8.19"

@@ -2,16 +2,16 @@
 resolver = "2"
 
 members = [
-	"rush-core",
-	"rush-cli",
-	"rush-sdk",
-	"rush-parser",
-	"rush-visor",
-	"rush-svm",
-	"rush-keystore",
-	"rush-manifest",
-	"rush-svm/programs/rush-proxy",
-	"rush-svm/programs/rush-store",
+	"rush-ecs-core",
+	"rush-ecs-cli",
+	"rush-ecs-sdk",
+	"rush-ecs-parser",
+	"rush-ecs-visor",
+	"rush-ecs-svm",
+	"rush-ecs-keystore",
+	"rush-ecs-manifest",
+	"rush-ecs-svm/programs/rush-proxy",
+	"rush-ecs-svm/programs/rush-store",
 ]
 
 exclude = [

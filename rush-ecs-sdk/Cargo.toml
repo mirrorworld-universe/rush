@@ -1,5 +1,5 @@
 [package]
-name = "rush-sdk"
+name = "rush-ecs-sdk"
 version = "0.1.0"
 edition = "2021"
 authors = ["Sonic Engineering"]
@@ -14,9 +14,9 @@ anyhow = "1.0.87"
 async-trait = "0.1.82"
 borsh = "1.5.1"
 colored = "2.1.0"
-rush-core = { version = "0.1.0", path = "../rush-core" }
-rush-parser = { version = "0.1.0", path = "../rush-parser" }
-rush-svm = { version = "0.1.0", path = "../rush-svm" }
+rush-ecs-core = { version = "0.1.0", path = "../rush-ecs-core" }
+rush-ecs-parser = { version = "0.1.0", path = "../rush-ecs-parser" }
+rush-ecs-svm = { version = "0.1.0", path = "../rush-ecs-svm" }
 thiserror = "1.0.63"
 tokio = "1.40.0"
 

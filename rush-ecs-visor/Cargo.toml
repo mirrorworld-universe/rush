@@ -1,5 +1,5 @@
 [package]
-name = "rush-visor"
+name = "rush-ecs-visor"
 version = "0.1.0"
 edition = "2021"
 

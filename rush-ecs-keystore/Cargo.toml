@@ -1,16 +1,12 @@
 [package]
-name = "rush-ecs-parser"
+name = "rush-ecs-keystore"
 version = "0.1.0"
 edition = "2021"
 authors = ["Sonic Engineering"]
-description = "Rush ECS Framework Parser"
+description = "Rush ECS Framework Keystore"
 homepage = "https://sonic.game/"
 repository = "https://github.com/mirrorworld-universe/rush"
 license = "Apache-2.0"
 keywords = ["rush", "sonic", "solana", "gamedev", "ecs"]
 
 [dependencies]
-anyhow = "1.0.86"
-rush-ecs-core = { version = "0.1.0", path = "../rush-core" }
-thiserror = "1.0.63"
-toml = "0.8.19"
