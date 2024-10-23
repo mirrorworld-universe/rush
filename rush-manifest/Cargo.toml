@@ -2,6 +2,12 @@
 name = "rush-manifest"
 version = "0.1.0"
 edition = "2021"
+authors = ["Sonic Engineering"]
+description = "Rush ECS Framework Manifest Standard"
+homepage = "https://sonic.game/"
+repository = "https://github.com/mirrorworld-universe/rush"
+license = "MIT"
+keywords = ["rush", "sonic", "solana", "gamedev", "ecs", "web3", "blockchain"]
 
 [dependencies]
 anyhow = "1.0.90"
