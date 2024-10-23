@@ -1,4 +1,4 @@
-use rush_svm::instruction::accounts::{Context, DespawnEntityAccounts};
+use rush_ecs_svm::instruction::accounts::{Context, DespawnEntityAccounts};
 use solana_program::{entrypoint::ProgramResult, pubkey::Pubkey};
 
 /// Despawn Entity

@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 
 use borsh::{BorshDeserialize, BorshSerialize};
-use rush_core::blueprint::{Component, ComponentValue, Entity, Region};
+use rush_ecs_core::blueprint::{Component, ComponentValue, Entity, Region};
 use shank::{ShankContext, ShankInstruction};
 
 /// RushStore Instruction List

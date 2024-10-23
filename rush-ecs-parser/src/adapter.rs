@@ -4,7 +4,7 @@
 //! supported formats: `TOML`
 
 use anyhow::Result;
-use rush_core::blueprint::{Blueprint, BlueprintString};
+use rush_ecs_core::blueprint::{Blueprint, BlueprintString};
 
 /// Parser Trait
 ///

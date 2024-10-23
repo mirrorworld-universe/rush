@@ -1,8 +1,8 @@
 use crate::{error::*, handlers::CliHandler};
 use anyhow::{bail, Result};
 use clap::ArgMatches;
-use rush_manifest::{Chain, Manifest};
-use rush_sdk::bevy::BevySDK;
+use rush_ecs_manifest::{Chain, Manifest};
+use rush_ecs_sdk::bevy::BevySDK;
 use std::path::Path;
 
 pub struct DeployHandler;

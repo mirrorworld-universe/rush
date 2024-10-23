@@ -3170,23 +3170,23 @@ dependencies = [
 ]
 
 [[package]]
-name = "rush-cli"
+name = "rush-ecs-cli"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap 4.5.16",
  "colored",
- "rush-core",
- "rush-manifest",
- "rush-parser",
- "rush-sdk",
+ "rush-ecs-core",
+ "rush-ecs-manifest",
+ "rush-ecs-parser",
+ "rush-ecs-sdk",
  "thiserror",
  "tokio",
  "toml 0.8.19",
 ]
 
 [[package]]
-name = "rush-core"
+name = "rush-ecs-core"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -3196,11 +3196,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "rush-keystore"
+name = "rush-ecs-keystore"
 version = "0.1.0"
 
 [[package]]
-name = "rush-manifest"
+name = "rush-ecs-manifest"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -3209,17 +3209,17 @@ dependencies = [
 ]
 
 [[package]]
-name = "rush-parser"
+name = "rush-ecs-parser"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "rush-core",
+ "rush-ecs-core",
  "thiserror",
  "toml 0.8.19",
 ]
 
 [[package]]
-name = "rush-proxy"
+name = "rush-ecs-proxy"
 version = "0.1.0"
 dependencies = [
  "arrayref",
@@ -3227,8 +3227,8 @@ dependencies = [
  "borsh 1.5.1",
  "num-derive",
  "num-traits",
- "rush-core",
- "rush-svm",
+ "rush-ecs-core",
+ "rush-ecs-svm",
  "shank",
  "solana-program",
  "solana-program-test",
@@ -3239,7 +3239,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rush-sdk"
+name = "rush-ecs-sdk"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -3247,9 +3247,9 @@ dependencies = [
  "async-trait",
  "borsh 1.5.1",
  "colored",
- "rush-core",
- "rush-parser",
- "rush-svm",
+ "rush-ecs-core",
+ "rush-ecs-parser",
+ "rush-ecs-svm",
  "solana-client",
  "solana-program-test",
  "solana-sdk",
@@ -3258,7 +3258,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rush-store"
+name = "rush-ecs-store"
 version = "0.1.0"
 dependencies = [
  "arrayref",
@@ -3266,8 +3266,8 @@ dependencies = [
  "borsh 1.5.1",
  "num-derive",
  "num-traits",
- "rush-core",
- "rush-svm",
+ "rush-ecs-core",
+ "rush-ecs-svm",
  "shank",
  "solana-program",
  "solana-program-test",
@@ -3278,14 +3278,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "rush-svm"
+name = "rush-ecs-svm"
 version = "0.1.0"
 dependencies = [
  "arrayref",
  "borsh 1.5.1",
  "num-derive",
  "num-traits",
- "rush-core",
+ "rush-ecs-core",
  "shank",
  "solana-program",
  "solana-sdk",
@@ -3295,7 +3295,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rush-visor"
+name = "rush-ecs-visor"
 version = "0.1.0"
 
 [[package]]

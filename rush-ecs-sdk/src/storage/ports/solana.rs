@@ -3,9 +3,9 @@ use anyhow::{bail, Result};
 use async_trait::async_trait;
 use borsh::BorshDeserialize;
 use colored::Colorize;
-use rush_core::blueprint::{Blueprint, Component, ComponentValue, Entity, Region};
-use rush_parser::{toml::TomlParser, Loader};
-use rush_svm::{
+use rush_ecs_core::blueprint::{Blueprint, Component, ComponentValue, Entity, Region};
+use rush_ecs_parser::{toml::TomlParser, Loader};
+use rush_ecs_svm::{
     client::{ix_create_world, ix_spawn_entity, ix_update_entity},
     pda::{InstancePDA, WorldPDA},
     state::{Instance, World},
@@ -308,8 +308,8 @@ mod tests {
     use super::*;
     use assert_matches::assert_matches;
     use borsh::{BorshDeserialize, BorshSerialize};
-    use rush_core::blueprint::*;
-    use rush_svm::state::Instance;
+    use rush_ecs_core::blueprint::*;
+    use rush_ecs_svm::state::Instance;
     use solana_program_test::*;
     use solana_sdk::{
         account::Account,

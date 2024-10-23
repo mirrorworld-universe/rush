@@ -22,7 +22,7 @@ use spl_discriminator::{ArrayDiscriminator, SplDiscriminate};
     ShankAccount,
     SplDiscriminate,
 )]
-#[discriminator_hash_input("rush_proxy::state::User")]
+#[discriminator_hash_input("rush_ecs_proxy::state::User")]
 pub struct User {
     /// Identifier for this specific structure
     pub discriminator: [u8; 8],

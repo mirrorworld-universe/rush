@@ -1,5 +1,5 @@
 use crate::instruction::RushStoreInstruction;
-use rush_core::blueprint::{Component, ComponentValue, Entity, Region};
+use rush_ecs_core::blueprint::{Component, ComponentValue, Entity, Region};
 use solana_sdk::{
     instruction::{AccountMeta, Instruction},
     pubkey::Pubkey,

@@ -1,4 +1,4 @@
-use rush_core::blueprint::BlueprintString;
+use rush_ecs_core::blueprint::BlueprintString;
 use std::{
     fs::{read_dir, read_to_string},
     path::Path,

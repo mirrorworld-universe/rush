@@ -3,7 +3,7 @@ use std::str::FromStr;
 use crate::auth::{Auth, FilesystemAuth};
 use crate::storage::{Solana, Storage};
 use anyhow::Result;
-use rush_core::blueprint::{Component, ComponentValue, Entity, Region};
+use rush_ecs_core::blueprint::{Component, ComponentValue, Entity, Region};
 use solana_sdk::{pubkey::Pubkey, signer::keypair::Keypair};
 
 pub struct BevySDK {

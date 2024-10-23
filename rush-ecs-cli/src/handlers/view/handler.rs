@@ -1,7 +1,7 @@
 use crate::{error::*, handlers::CliHandler};
 use anyhow::{bail, Result};
 use clap::ArgMatches;
-use rush_parser::{toml::TomlParser, Loader};
+use rush_ecs_parser::{toml::TomlParser, Loader};
 use std::path::Path;
 
 pub struct ViewHandler;

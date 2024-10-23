@@ -2,7 +2,7 @@
 
 use crate::{adapter::Parser, error::utils::ensure_syntax};
 use anyhow::Result;
-use rush_core::blueprint::{
+use rush_ecs_core::blueprint::{
     Blueprint, BlueprintString, Component, ComponentType, ComponentValue, Entity,
 };
 use std::collections::BTreeMap;

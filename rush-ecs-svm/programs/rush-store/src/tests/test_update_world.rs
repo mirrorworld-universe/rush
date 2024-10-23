@@ -1,4 +1,4 @@
-use rush_svm::{
+use rush_ecs_svm::{
     client::{ix_create_world, ix_update_world},
     pda::WorldPDA,
     state::World,
@@ -29,7 +29,7 @@ async fn test_update_world() {
     let program_id = Pubkey::new_unique();
     let program_test = ProgramTest::new(
         // .so fixture is  retrieved from /target/deploy
-        "rush_store",
+        "rush_ecs_store",
         program_id,
         // shank is incompatible with instantiating the BuiltInFunction
         None,

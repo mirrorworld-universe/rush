@@ -1,4 +1,4 @@
-use rush_svm::instruction::accounts::{Context, DeleteWorldAccounts};
+use rush_ecs_svm::instruction::accounts::{Context, DeleteWorldAccounts};
 use solana_program::{entrypoint::ProgramResult, pubkey::Pubkey};
 
 /// Delete World

@@ -2,7 +2,7 @@ use crate::{error::*, handlers::CliHandler, utils::print_happy_peepo};
 use anyhow::{bail, Result};
 use clap::ArgMatches;
 use colored::Colorize;
-use rush_manifest::{Chain, Manifest};
+use rush_ecs_manifest::{Chain, Manifest};
 use std::{
     fs::{create_dir, File},
     io::Write,

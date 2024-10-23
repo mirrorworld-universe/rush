@@ -1,6 +1,6 @@
 use assert_matches::assert_matches;
-use rush_core::blueprint::{Component, ComponentValue};
-use rush_svm::{
+use rush_ecs_core::blueprint::{Component, ComponentValue};
+use rush_ecs_svm::{
     client::{ix_create_world, ix_despawn_entity, ix_spawn_entity},
     pda::{InstancePDA, WorldPDA},
     state::Instance,
@@ -15,7 +15,7 @@ async fn test_despawn_entity() {
     let program_id = Pubkey::new_unique();
     let program_test = ProgramTest::new(
         // .so fixture is  retrieved from /target/deploy
-        "rush_store",
+        "rush_ecs_store",
         program_id,
         // shank is incompatible with instantiating the BuiltInFunction
         None,

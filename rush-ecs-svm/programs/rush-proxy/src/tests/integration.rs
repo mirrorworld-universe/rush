@@ -1,7 +1,7 @@
 use super::client;
 use crate::instruction::RushProxyInstruction;
 use borsh::{BorshDeserialize, BorshSerialize};
-use rush_svm::{
+use rush_ecs_svm::{
     pda::{UserPDA, WorldPDA},
     state::{User, World},
 };
@@ -35,8 +35,8 @@ async fn test_proxy() {
     let proxy_program_id = Pubkey::from_str("1111111QLbz7JHiBTspS962RLKV8GndWFwiEaqKM").unwrap();
     let store_program_id = Pubkey::from_str("1111111ogCyDbaRMvkdsHB3qfdyFYaG1WtRUAfdh").unwrap();
     let mut test = ProgramTest::default();
-    test.add_program("rush_proxy", proxy_program_id, None);
-    test.add_program("rush_store", store_program_id, None);
+    test.add_program("rush_ecs_proxy", proxy_program_id, None);
+    test.add_program("rush_ecs_store", store_program_id, None);
 
     // TEST START
 
@@ -46,7 +46,7 @@ async fn test_proxy() {
     let entities = vec!["entity1".to_string(), "entity2".to_string()];
     let user_agent_salt = String::from("myuseragent");
 
-    // IMPORTANT NOTE: Use the PROGRAM_ID of rush_store for WORLD_PDA, not rush_proxy
+    // IMPORTANT NOTE: Use the PROGRAM_ID of rush_ecs_store for WORLD_PDA, not rush_proxy
     let (world_pda, world_bump) = WorldPDA::find_pda(&store_program_id, &name, &description);
 
     println!("PROXY PROGRAM ID: {}", proxy_program_id);

@@ -1,5 +1,5 @@
 use borsh::{BorshDeserialize, BorshSerialize};
-use rush_core::blueprint::{Entity, Region};
+use rush_ecs_core::blueprint::{Entity, Region};
 use shank::{ShankContext, ShankInstruction};
 
 #[derive(

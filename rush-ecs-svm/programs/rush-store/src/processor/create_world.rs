@@ -1,7 +1,7 @@
 use borsh::BorshSerialize;
-use rush_core::blueprint::{Entity, Region};
-use rush_svm::instruction::accounts::{Context, CreateWorldAccounts};
-use rush_svm::{pda::WorldPDA, state::World};
+use rush_ecs_core::blueprint::{Entity, Region};
+use rush_ecs_svm::instruction::accounts::{Context, CreateWorldAccounts};
+use rush_ecs_svm::{pda::WorldPDA, state::World};
 use solana_program::{
     borsh1, entrypoint::ProgramResult, program::invoke_signed, pubkey::Pubkey, rent::Rent,
     system_instruction, sysvar::Sysvar,

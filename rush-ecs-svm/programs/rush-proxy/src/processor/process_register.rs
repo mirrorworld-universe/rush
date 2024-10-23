@@ -1,6 +1,6 @@
 use crate::instruction::accounts::{Context, RegisterAccounts};
 use borsh::BorshSerialize;
-use rush_svm::{pda::UserPDA, state::User};
+use rush_ecs_svm::{pda::UserPDA, state::User};
 use solana_program::{
     entrypoint::ProgramResult, program::invoke_signed, pubkey::Pubkey, rent::Rent,
     system_instruction, sysvar::Sysvar,

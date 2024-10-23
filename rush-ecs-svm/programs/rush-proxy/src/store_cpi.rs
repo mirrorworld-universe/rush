@@ -1,7 +1,7 @@
 //! Similar to client in rush-svm, but used solana-program
 //! instead of solana-sdk
-use rush_core::blueprint::{Component, ComponentValue, Entity, Region};
-use rush_svm::instruction::RushStoreInstruction;
+use rush_ecs_core::blueprint::{Component, ComponentValue, Entity, Region};
+use rush_ecs_svm::instruction::RushStoreInstruction;
 use solana_program::{
     instruction::{AccountMeta, Instruction},
     pubkey::Pubkey,

@@ -5,7 +5,7 @@
 
 use anyhow::Result;
 use async_trait::async_trait;
-use rush_core::blueprint::{Component, ComponentValue, Entity, Region};
+use rush_ecs_core::blueprint::{Component, ComponentValue, Entity, Region};
 
 /// Storage Trait
 ///

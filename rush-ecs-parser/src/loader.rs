@@ -1,7 +1,7 @@
 use super::adapter::Parser;
 use crate::utils::{dir_to_string, file_to_string};
 use anyhow::Result;
-use rush_core::blueprint::Blueprint;
+use rush_ecs_core::blueprint::Blueprint;
 use std::{
     fs::{canonicalize, metadata},
     path::Path,

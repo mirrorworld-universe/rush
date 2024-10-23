@@ -1,7 +1,7 @@
 use borsh::BorshSerialize;
-use rush_core::blueprint::{Component, ComponentValue, Entity, Region};
-use rush_svm::instruction::accounts::{Context, SpawnEntityAccounts};
-use rush_svm::{
+use rush_ecs_core::blueprint::{Component, ComponentValue, Entity, Region};
+use rush_ecs_svm::instruction::accounts::{Context, SpawnEntityAccounts};
+use rush_ecs_svm::{
     pda::InstancePDA,
     require,
     state::{Instance, World},

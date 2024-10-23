@@ -1,4 +1,4 @@
-use rush_svm::{client::ix_create_world, pda::WorldPDA, state::World};
+use rush_ecs_svm::{client::ix_create_world, pda::WorldPDA, state::World};
 use solana_program_test::*;
 use solana_sdk::{pubkey::Pubkey, signature::Signer, transaction::Transaction};
 
@@ -29,7 +29,7 @@ async fn test_create_world() {
     let program_id = Pubkey::new_unique();
     let program_test = ProgramTest::new(
         // .so fixture is  retrieved from /target/deploy
-        "rush_store",
+        "rush_ecs_store",
         program_id,
         // shank is incompatible with instantiating the BuiltInFunction
         None,

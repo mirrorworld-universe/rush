@@ -1,5 +1,5 @@
 use borsh::{BorshDeserialize, BorshSerialize};
-use rush_core::blueprint::{Entity, Region};
+use rush_ecs_core::blueprint::{Entity, Region};
 use shank::ShankAccount;
 use solana_program::{msg, pubkey::Pubkey};
 use spl_discriminator::{ArrayDiscriminator, SplDiscriminate};
@@ -20,7 +20,7 @@ use std::collections::BTreeMap;
     ShankAccount,
     SplDiscriminate,
 )]
-#[discriminator_hash_input("rush_store::state::World")]
+#[discriminator_hash_input("rush_ecs_store::state::World")]
 pub struct World {
     /// Identifier for this specific structure
     pub discriminator: [u8; 8],
