@@ -37,15 +37,15 @@ impl BevySDK {
         }
     }
 
-    pub async fn migrate(&mut self) -> Result<()> {
+    pub fn migrate(&mut self) -> Result<()> {
         self.storage.migrate()
     }
 
-    pub async fn create(&mut self, region: Region, entity: Entity) -> Result<u64> {
+    pub fn create(&mut self, region: Region, entity: Entity) -> Result<u64> {
         self.storage.create(region, entity)
     }
 
-    pub async fn get(
+    pub fn get(
         &mut self,
         region: Region,
         entity: Entity,
@@ -55,7 +55,7 @@ impl BevySDK {
         self.storage.get(region, entity, nonce, component)
     }
 
-    pub async fn set(
+    pub fn set(
         &mut self,
         region: Region,
         entity: Entity,
@@ -78,8 +78,8 @@ mod tests {
 
     use super::*;
 
-    #[tokio::test]
-    async fn test_sdk_integration() {
+    #[test]
+    fn test_sdk_integration() {
         let sdk = BevySDK::new(
             "https://devnet.sonic.game".to_string(),
             "8npxEZiWoi6zcBQ4Pw2e5enC1Av4UhzA2ZtPn1fKeciU",
