@@ -7,7 +7,7 @@ description = "Rush ECS Framework SDK"
 homepage = "https://sonic.game/"
 repository = "https://github.com/mirrorworld-universe/rush"
 license = "Apache-2.0"
-keywords = ["rush", "sonic", "solana", "gamedev", "ecs", "web3", "blockchain"]
+keywords = ["rush", "sonic", "solana", "gamedev", "ecs"]
 
 [dependencies]
 anyhow = "1.0.87"

@@ -7,7 +7,7 @@ description = "Rush ECS Framework Onchain Types"
 homepage = "https://sonic.game/"
 repository = "https://github.com/mirrorworld-universe/rush"
 license = "Apache-2.0"
-keywords = ["rush", "sonic", "solana", "gamedev", "ecs", "web3", "blockchain"]
+keywords = ["rush", "sonic", "solana", "gamedev", "ecs"]
 
 [dependencies]
 arrayref = "0.3.8"
