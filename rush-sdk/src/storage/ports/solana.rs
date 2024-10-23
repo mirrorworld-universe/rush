@@ -7,7 +7,7 @@ use rush_parser::{toml::TomlParser, Loader};
 use rush_svm::{
     client::{ix_create_world, ix_spawn_entity},
     pda::{InstancePDA, WorldPDA},
-    state::World,
+    state::{Instance, World},
 };
 use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_sdk::{
@@ -99,21 +99,25 @@ impl Storage for Solana {
                     .get(entity_name)
                     .unwrap();
 
+                println!("IN MIGRATE INSTANCES: {:?}", instances);
                 for (each_index, each_instance) in instances.iter().enumerate() {
+                    let nonce = each_index as u64 + 1;
+                    println!("IN MIGRATE NONCE: {}", nonce);
                     let (instance_pda, instance_bump) = InstancePDA::find_pda(
                         &self.program_id,
                         &world_pda,
                         region_name,
                         entity_name,
-                        each_index as u64,
+                        nonce,
                     );
+                    println!("{instance_pda}");
 
                     let ix = ix_spawn_entity(
                         &self.program_id,
                         region_name.to_string(),
                         entity_name.to_string(),
                         each_instance.clone(),
-                        each_index as u64,
+                        nonce,
                         instance_bump,
                         &instance_pda,
                         &self.signer.pubkey(),
@@ -149,6 +153,7 @@ impl Storage for Solana {
         let world_pda = self.world.unwrap();
         let world_account_data = client.get_account_data(&world_pda).await.unwrap();
         let world = World::try_from_slice(&world_account_data)?;
+        // TODO: Consider using the nonce internally in spawn_entity instruction
         let nonce = world.instances.get(&region).unwrap().get(&entity).unwrap() + 1;
 
         let default_components = self.blueprint.get_default_components(&entity).unwrap();
@@ -204,7 +209,19 @@ impl Storage for Solana {
             bail!(StorageError::NotMigrated);
         }
 
-        Ok(ComponentValue::Integer(0))
+        let client = RpcClient::new(self.rpc_url.clone());
+        let (instance_pda, _) = InstancePDA::find_pda(
+            &self.program_id,
+            &self.world.unwrap(),
+            &region,
+            &entity,
+            nonce,
+        );
+        let data = client.get_account_data(&instance_pda).await?;
+        let instance_state = Instance::try_from_slice(&data)?;
+        let value = instance_state.components.get(&component).unwrap().clone();
+
+        Ok(value)
     }
 
     async fn set(
@@ -348,7 +365,43 @@ mod tests {
 
     // Happy path
     #[tokio::test]
-    async fn test_solana_get() {}
+    async fn test_solana_get() {
+        // prepare test context
+        let program_id = Pubkey::from_str("FXm4HiySCyKv3HrynYKY7yfanyH7dJGMuvxXsbnvtW5c").unwrap();
+        let seed = [
+            192, 45, 79, 47, 38, 198, 135, 27, 191, 116, 8, 103, 96, 204, 251, 131, 110, 7, 179, 0,
+            236, 71, 217, 202, 191, 140, 13, 148, 165, 62, 107, 20, 118, 252, 252, 98, 134, 2, 49,
+            17, 166, 221, 114, 65, 149, 220, 228, 81, 254, 57, 227, 230, 70, 178, 135, 176, 103,
+            235, 188, 54, 173, 91, 232, 57,
+        ];
+
+        let signer = Keypair::from_seed(&seed).unwrap();
+
+        let path_str = "fixtures/blueprint.toml";
+        let loader = Loader::new(TomlParser {});
+        let path = Path::new(path_str);
+        let blueprint = loader.load_blueprint(path).unwrap();
+
+        let (world_pda, world_bump) =
+            WorldPDA::find_pda(&program_id, &blueprint.name, &blueprint.description);
+
+        let rpc_url = String::from("http://127.0.0.1:8899");
+        let mut solana = Solana::new(program_id, signer.insecure_clone(), rpc_url, path_str);
+
+        solana.migrate().await.unwrap();
+        // region: Region,
+        // entity: Entity,
+        // nonce: u64,
+        // component: Component,
+        let region = "farm".to_string();
+        let entity = "apple".to_string();
+        let component = "x".to_string();
+
+        let component_value = solana.get(region, entity, 1, component).await.unwrap();
+
+        let expected_parameter = 0;
+        assert_matches!(component_value, ComponentValue::Integer(expected_parameter));
+    }
 
     // Happy path
     #[tokio::test]
