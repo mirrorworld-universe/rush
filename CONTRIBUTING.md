@@ -1,6 +1,6 @@
-# Project Title
+# Rush Contributing Guide
 
-Project description.
+Rush is a rapid and declarative ECS framework for Fully Onchain Games and Autonomous Worlds.
 
 ## Code of Conduct
 

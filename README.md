@@ -1,6 +1,6 @@
 # Rush
 
-![Project Banner](.github/image/rush-peepo.png)
+![Rush Peepo](.github/image/rush-peepo.png)
 
 ## Contributing
 
@@ -23,7 +23,7 @@ Read the repository's [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License
 
-**Project Title** is licensed under [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0).
+**Rush** is licensed under [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
 ## Author
 

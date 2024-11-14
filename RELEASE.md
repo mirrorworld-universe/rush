@@ -1,4 +1,4 @@
-# Project Title Release Process
+# Rush Release Process
 
 This covers how to do an official release of a package from this repository.
 
