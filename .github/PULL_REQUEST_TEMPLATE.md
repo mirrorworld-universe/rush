@@ -2,11 +2,11 @@
 
 Please include a summary of the change and which issue is fixed. Please also include relevant motivation and context. List any dependencies that are required for this change.
 
-## Link to issue
+# Link to issue
 
 Please add a link to any relevant issues/tickets.
 
-## Type of change
+# Type of change
 
 - [ ] Bug fix (non-breaking change that fixes an issue)
 - [ ] New feature (non-breaking change that adds functionality)
@@ -17,13 +17,13 @@ Please add a link to any relevant issues/tickets.
 
 Please delete options that are not relevant.
 
-## Test plan (required)
+# Test plan (required)
 
 Demonstrate the code is solid. Are changes to the templates tested in the top-level project workflows?
 
 Which commands did you test with and what are the expected results? Which tests have you added or updated? Do the
 tests cover all of the changes included in this PR?
 
-## Screenshots/Screencaps
+# Screenshots/Screencaps
 
 Please include screenshots that support the previous information you have provided. This would help us review your pull request better.
