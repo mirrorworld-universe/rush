@@ -1,115 +1,30 @@
 # Rush
 
-Rush is a **Rapid** and **Declarative** development framework for Fully Onchain Games (FOCG) and Autonomous Worlds (AW) by SonicSVM. 
+![Project Banner](.github/image/banner.png)
 
-![Rush Peepo Banner](.github/images/rush-peepo.png)
+## Contributing
 
-# The Rush Way
+Read the repository's [Contributing Guide](CONTRIBUTING.md).
 
-![Rush Way Banner](.github/images/rush-way.png)
+## Discussions
 
-[WIP Narrative]
+For any questions, suggestions, or ideas feel free to share it with the [community](https://github.com/mirrorworld-universe/oss-base-template/discussions).
 
+## Issues
 
-# Package-Level System Design
+> [!WARNING]
+> For security related bugs and fixes please see our [Security Policy](SECURITY.md).
 
-![Rush Banner](.github/images/rush-package-level.png)
+Please report issues and bugs by [creating a new issue here](). Make sure you report an issue that is not reported yet. Any contribution towards improving the project is welcome.
 
-# Monorepo Packages
+## Code of Conduct
 
-<center>
-<table>
-    <thead>
-        <td>Name</td>
-        <td>Description</td>
-        <td>Tests</td>
-        <td>Docs</td>
-    </head>
-    <tr>
-        <td>rush-core</td>
-        <td>Rush library for abstracting Rush specific implementation details</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>rush-cli</td>
-        <td>Rush ECS CLI tool</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>rush-sdk</td>
-        <td>Rush SDKs for integrating Rush in games</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>rush-svm</td>
-        <td>Collection of SVM Rush programs and Solana modules</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>rush-visor</td>
-        <td>Rush tooling for FOCG and AW introspection</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>rush-parser</td>
-        <td>Rush parsers for different blueprint formats</td>
-        <td></td>
-        <td></td>
-    </tr>
-</table>
-</center>
+Read the repository's [Code of Conduct](CODE_OF_CONDUCT.md).
 
-# Programs
+## License
 
-<center>
-<table>
-    <thead>
-        <td>Name</td>
-        <td>Description</td>
-        <td>Tests</td>
-        <td>Docs</td>
-    </head>
-    <tr>
-        <td>rush-store</td>
-        <td>Rush onchain Solana program for managing data writes and reads</td>
-        <td></td>
-        <td></td>
-    </tr>
-</table>
-</center>
+**Project Title** is licensed under [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
-# Examples
+## Author
 
-<center>
-<table>
-    <thead>
-        <td>Name</td>
-        <td>Description</td>
-        <td>Tests</td>
-        <td>Docs</td>
-    </head>
-    <tr>
-        <td>bevy-apple-game</td>
-        <td>Exploring collision detection with player and apple entities with Bevy</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>bevy-farm-game</td>
-        <td>Exploring world-building and world-sharing with atomic Gaming Primitives with Bevy</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>bevy-demo-game</td>
-        <td>Exploring world state side-effect (e.g. gravity) with Bevy</td>
-        <td></td>
-        <td></td>
-    </tr>
-</table>
-</center>
+[![contributors](https://contrib.rocks/image?repo=mirrorworld-universe/oss-base-template)](https://github.com/mirrorworld-universe/oss-base-template/graphs/contributors)
