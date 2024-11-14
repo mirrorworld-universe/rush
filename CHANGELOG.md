@@ -6,20 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Nightly is tracked by the `main` branch.
 
-- feat: CHANGELOG
-- feat: RELEASE guide
-- chore: Change email in SECURITY
-- fix: Change CONTRIBUTING hirearchy
-- feat: Add node_modules in gitignore
-- feat: Add CONTRIBUTING format
-- feat: Feature request issue template
-- feat: Add github config
-- featt: Add bug issue template
-- fix: Repo banner
-- add: Banner and fix README, SECURITY
-- first commit
-- Initial commit
-
 ## Stable
 
 Stable is tracked by the `stable` branch
