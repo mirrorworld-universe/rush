@@ -1,6 +1,6 @@
 # Rush
 
-![Project Banner](.github/image/banner.png)
+![Project Banner](.github/image/rush-peepo.png)
 
 ## Contributing
 
