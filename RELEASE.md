@@ -28,7 +28,7 @@ This covers how to do an official release of a package from this repository.
 > Make sure to look out for **feature flags** when reviewing incomplete feature PRs. Usually applied for big EPICs.
 
 1. When tagged in a `Pull Request` review the code as soon as possible
-    1. Baseline requirement is to ensure `Pull Request` follows the repo’s `Pull Request` format
+    1. Baseline requirement is to ensure `Pull Request` follows the repo’s `[Pull Request](.github/PULL_REQUEST_TEMPLATE.md)` format
 2. If upon reviewing an action is needed, mention `Pull Request` **owner** to take action
 3. If upon reviewing the PR is ready for merging, mention `Maintainer` with approval to initiate `Merge` 
 
