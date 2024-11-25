@@ -2,11 +2,11 @@
 
 This covers how to do an official release of a package from this repository.
 
-# Roles:
+# Roles
 
-1. Maintainer / Release Manager - People running and managing the release process
-2. Owner - Engineer who owns the PR
-3. Reviewer - Engineer who does not own the PR and provides a code review for the PR
+1. **Maintainer / Release Manager** - People running and managing the release process
+2. **Owner** - Engineer who owns the PR
+3. **Reviewer** - Engineer who does not own the PR and provides a code review for the PR
 
 # Full Release Process
 
