@@ -6,16 +6,42 @@ on:
 
 permissions:
   contents: write
+  pull-requests: read
 
 jobs:
   nightly:
+    name: Release Nightly
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Release Info
+        id: release_info
+        run: |
+          echo "release_name=Nightly ($(date '+%Y-%m-%d'))" >> $GITHUB_OUTPUT
+          echo "tag_name=nightly-${{ github.sha }}" >> $GITHUB_OUTPUT
+      - name: Get Previous Tag
+        id: previous_tag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+      - name: Build Changelog
+        # ID for getting CHANGELOG output into releasing step
+        id: build_changelog
+        uses: mikepenz/release-changelog-builder-action@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          configuration: "./.github/changelog.json"
+          mode: "COMMIT"
+          fromTag: ${{ steps.previous_tag.outputs.tag }}
+          toTag: ${{ github.ref }}
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: nightly-${{ github.sha }}
-          tag_name: nightly-${{ github.sha }}
+          prerelease: true
+          name: ${{ steps.release_info.outputs.release_name }}
+          tag_name: ${{ steps.release_info.outputs.tag_name }}
+          # Fetch CHANGELOG output from build_changelog step
+          body: ${{ steps.build_changelog.outputs.changelog }}
