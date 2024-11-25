@@ -1,0 +1,21 @@
+name: Nightly Releasing
+on:
+  schedule:
+    # 22:00 UTC+8 (Sonic team timezone)
+    - cron: "00 14 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  nightly:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: nightly-${{ github.sha }}
+          tag_name: nightly-${{ github.sha }}
