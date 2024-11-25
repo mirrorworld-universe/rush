@@ -17,6 +17,9 @@ There are many ways to contribute to this open source project. Any contributions
 
 ### Development
 
+> [!IMPORTANT]
+> Git signing is required. Branching rulesets have been applied to prevent unsigned commits. See [Git Signing](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits) for more details.
+
 If you can write a code then create a [`Pull Request`](.github/PULL_REQUEST_TEMPLATE.md) to this repo and we will review your code.
 
 Please submit your `Pull Request` to the ```main``` `nightly` branch. We will auto reject if you submit your `Pull Request` to the ```stable``` branch or any release candidate branch.
