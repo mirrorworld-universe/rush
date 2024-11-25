@@ -13,7 +13,7 @@ This covers how to do an official release of a package from this repository.
 ## For Owner
 
 1. For every `Issue` / Scrum Card (User Story), create a branch in `<TYPE>/<DESCRIPTION>` format
-    1. Types: `feat`, `fix`, `docs`, `chore`, `refactor` , `test` 
+    1. Types: `feat`, `fix`, `docs`, `chore`, `refactor` , `test`, `ci` 
     2. Example: `feat/proxy-program` 
 2. Do **signed commits** of your progress with your branch
     1. `git commit -S`
