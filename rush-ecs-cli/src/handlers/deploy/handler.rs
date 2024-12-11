@@ -26,7 +26,7 @@ impl CliHandler for DeployHandler {
         } = manifest.chain;
         let mut sdk = BevySDK::new(rpc, &store, "./blueprint", &keypair);
 
-        sdk.migrate().await
+        sdk.migrate()
     }
 }
 
