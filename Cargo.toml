@@ -5,13 +5,13 @@ members = [
 	"ecs/sdk",
 	"ecs/parser",
 	"ecs/svm",
+	"ecs/svm/programs/rush-proxy",
+	"ecs/svm/programs/rush-store",
 	"ecs/keystore",
 	"ecs/manifest",
 ]
 
 exclude = [
-	"ecs/svm/programs/rush-proxy",
-	"ecs/svm/programs/rush-store",
 ]
 
 resolver = "2"
