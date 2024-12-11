@@ -1,0 +1,44 @@
+[package]
+name = "rush-cli"
+description = ""
+version = { workspace = true }
+authors = { workspace = true }
+repository = { workspace = true }
+homepage = { workspace = true }
+license = { workspace = true }
+edition = { workspace = true }
+keywords = { workspace = true }
+
+[features]
+# Default features:
+# - Toml (Parser)
+# - Bevy (Game Engine)
+# - Solana (Blockchain)
+
+# Parser Support
+# yaml = []
+
+# Game Engine Support
+# unity = []
+# godot = []
+# pygame = []
+
+# Blockchain Support
+# evm = []
+# near = []
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true }
+colored = { workspace = true }
+rush-ecs-core = { workspace = true }
+rush-ecs-manifest = { workspace = true }
+rush-ecs-parser = { workspace = true }
+rush-ecs-sdk = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+toml = { workspace = true }
+
+[[bin]]
+name = "rush"
+path = "src/main.rs"

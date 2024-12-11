@@ -27,7 +27,7 @@ async fn main() -> Result<()> {
         )
         .subcommand(
             Command::new("view")
-                .about("Create a new Rush project.")
+                .about("Displays the Blueprint in the current workspace")
         )
         // TODO: Config Subcommand
         // .subcommand(
