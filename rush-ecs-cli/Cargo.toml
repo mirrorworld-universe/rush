@@ -34,7 +34,7 @@ colored = "2.1.0"
 rush-ecs-core = { version = "0.1.0", path = "../rush-ecs-core" }
 rush-ecs-manifest = { version = "0.1.0", path = "../rush-ecs-manifest" }
 rush-ecs-parser = { version = "0.1.0", path = "../rush-ecs-parser" }
-rush-ecs-sdk = { version = "0.1.0", path = "../rush-ecs-sdk" }
+rush-ecs-sdk = { version = "0.2.3", path = "../rush-ecs-sdk" }
 thiserror = "1.0.63"
 tokio = "1.41.0"
 toml = "0.8.19"
