@@ -36,5 +36,5 @@ export interface TSSDKParams {
 	rpc_url: string;
 	program_id: PublicKey | string;
 	blueprint_path: string;
-	keypair_base58: string;
+	secret_key: Uint8Array<ArrayBufferLike>;
 }
