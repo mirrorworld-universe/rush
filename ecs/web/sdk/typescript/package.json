@@ -2,7 +2,6 @@
   "name": "typescript",
   "version": "1.0.0",
   "main": "src/index.ts",
-  "type": "module",
   "scripts": {
     "dev": "tsc --watch & nodemon dist/index.js",
     "build": "npx tsc",
