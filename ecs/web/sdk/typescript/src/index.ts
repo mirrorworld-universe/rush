@@ -31,7 +31,7 @@ function test_call_rushsdk() {
 	const sdk = new RushSDK({
 		secret_key: secretKey,
 		blueprint_path: "/my/blueprint/path",
-		program_id: new PublicKey("6vg3oUN7LLcCS3Qc8bhsrqqJRkeDaC2KsFqF23aQp5iQ"),
+		program_id: new_keypair.publicKey,
 		rpc_url: "http://127.0.0.1:8899",
 	});
 
