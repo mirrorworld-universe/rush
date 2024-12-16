@@ -1,0 +1,33 @@
+[package]
+name = "rush-ecs-sdk"
+description = ""
+version = { workspace = true }
+authors = { workspace = true }
+repository = { workspace = true }
+homepage = { workspace = true }
+license = { workspace = true }
+edition = { workspace = true }
+keywords = { workspace = true }
+
+[dependencies]
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+borsh = { workspace = true }
+colored = { workspace = true }
+rush-ecs-core = { workspace = true }
+rush-ecs-parser = { workspace = true }
+rush-ecs-svm = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+assert_matches = { workspace = true }
+solana-program-test = { workspace = true }
+solana-sdk = { workspace = true }
+solana-client = { workspace = true }
+tokio = { workspace = true }
+
+# Ensure unsupported crates from solana_sdk/solana_client don't get
+# imported into program specific code
+[target.'cfg(not(target_os = "solana"))'.dependencies]
+solana-sdk = "=2.0.13"
+solana-client = "=2.0.13"
