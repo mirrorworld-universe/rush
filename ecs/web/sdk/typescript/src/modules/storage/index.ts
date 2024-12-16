@@ -71,10 +71,15 @@ export class Solana {
 	 * /// TODO: DONE RULE: The Game Developer must be able to update a specific entity data
 	 * from their game’s Onchain world
 	 */
-	public set() {
-		console.log("set method");
-	}
-}
+	async set(region: Region, entity: Entity, nonce: number, component: Component, value: ComponentValue): Promise<void> {
+        console.log("Set logic executed.");
+        const transaction = new Transaction().add(  
+            SystemProgram.transfer({
+                fromPubkey: this.keypair.publicKey,
+                toPubkey: new PublicKey(entity.id),
+                lamports: 0,
+            })
+        );
 
 function test() {
 	let Path = "";
