@@ -1,18 +1,19 @@
 import { TSSDKParams } from "../../types";
-import * as solanaWeb3 from "@solana/web3.js";
 import { Solana } from "../storage";
+import { Keypair, PublicKey } from "@solana/web3.js";
+import bs58 from "bs58";
 
-class TSSDK {
+export class RushSDK {
 	// Imporant variables
-	private keypair: solanaWeb3.Keypair;
+	private keypair: Keypair;
 	private storage: Solana;
 
-	constructor({ rpc_url, program_id, blueprint_path, keypair_string }: TSSDKParams) {
+	constructor({ rpc_url, program_id, blueprint_path, keypair_base58 }: TSSDKParams) {
 		// Initialzation of the instance
-		const secretKey = Uint8Array.from(JSON.parse(keypair_string)); // This will be a keypair_string since
-		this.keypair = solanaWeb3.Keypair.fromSecretKey(secretKey);
+		const secretKey = bs58.decode(keypair_base58);
+		this.keypair = Keypair.fromSecretKey(secretKey);
 
-		const programIdKey = new solanaWeb3.PublicKey(program_id);
+		const programIdKey = new PublicKey(program_id);
 
 		this.storage = new Solana({ blueprint: blueprint_path, program_id: programIdKey, rpc_url, signer: this.keypair });
 	}
