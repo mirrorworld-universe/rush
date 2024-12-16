@@ -34,7 +34,7 @@ export interface Signer {
 }
 export interface TSSDKParams {
 	rpc_url: string;
-	program_id: string;
+	program_id: PublicKey | string;
 	blueprint_path: string;
-	keypair_string: string;
+	keypair_base58: string;
 }
