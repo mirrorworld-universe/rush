@@ -8,10 +8,9 @@ export class RushSDK {
 	private keypair: Keypair;
 	private storage: Solana;
 
-	constructor({ rpc_url, program_id, blueprint_path, keypair_base58 }: TSSDKParams) {
+	constructor({ rpc_url, program_id, blueprint_path, secret_key }: TSSDKParams) {
 		// Initialzation of the instance
-		const secretKey = bs58.decode(keypair_base58);
-		this.keypair = Keypair.fromSecretKey(secretKey);
+		this.keypair = Keypair.fromSecretKey(secret_key); // Create a key pair here using their secret key
 
 		const programIdKey = new PublicKey(program_id);
 
