@@ -1,7 +1,8 @@
-import { Keypair, PublicKey } from "@solana/web3.js";
+import { Keypair, PublicKey, Connection, SystemProgram, Transaction, TransactionInstruction, sendAndConfirmTransaction } from "@solana/web3.js";
 import { solanaStorage } from "../../types";
 import * as fs from "fs";
 import * as path from "path";
+
 
 // ! in this solana
 
@@ -37,8 +38,50 @@ export class Solana {
 	 * /// TODO: DONE RULE: The Game Developer must be able to create an onchain world and
 	 * spawn its initial entities based on the Rush Gaming Blueprint configuration
 	 */
-	public migrate() {
-		console.log(this.migrate);
+	public async migrate() {
+		try {
+			const connection = new Connection(this.rpc_url);
+			
+			// Convert program_id to PublicKey if it's a string
+			const programIdPubkey = (typeof this.program_id === 'string') 
+				? new PublicKey(this.program_id) 
+				: this.program_id;
+
+			// Get the world PDA (Program Derived Address)
+			const [worldPDA] = PublicKey.findProgramAddressSync(
+				[
+					Buffer.from("world"),
+					Buffer.from(this.blueprint),
+					programIdPubkey.toBuffer()
+				],
+				programIdPubkey
+			);
+
+			// Create the instruction
+			const instruction = new TransactionInstruction({
+				programId: programIdPubkey,
+				keys: [
+					{ pubkey: this.signer.publicKey, isSigner: true, isWritable: true },
+					{ pubkey: worldPDA, isSigner: false, isWritable: true },
+					{ pubkey: SystemProgram.programId, isSigner: false, isWritable: false }
+				],
+				data: Buffer.from([/* instruction data */])
+			});
+
+			const transaction = new Transaction().add(instruction);
+			const signature = await sendAndConfirmTransaction(
+				connection,
+				transaction,
+				[this.signer]
+			);
+
+			console.log("World created successfully. Signature:", signature);
+			return signature;
+
+		} catch (error) {
+			console.error("Error in migrate:", error);
+			throw error;
+		}
 	}
 
 	/**
