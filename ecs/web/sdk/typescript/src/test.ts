@@ -1,19 +1,21 @@
-import { Keypair, PublicKey } from "@solana/web3.js";
-import { Solana } from "./modules/storage";
-import { RushSDK } from "./modules/sdk/sdk";
 import bs58 from "bs58";
-
-// ? this is a mock test
-// ? this is where the solana storage class is called inside the TS_RUSH_SDK
+import { Storage } from "./modules/storage/storage";
+import { RushSdk } from "./sdk";
+import { Keypair, PublicKey } from "@solana/web3.js";
+console.log(
+	"seeing this means you have successfully ran the scripts \nfrom src/test.ts file\n",
+);
 
 async function test_call_storage() {
 	const new_keypair = Keypair.generate();
 
-	const storage = new Solana({
+	const storage = new Storage({
 		blueprint: "/my/blueprint/path",
-		program_id: new PublicKey("6vg3oUN7LLcCS3Qc8bhsrqqJRkeDaC2KsFqF23aQp5iQ"),
+		programId: new PublicKey(
+			"6vg3oUN7LLcCS3Qc8bhsrqqJRkeDaC2KsFqF23aQp5iQ",
+		),
 		signer: new_keypair,
-		rpc_url: "http://127.0.0.1:8899",
+		rpcUrl: "http://127.0.0.1:8899",
 	});
 
 	console.log(storage);
@@ -29,7 +31,10 @@ async function test_call_storage() {
 
 	try {
 		const signature = await storage.set(entityId, data);
-		console.log("Set function executed successfully. Signature:", signature);
+		console.log(
+			"Set function executed successfully. Signature:",
+			signature,
+		);
 	} catch (error) {
 		console.error("Error executing set function:", error);
 	}
@@ -39,11 +44,11 @@ function test_call_rushsdk() {
 	const new_keypair = Keypair.generate();
 	const encoded = bs58.encode(new_keypair.secretKey);
 	const secretKey = bs58.decode(encoded); // Pretend to be a secret key to be passed to creating the keypair
-	const sdk = new RushSDK({
-		secret_key: secretKey,
-		blueprint_path: "/my/blueprint/path",
-		program_id: new_keypair.publicKey,
-		rpc_url: "http://127.0.0.1:8899",
+	const sdk = new RushSdk({
+		secretKey: secretKey,
+		blueprintPath: "/my/blueprint/path",
+		programId: new_keypair.publicKey,
+		rpcUrl: "http://127.0.0.1:8899",
 	});
 
 	console.log(sdk);
@@ -53,37 +58,40 @@ function test_call_migrate() {
 	const new_keypair = Keypair.generate();
 	const encoded = bs58.encode(new_keypair.secretKey);
 	const secretKey = bs58.decode(encoded); // Pretend to be a secret key to be passed to creating the keypair
-	const sdk = new RushSDK({
-		secret_key: secretKey,
-		blueprint_path: "/my/blueprint/path",
-		program_id: new_keypair.publicKey,
-		rpc_url: "http://127.0.0.1:8899",
+	const sdk = new RushSdk({
+		secretKey: secretKey,
+		blueprintPath: "/my/blueprint/path",
+		programId: new_keypair.publicKey,
+		rpcUrl: "http://127.0.0.1:8899",
 	});
-	sdk.Migrate();
-	console.log(sdk);
+	sdk.migrate();
+	// console.log(sdk);
 }
-
-//test_call_migrate();
-// test_call_storage();
-// test_call_rushsdk();
-console.log("sdk index file");
-
-setStorage("your_entity_id_here", { key: "value" }); // Sample call to setStorage
 
 async function setStorage(entityId: string, data: object) {
 	const new_keypair = Keypair.generate();
 
-	const storage = new Solana({
+	const storage = new Storage({
 		blueprint: "/my/blueprint/path",
-		program_id: new PublicKey("6vg3oUN7LLcCS3Qc8bhsrqqJRkeDaC2KsFqF23aQp5iQ"),
+		programId: new PublicKey(
+			"6vg3oUN7LLcCS3Qc8bhsrqqJRkeDaC2KsFqF23aQp5iQ",
+		),
 		signer: new_keypair,
-		rpc_url: "http://127.0.0.1:8899",
+		rpcUrl: "http://127.0.0.1:8899",
 	});
 
 	try {
 		const signature = await storage.set(entityId, data);
-		console.log("Set function executed successfully. Signature:", signature);
+		console.log(
+			"Set function executed successfully. Signature:",
+			signature,
+		);
 	} catch (error) {
 		console.error("Error executing set function:", error);
 	}
 }
+
+// setStorage("your_entity_id_here", { key: "value" }); // Sample call to setStorage
+// test_call_migrate();
+// test_call_storage();
+// test_call_rushsdk();
