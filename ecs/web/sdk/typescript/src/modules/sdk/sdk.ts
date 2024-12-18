@@ -16,4 +16,8 @@ export class RushSDK {
 
 		this.storage = new Solana({ blueprint: blueprint_path, program_id: programIdKey, rpc_url, signer: this.keypair });
 	}
+	public Migrate() {
+		// Migrate the data
+		this.storage.migrate();
+	}
 }
