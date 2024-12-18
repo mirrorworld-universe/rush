@@ -17,8 +17,14 @@ export class RushSDK {
 
     const programIdKey = new PublicKey(program_id);
 
-    this.storage = new Solana({ blueprint: blueprint_path, program_id: programIdKey, rpc_url, signer: this.keypair, });
-  }
+		this.storage = new Solana({ blueprint: blueprint_path, program_id: programIdKey, rpc_url, signer: this.keypair });
+	}
+  
+	public Migrate() {
+		// Migrate the data
+		this.storage.migrate();
+	}
+
 
   /**
    * Generates a new Solana Keypair and returns it.
