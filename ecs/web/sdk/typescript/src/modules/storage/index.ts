@@ -114,12 +114,74 @@ export class Solana {
 	 * /// TODO: DONE RULE: The Game Developer must be able to update a specific entity data
 	 * from their game’s Onchain world
 	 */
-	public set() {
-		console.log("set method");
+public async set(entityId: string, data: any, callback?: (signature: string) => void) {
+	    console.log("set method");
+
+	    try {
+	        const connection = new Connection(this.rpc_url);
+	        
+	        // Convert entityId to PublicKey
+	        const entityPubkey = new PublicKey(entityId);
+
+	        // Create the instruction
+	        const instruction = new TransactionInstruction({
+	            programId: this.program_id instanceof PublicKey ? this.program_id : new PublicKey(this.program_id),
+	            keys: [
+	                { pubkey: this.signer.publicKey, isSigner: true, isWritable: true },
+	                { pubkey: entityPubkey, isSigner: false, isWritable: true },
+	                { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }
+	            ],
+	            data: Buffer.from(JSON.stringify(data)) // Assuming data is JSON serializable
+	        });
+
+	        const transaction = new Transaction().add(instruction);
+	        const signature = await sendAndConfirmTransaction(
+	            connection,
+	            transaction,
+	            [this.signer]
+	        );
+
+	        console.log("Entity updated successfully. Signature:", signature);
+	        return signature;
+
+	    } catch (error) {
+	        console.error("Error in set:", error);
+	        throw error;
+	    }
 	}
 }
 
-function test() {
+async function test() {
+    const storage = new Solana({
+        blueprint: "/path/to/blueprint",
+        program_id: program_id.toString(),
+        signer: KEYPAIR,
+        rpc_url: "http://127.0.0.1:8899",
+    });
+
+    // Test the set function
+    const entityId = "your_entity_id_here"; // Replace with a valid entity ID
+    const data = { key: "value" }; // Sample data to update
+
+    try {
+        const signature = await storage.set(entityId, data);
+        console.log("Set function executed successfully. Signature:", signature);
+    } catch (error) {
+        console.error("Error executing set function:", error);
+    }
+}
+
+// Uncomment to run the test
+// test();
+
+// Uncomment to run the test
+// test();
+
+// Uncomment to run the test
+// test();
+
+// Uncomment to run the test
+// test();
 	let Path = "";
 	let PubKey = "";
 	let KEYPAIR: Keypair;
@@ -159,7 +221,7 @@ function test() {
 		signer: KEYPAIR,
 		rpc_url: "http://127.0.0.1:8899",
 	});
-}
+
 
 // ! WARNING: Test should not be in development environment
 // ! Do it with build and start, not dev so the loop won't happen
