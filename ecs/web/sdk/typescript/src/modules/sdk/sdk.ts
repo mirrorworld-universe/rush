@@ -19,6 +19,22 @@ export class RushSDK {
 
 		this.storage = new Solana({ blueprint: blueprint_path, program_id: programIdKey, rpc_url, signer: this.keypair });
 	}
+
+	/**
+	 * Public set function to update entity data in the on-chain world.
+	 * @param entityId - The ID of the entity to update.
+	 * @param data - The data to update for the entity.
+	 */
+	public async set(entityId: string, data: any) {
+		try {
+			const signature = await this.storage.set(entityId, data);
+			console.log("Set function executed successfully. Signature:", signature);
+			return signature;
+		} catch (error) {
+			console.error("Error in set function:", error);
+			throw error;
+		}
+	}
   
 	public Migrate() {
 		// Migrate the data
