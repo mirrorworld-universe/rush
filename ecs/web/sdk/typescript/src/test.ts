@@ -68,6 +68,21 @@ function test_call_migrate() {
 	// console.log(sdk);
 }
 
+function test_call_create() {
+	const new_keypair = Keypair.generate();
+	const encoded = bs58.encode(new_keypair.secretKey);
+	const secretKey = bs58.decode(encoded); // Pretend to be a secret key to be passed to creating the keypair
+	
+	const sdk = new RushSdk({
+		secretKey: secretKey,
+		blueprintPath: "/my/blueprint/path",
+		programId: new_keypair.publicKey,
+		rpcUrl: "http://127.0.0.1:8899",
+	});
+
+	sdk.create();
+}
+
 async function setStorage(entityId: string, data: object) {
 	const new_keypair = Keypair.generate();
 
@@ -92,6 +107,7 @@ async function setStorage(entityId: string, data: object) {
 }
 
 // setStorage("your_entity_id_here", { key: "value" }); // Sample call to setStorage
+// test_call_rushsdk();
 // test_call_migrate();
 // test_call_storage();
-// test_call_rushsdk();
+test_call_create();
