@@ -43,6 +43,11 @@ export class RushSdk {
 		}
 	}
 
+	public create() {
+		// Migrate the data
+		this.storage.create();
+	}
+
 	public migrate() {
 		// Migrate the data
 		this.storage.migrate();

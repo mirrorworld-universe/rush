@@ -94,6 +94,11 @@ export class Storage {
 	 * onchain game world in the Rush Store Solana Program (smart contract) after instantiating the SDK
 	 */
 	public create() {
+		//? tasks breakdown:
+		//? - learn how to create a transaction and storing instruction from the world detail
+		//? - initiate Instance PDA Class
+		//? - initiate World PDA Instance Class
+		//? - create a transaction that will set all e2e
 		console.log("create method");
 	}
 
