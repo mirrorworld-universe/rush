@@ -10,10 +10,9 @@ export class RushSdk {
 	private keypair: Keypair;
 	private storage: Storage;
 
-	constructor({ rpcUrl, programId, blueprintPath, secretKey }: ITsSdkParams) {
+	constructor({ rpcUrl, programId, blueprintPath, keypair }: ITsSdkParams) {
 		// Initialization of the instance
-		this.keypair = Keypair.fromSecretKey(secretKey); // Create a key pair using the provided secret key
-
+		this.keypair = keypair
 		const programIdKey = new PublicKey(programId);
 
 		this.storage = new Storage({
