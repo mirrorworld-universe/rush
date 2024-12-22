@@ -36,5 +36,5 @@ export interface ITsSdkParams {
 	rpcUrl: string;
 	programId: PublicKey | string;
 	blueprintPath: string;
-	secretKey: Uint8Array<ArrayBufferLike>;
+	keypair: Keypair;
 }
