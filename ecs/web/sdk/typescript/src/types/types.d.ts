@@ -38,3 +38,15 @@ export interface ITsSdkParams {
 	blueprintPath: string;
 	keypair: Keypair;
 }
+
+declare global {
+	interface Window {
+		solana?: {
+			isPhantom: boolean;
+			connect: () => Promise<{ publicKey: PublicKey }>;
+			signAndSendTransaction: (
+				transaction: Transaction,
+			) => Promise<{ signature: string }>;
+		};
+	}
+}

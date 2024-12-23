@@ -1,7 +1,8 @@
 import bs58 from "bs58";
 import { Storage } from "./modules/storage/storage";
 import { RushSdk } from "./sdk";
-import { Keypair, PublicKey } from "@solana/web3.js";
+import { Connection, Keypair, PublicKey } from "@solana/web3.js";
+import { SessionAuth } from "./modules/session/session";
 console.log(
 	"seeing this means you have successfully ran the scripts \nfrom src/test.ts file\n",
 );
@@ -45,7 +46,7 @@ function test_call_rushsdk() {
 	const encoded = bs58.encode(new_keypair.secretKey);
 	const secretKey = bs58.decode(encoded); // Pretend to be a secret key to be passed to creating the keypair
 	const sdk = new RushSdk({
-		secretKey: secretKey,
+		keypair: new_keypair,
 		blueprintPath: "/my/blueprint/path",
 		programId: new_keypair.publicKey,
 		rpcUrl: "http://127.0.0.1:8899",
@@ -59,7 +60,7 @@ function test_call_migrate() {
 	const encoded = bs58.encode(new_keypair.secretKey);
 	const secretKey = bs58.decode(encoded); // Pretend to be a secret key to be passed to creating the keypair
 	const sdk = new RushSdk({
-		secretKey: secretKey,
+		keypair: new_keypair,
 		blueprintPath: "/my/blueprint/path",
 		programId: new_keypair.publicKey,
 		rpcUrl: "http://127.0.0.1:8899",
@@ -72,9 +73,9 @@ function test_call_create() {
 	const new_keypair = Keypair.generate();
 	const encoded = bs58.encode(new_keypair.secretKey);
 	const secretKey = bs58.decode(encoded); // Pretend to be a secret key to be passed to creating the keypair
-	
+
 	const sdk = new RushSdk({
-		secretKey: secretKey,
+		keypair: new_keypair,
 		blueprintPath: "/my/blueprint/path",
 		programId: new_keypair.publicKey,
 		rpcUrl: "http://127.0.0.1:8899",
@@ -106,8 +107,23 @@ async function setStorage(entityId: string, data: object) {
 	}
 }
 
+function test_call_session() {
+	const connection = new Connection(
+		"https://api.testnet.solana.com",
+		"confirmed",
+	);
+	const auth = new SessionAuth(connection);
+	const sessionKeypair = auth.createSession({ password: "lev" });
+	console.log("Session Keypair Encrypted: ", sessionKeypair);
+
+	console.log("DECRYPTING....");
+
+	// const decrypted = auth.decrypt(sessionKeypair); // This is commented out since it is now private
+}
+
 // setStorage("your_entity_id_here", { key: "value" }); // Sample call to setStorage
 // test_call_rushsdk();
 // test_call_migrate();
 // test_call_storage();
-test_call_create();
+// test_call_create();
+test_call_session();
