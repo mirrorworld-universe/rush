@@ -36,5 +36,17 @@ export interface ITsSdkParams {
 	rpcUrl: string;
 	programId: PublicKey | string;
 	blueprintPath: string;
-	secretKey: Uint8Array<ArrayBufferLike>;
+	keypair: Keypair;
+}
+
+declare global {
+	interface Window {
+		solana?: {
+			isPhantom: boolean;
+			connect: () => Promise<{ publicKey: PublicKey }>;
+			signAndSendTransaction: (
+				transaction: Transaction,
+			) => Promise<{ signature: string }>;
+		};
+	}
 }

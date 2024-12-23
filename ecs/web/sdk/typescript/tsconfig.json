@@ -8,7 +8,7 @@
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
-		"lib": ["ES6"],
+		"lib": ["ES6", "DOM"],
 		"moduleResolution": "node",
 		"declaration": true,
 		"outDir": "./dist",
