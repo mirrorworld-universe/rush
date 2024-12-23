@@ -2,17 +2,13 @@ import { Keypair, PublicKey } from "@solana/web3.js";
 import { Storage } from "./modules/storage/storage";
 import { ITsSdkParams } from "./types/types";
 
-/**
- * RushSDK class that provides SDK functionality for interacting with Solana.
- */
 export class RushSdk {
-	// Important variables
 	private keypair: Keypair;
 	private storage: Storage;
 
-	constructor({ rpcUrl, programId, blueprintPath, keypair }: ITsSdkParams) {
-		// Initialization of the instance
-		this.keypair = keypair
+	constructor({ rpcUrl, programId, blueprintPath, secretKey }: ITsSdkParams) {
+		this.keypair = Keypair.fromSecretKey(secretKey);
+
 		const programIdKey = new PublicKey(programId);
 
 		this.storage = new Storage({
@@ -23,18 +19,10 @@ export class RushSdk {
 		});
 	}
 
-	/**
-	 * Public set function to update entity data in the on-chain world.
-	 * @param entityId - The ID of the entity to update.
-	 * @param data - The data to update for the entity.
-	 */
 	public async set(entityId: string, data: any) {
 		try {
 			const signature = await this.storage.set(entityId, data);
-			console.log(
-				"Set function executed successfully. Signature:",
-				signature,
-			);
+			console.log("Set function executed successfully. Signature:", signature);
 			return signature;
 		} catch (error) {
 			console.error("Error in set function:", error);
@@ -42,20 +30,36 @@ export class RushSdk {
 		}
 	}
 
+	public async get(entityId: string) {
+		try {
+			const data = await this.storage.get(entityId);
+			console.log("Get function executed successfully. Data:", data);
+			return data;
+		} catch (error) {
+			console.error("Error in get function:", error);
+			throw error;
+		}
+	}
+
+	public async delete(entityId: string) {
+		try {
+			const result = await this.storage.delete(entityId);
+			console.log("Delete function executed successfully. Result:", result);
+			return result;
+		} catch (error) {
+			console.error("Error in delete function:", error);
+			throw error;
+		}
+	}
+
 	public create() {
-		// Migrate the data
 		this.storage.create();
 	}
 
 	public migrate() {
-		// Migrate the data
 		this.storage.migrate();
 	}
 
-	/**
-	 * Generates a new Solana Keypair and returns it.
-	 * @returns {Keypair} A new Solana Keypair.
-	 */
 	public signin(): Keypair {
 		const keypair = Keypair.generate();
 		console.log("New Keypair Created:");
