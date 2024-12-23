@@ -9,14 +9,15 @@
 		"build": "npx tsc",
 		"minify": "terser dist/sdk.js --compress --mangle --output dist/index.min.js # minify the final build",
 		"bnm": "npm run build && npm run minify # build and minify",
-		"start": "node dist/sdk.js",
-		"test": "tsc --watch & nodemon dist/test.js"
+		"start": "node dist/test.js",
+		"test": "tsc --watch & node dist/test.js"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"description": "",
 	"devDependencies": {
+		"@types/crypto-js": "^4.2.2",
 		"@typescript-eslint/eslint-plugin": "^8.18.1",
 		"bs58": "^6.0.0",
 		"nodemon": "^3.1.9",

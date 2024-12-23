@@ -12,14 +12,14 @@ export class RushSdk {
 
 	constructor({ rpcUrl, programId, blueprintPath, keypair }: ITsSdkParams) {
 		// Initialization of the instance
-		this.keypair = keypair
+		this.keypair = keypair;
 		const programIdKey = new PublicKey(programId);
 
 		this.storage = new Storage({
 			blueprint: blueprintPath,
 			programId: programIdKey,
 			rpcUrl,
-			signer: this.keypair,
+			signer: keypair,
 		});
 	}
 
