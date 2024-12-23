@@ -13,8 +13,9 @@
 		"declaration": true,
 		"outDir": "./dist",
 		"rootDir": "./src",
-		"types": ["./src/types/types.d.ts", "node"]
+		"types": ["./src/types/types.d.ts", "node", "jest"] // Added jest to the types field
 	},
 	"include": ["*/.d.ts", "src/**/*.ts"],
 	"exclude": ["node_modules"]
 }
+
