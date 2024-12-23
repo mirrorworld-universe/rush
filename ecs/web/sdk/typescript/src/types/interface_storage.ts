@@ -32,25 +32,3 @@ export interface Storage {
     delete(entityId: string): Promise<void>;
 }
 
-export interface StoragePort {
-    /**
-     * Saves data for a given key.
-     * @param data - The data to be saved.
-     * @returns A promise that resolves when the data has been saved.
-     */
-    save(data: string): Promise<void>;
-
-    /**
-     * Loads data for a given key.
-     * @param key - The unique identifier of the data to load.
-     * @returns A promise that resolves with the loaded data.
-     */
-    load(key: string): Promise<string>;
-
-    /**
-     * Deletes data for a given key.
-     * @param key - The unique identifier of the data to delete.
-     * @returns A promise that resolves when the data has been deleted.
-     */
-    delete(key: string): Promise<void>;
-}

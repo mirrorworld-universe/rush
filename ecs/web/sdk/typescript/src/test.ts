@@ -1,3 +1,9 @@
+describe('Test Suite', () => {
+    test('should run a simple test', () => {
+        expect(true).toBe(true);
+    });
+});
+
 import bs58 from "bs58";
 import { Storage } from "./modules/storage/storage";
 import { RushSdk } from "./sdk";
