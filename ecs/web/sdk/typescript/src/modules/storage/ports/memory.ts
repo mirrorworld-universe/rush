@@ -17,10 +17,18 @@ export class MemoryAdapter implements Storage {
 
 
     async migrate(): Promise<void> {
+        // Migration logic: Check if instances need to be initialized
+        if (!this.instances.size) {
+            const initialData = { createdAt: new Date(), data: {} }; // Example structure
+            this.instances.set(this.blueprint, initialData);
+            console.log(`Migration completed. Initialized instances with blueprint: ${this.blueprint}`);
+        }
     }
 
     async create(): Promise<void> {
-        this.instances.clear();
+        // Initialize instances based on the interface_storage requirements
+        this.instances.set(this.blueprint, { createdAt: new Date(), data: {} });
+        console.log(`Created new instance for blueprint: ${this.blueprint}`);
     }
 
     async get(entityId: string): Promise<any> {
@@ -34,7 +42,13 @@ export class MemoryAdapter implements Storage {
 
 
     async set(entityId: string, data: any): Promise<void> {
-        this.instances.set(entityId, data);
+    if (!entityId) {
+        throw new Error("Entity ID cannot be empty.");
+    }
+    
+    console.log(`Setting data for entity ID ${entityId}:`, data);
+    
+    this.instances.set(entityId, data);
     }
 
 
