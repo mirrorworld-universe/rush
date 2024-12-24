@@ -56,8 +56,15 @@ export class RushSdk {
 		this.storage.create();
 	}
 
-	public migrate() {
-		this.storage.migrate();
+	public async migrate() {
+		try {
+			const signature = await this.storage.migrate();
+			console.log("Migration successful. Signature:", signature);
+			return signature;
+		} catch (error) {
+			console.error("Error during migration:", error);
+			throw error;
+		}
 	}
 
 	public signin(): Keypair {

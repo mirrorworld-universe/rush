@@ -105,7 +105,7 @@ export class Storage {
 	/**
 	 * delete function
 	 */
-	public delete() {
+	public delete(entityId: string) {
 		console.log("delete method");
 	}
 
@@ -114,8 +114,49 @@ export class Storage {
 	 * /// TODO: DONE RULE: The Game Developer must be able to retrieve specific entity
 	 * data from their game’s On-chain world
 	 */
-	public get() {
+	public async get(entityId: string) {
 		console.log("get method");
+
+		try {
+			const connection = new Connection(this.rpcUrl);
+
+			// Convert entityId to PublicKey
+			const entityPubkey = new PublicKey(entityId);
+
+			// Create the instruction to retrieve entity data
+			const instruction = new TransactionInstruction({
+				programId:
+					this.programId instanceof PublicKey
+						? this.programId
+						: new PublicKey(this.programId),
+				keys: [
+					{
+						pubkey: entityPubkey,
+						isSigner: false,
+						isWritable: false,
+					},
+					{
+						pubkey: SystemProgram.programId,
+						isSigner: false,
+						isWritable: false,
+					},
+				],
+				data: Buffer.from([]), // Assuming no additional data is needed for retrieval
+			});
+
+			const transaction = new Transaction().add(instruction);
+			const signature = await sendAndConfirmTransaction(
+				connection,
+				transaction,
+				[this.signer],
+			);
+
+			console.log("Entity retrieved successfully. Signature:", signature);
+			return signature;
+		} catch (error) {
+			console.error("Error in get:", error);
+			throw error;
+		}
 	}
 
 	/**
