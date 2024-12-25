@@ -323,15 +323,6 @@ export class SessionAuth implements Auth {
 			transaction,
 			[sessionKeypair],
 		);
-
-		await this.connection.confirmTransaction(
-			{
-				signature,
-				blockhash: blockhash.blockhash,
-				lastValidBlockHeight: blockhash.lastValidBlockHeight,
-			},
-			"confirmed",
-		);
 		console.log("Transaction created successfully! Signature:", signature);
 	}
 }

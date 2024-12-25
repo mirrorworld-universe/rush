@@ -1,8 +1,8 @@
-describe('Test Suite', () => {
-    test('should run a simple test', () => {
-        expect(true).toBe(true);
-    });
-});
+// describe('Test Suite', () => {
+//     test('should run a simple test', () => {
+//         expect(true).toBe(true);
+//     });
+// });
 
 import bs58 from "bs58";
 import { Storage } from "./modules/storage/storage";
@@ -126,6 +126,10 @@ function test_call_session() {
 
 	// const decrypted = auth.decrypt(sessionKeypair); // This is commented out since it is now private
 }
+
+// function test_call_create(){
+// 	const sdk = new RushSdk({})
+// }
 
 // setStorage("your_entity_id_here", { key: "value" }); // Sample call to setStorage
 // test_call_rushsdk();

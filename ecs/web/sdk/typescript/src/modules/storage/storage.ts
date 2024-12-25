@@ -93,62 +93,101 @@ export class Storage {
 	 * /// TODO: DONE RULE: The Game Developer must be able to spawn an entity on the
 	 * onchain game world in the Rush Store Solana Program (smart contract) after instantiating the SDK
 	 */
-	public create() {
+	public async create() {
 		//? tasks breakdown:
 		//? - learn how to create a transaction and storing instruction from the world detail
 		//? - initiate Instance PDA Class
 		//? - initiate World PDA Instance Class
 		//? - create a transaction that will set all e2e
-		console.log("create method");
+		const seed = "rush-test-seed";
+		const connection = new Connection(this.rpcUrl);
+		try {
+			const entityData = Buffer.from(
+				JSON.stringify({ itemName: "sword" }),
+			);
+			const [pda, bump] = PublicKey.findProgramAddressSync(
+				[Buffer.from(seed)],
+				SystemProgram.programId,
+			);
+
+			const ix = new TransactionInstruction({
+				programId: SystemProgram.programId,
+				keys: [
+					{
+						pubkey: pda,
+						isSigner: false,
+						isWritable: true,
+					},
+					{
+						pubkey: this.signer.publicKey,
+						isSigner: true,
+						isWritable: true,
+					},
+				],
+				data: entityData,
+			});
+
+			const transaction = new Transaction().add(ix);
+
+			const signature = await sendAndConfirmTransaction(
+				connection,
+				transaction,
+				[this.signer],
+			);
+			console.log("Entity created successfully! Signature:", signature);
+		} catch (error) {
+			console.log("Error in create:", error);
+			throw error;
+		}
 	}
 
 	/**
 	 * delete function
 	 */
 	public async delete(entityId: string) {
-	    console.log("delete method");
+		console.log("delete method");
 
-	    try {
-	        const connection = new Connection(this.rpcUrl);
+		try {
+			const connection = new Connection(this.rpcUrl);
 
-	        // Convert entityId to PublicKey
-	        const entityPubkey = new PublicKey(entityId);
+			// Convert entityId to PublicKey
+			const entityPubkey = new PublicKey(entityId);
 
-	        // Create the instruction to delete the entity
-	        const instruction = new TransactionInstruction({
-	            programId:
-	                this.programId instanceof PublicKey
-	                    ? this.programId
-	                    : new PublicKey(this.programId),
-	            keys: [
-	                {
-	                    pubkey: this.signer.publicKey,
-	                    isSigner: true,
-	                    isWritable: true,
-	                },
-	                { pubkey: entityPubkey, isSigner: false, isWritable: true },
-	                {
-	                    pubkey: SystemProgram.programId,
-	                    isSigner: false,
-	                    isWritable: false,
-	                },
-	            ],
-	            data: Buffer.from([]), // Assuming no additional data is needed for deletion
-	        });
+			// Create the instruction to delete the entity
+			const instruction = new TransactionInstruction({
+				programId:
+					this.programId instanceof PublicKey
+						? this.programId
+						: new PublicKey(this.programId),
+				keys: [
+					{
+						pubkey: this.signer.publicKey,
+						isSigner: true,
+						isWritable: true,
+					},
+					{ pubkey: entityPubkey, isSigner: false, isWritable: true },
+					{
+						pubkey: SystemProgram.programId,
+						isSigner: false,
+						isWritable: false,
+					},
+				],
+				data: Buffer.from([]), // Assuming no additional data is needed for deletion
+			});
 
-	        const transaction = new Transaction().add(instruction);
-	        const signature = await sendAndConfirmTransaction(
-	            connection,
-	            transaction,
-	            [this.signer],
-	        );
+			const transaction = new Transaction().add(instruction);
+			const signature = await sendAndConfirmTransaction(
+				connection,
+				transaction,
+				[this.signer],
+			);
 
-	        console.log("Entity deleted successfully. Signature:", signature);
-	        return signature;
-	    } catch (error) {
-	        console.error("Error in delete:", error);
-	        throw error;
-	    }
+			console.log("Entity deleted successfully. Signature:", signature);
+			return signature;
+		} catch (error) {
+			console.error("Error in delete:", error);
+			throw error;
+		}
 	}
 
 	/**
