@@ -105,8 +105,50 @@ export class Storage {
 	/**
 	 * delete function
 	 */
-	public delete(entityId: string) {
-		console.log("delete method");
+	public async delete(entityId: string) {
+	    console.log("delete method");
+
+	    try {
+	        const connection = new Connection(this.rpcUrl);
+
+	        // Convert entityId to PublicKey
+	        const entityPubkey = new PublicKey(entityId);
+
+	        // Create the instruction to delete the entity
+	        const instruction = new TransactionInstruction({
+	            programId:
+	                this.programId instanceof PublicKey
+	                    ? this.programId
+	                    : new PublicKey(this.programId),
+	            keys: [
+	                {
+	                    pubkey: this.signer.publicKey,
+	                    isSigner: true,
+	                    isWritable: true,
+	                },
+	                { pubkey: entityPubkey, isSigner: false, isWritable: true },
+	                {
+	                    pubkey: SystemProgram.programId,
+	                    isSigner: false,
+	                    isWritable: false,
+	                },
+	            ],
+	            data: Buffer.from([]), // Assuming no additional data is needed for deletion
+	        });
+
+	        const transaction = new Transaction().add(instruction);
+	        const signature = await sendAndConfirmTransaction(
+	            connection,
+	            transaction,
+	            [this.signer],
+	        );
+
+	        console.log("Entity deleted successfully. Signature:", signature);
+	        return signature;
+	    } catch (error) {
+	        console.error("Error in delete:", error);
+	        throw error;
+	    }
 	}
 
 	/**
