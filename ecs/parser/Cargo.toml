@@ -1,0 +1,16 @@
+[package]
+name = "rush-ecs-parser"
+description = ""
+version = { workspace = true }
+authors = { workspace = true }
+repository = { workspace = true }
+homepage = { workspace = true }
+license = { workspace = true }
+edition = { workspace = true }
+keywords = { workspace = true }
+
+[dependencies]
+anyhow = { workspace = true }
+rush-ecs-core = { workspace = true }
+thiserror = { workspace = true }
+toml = { workspace = true }

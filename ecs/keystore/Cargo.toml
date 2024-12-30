@@ -1,0 +1,12 @@
+[package]
+name = "rush-ecs-keystore"
+description = ""
+version = { workspace = true }
+authors = { workspace = true }
+repository = { workspace = true }
+homepage = { workspace = true }
+license = { workspace = true }
+edition = { workspace = true }
+keywords = { workspace = true }
+
+[dependencies]
