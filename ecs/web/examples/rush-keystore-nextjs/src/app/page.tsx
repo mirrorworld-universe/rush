@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { SessionAuth } from "../../../sdk/typescript/src/modules/session/session";
+import { RushSession } from "../../../../sdk/typescript/src/session/RushSessionAdapter";
 import { Connection, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 const connection = new Connection("https://api.devnet.solana.com", "confirmed");
-const sessionAuth = new SessionAuth(connection);
+const sessionAuth = new RushSession(connection);
 const SessionTest = () => {
 	const [walletPublicKey, setWalletPublicKey] = useState<PublicKey | null>(null);
 	const [encryptedSession, setEncryptedSession] = useState<string | null>(window.localStorage.getItem("session"));

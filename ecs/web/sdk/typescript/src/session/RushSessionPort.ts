@@ -1,6 +1,6 @@
 import { Keypair, PublicKey } from "@solana/web3.js";
 
-export interface Auth {
+export interface RushSessionPort {
 	connectWallet(): Promise<PublicKey>;
 
 	// This will create the session keypair and encrypt the data and then store that encrypted data to the class and return the encrypted session keypair (base64 string)
