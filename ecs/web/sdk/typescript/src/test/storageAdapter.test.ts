@@ -1,4 +1,4 @@
-import { Storage } from "./storage";
+import { Storage } from "../storage/storage";
 import { Keypair, PublicKey } from "@solana/web3.js";
 
 jest.mock("@solana/web3.js", () => {

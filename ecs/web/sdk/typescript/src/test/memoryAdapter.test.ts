@@ -1,4 +1,4 @@
-import { MemoryAdapter } from './memory';
+import { MemoryAdapter } from '../storage/memoryAdapter';
 
 describe('MemoryAdapter', () => {
     let adapter: MemoryAdapter;

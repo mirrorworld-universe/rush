@@ -7,10 +7,10 @@ import {
 	sendAndConfirmTransaction,
 	Connection,
 } from "@solana/web3.js";
-import { Auth } from "./adapters/auth-adapter";
+import { RushSessionPort } from "./RushSessionPort";
 import crypto from "crypto";
 
-export class SessionAuth implements Auth {
+export class RushSession implements RushSessionPort {
 	// All variables can be stored in either PDA or just here in the class
 	private connection: Connection; // Connection should be stored or they need to create a connection again
 	private sessionExpiration: number | undefined; // Can store the session Expiration in PDA soon

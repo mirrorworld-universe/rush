@@ -50,3 +50,18 @@ declare global {
 		};
 	}
 }
+
+// Possible to make this a class?
+export interface Entity {
+	id: string;
+	data: Map<string, string>;
+	name: string;
+	description: string;
+	properties: Map<string, string>;
+}
+
+export interface Region {
+	name: string;
+	description: string;
+	properties: Map<string, string>;
+}
