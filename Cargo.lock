@@ -3170,8 +3170,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "rush-ecs-cli"
-version = "0.1.0"
+name = "rush-cli"
+version = "0.2.4"
 dependencies = [
  "anyhow",
  "clap 4.5.16",
@@ -3187,7 +3187,7 @@ dependencies = [
 
 [[package]]
 name = "rush-ecs-core"
-version = "0.1.0"
+version = "0.2.4"
 dependencies = [
  "anyhow",
  "borsh 1.5.1",
@@ -3197,11 +3197,11 @@ dependencies = [
 
 [[package]]
 name = "rush-ecs-keystore"
-version = "0.1.0"
+version = "0.2.4"
 
 [[package]]
 name = "rush-ecs-manifest"
-version = "0.1.0"
+version = "0.2.4"
 dependencies = [
  "anyhow",
  "thiserror",
@@ -3210,7 +3210,7 @@ dependencies = [
 
 [[package]]
 name = "rush-ecs-parser"
-version = "0.1.0"
+version = "0.2.4"
 dependencies = [
  "anyhow",
  "rush-ecs-core",
@@ -3240,7 +3240,7 @@ dependencies = [
 
 [[package]]
 name = "rush-ecs-sdk"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "anyhow",
  "assert_matches",
@@ -3279,7 +3279,7 @@ dependencies = [
 
 [[package]]
 name = "rush-ecs-svm"
-version = "0.1.0"
+version = "0.2.4"
 dependencies = [
  "arrayref",
  "borsh 1.5.1",
@@ -3293,10 +3293,6 @@ dependencies = [
  "spl-program-error",
  "thiserror",
 ]
-
-[[package]]
-name = "rush-ecs-visor"
-version = "0.1.0"
 
 [[package]]
 name = "rustc-demangle"
