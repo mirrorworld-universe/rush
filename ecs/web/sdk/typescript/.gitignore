@@ -1,7 +1,0 @@
-node_modules
-dist
-bun.lockb
-package-lock.json
-.env
-SAMPLE_PAIR.json
-*.js
